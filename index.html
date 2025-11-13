@@ -75,7 +75,7 @@ body {
     height: 100%;
     z-index: 1000;
     overflow-y: auto;
-    padding: 30px 20px;
+    padding: 30px 10px;
     box-sizing: border-box;
     background: rgba(0,0,0,0.1);
 }
@@ -145,27 +145,29 @@ body {
 .precios-lista ul li span:last-child { margin-left: 10px; }
 
 /* ---------- GALERÍA / PRODUCTOS ---------- */
+/* Miniaturas tipo mosaico */
 .galeria-interna, .productos-interna {
-    position: relative;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+    gap: 4px;
+    margin-top: 10px;
+    padding: 5px;
     z-index: 1;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 50px;
 }
 
 .galeria-interna img, .productos-interna img {
-    width: 220px;
-    height: 160px;
+    width: 100%;
+    aspect-ratio: 1/1;
     object-fit: cover;
-    border-radius: 10px;
+    border-radius: 4px;
     cursor: pointer;
-    transition: transform 0.3s;
+    transition: transform 0.2s ease;
 }
 
-.galeria-interna img:hover, .productos-interna img:hover {
-    transform: scale(1.05);
+@media(min-width: 769px){
+    .galeria-interna img:hover, .productos-interna img:hover {
+        transform: scale(1.05);
+    }
 }
 
 /* ---------- LIGHTBOX ---------- */
@@ -193,7 +195,6 @@ body {
     transition: transform 0.3s ease;
 }
 
-/* Botones de navegación */
 .lightbox button {
     position: absolute;
     top: 50%;
@@ -216,7 +217,6 @@ body {
 .lightbox button:hover { background: rgba(255,255,255,0.7); color: #a5005a; }
 .close-lightbox { position: absolute; top: 15px; right: 25px; font-size: 30px; color: rgba(255,255,255,0.8); cursor: pointer; }
 
-/* ---------- BOTÓN REGRESAR ---------- */
 .reset-btn {
     display: none;
     position: absolute;
@@ -241,32 +241,13 @@ body {
     transform: translateX(-50%) scale(1.05);
 }
 
-/* ---------- ANIMACIONES PARA LIGHTBOX ---------- */
+/* ANIMACIONES LIGHTBOX */
 .lightbox-img-anim {
     transition: transform 0.5s ease, opacity 0.5s ease;
     opacity: 0;
 }
 .lightbox-img-anim.show {
     opacity: 1;
-}
-
-/* ---------- MÓVILES ---------- */
-@media (max-width: 768px) {
-    .galeria-interna, .productos-interna {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        gap: 10px;
-        justify-content: flex-start;
-    }
-    .galeria-interna img, .productos-interna img {
-        flex: 0 0 auto;
-        width: 80%;
-        height: auto;
-        margin-right: 10px;
-    }
-
-    .lightbox img { max-width: 95%; max-height: 80%; }
 }
 </style>
 </head>
@@ -385,6 +366,7 @@ const lightboxImg = document.getElementById('lightbox-img');
 const closeLB = document.getElementById('close-lightbox');
 const prevLB = document.getElementById('prev');
 const nextLB = document.getElementById('next');
+const resetBtn = document.getElementById('reset');
 
 const imgsGaleria = Array.from(document.querySelectorAll('.galeria-interna img'));
 const imgsProductos = Array.from(document.querySelectorAll('.productos-interna img'));
@@ -392,73 +374,54 @@ let currentImages = [];
 let currentIndex = 0;
 let scale = 1;
 
-// Muestra la imagen en lightbox
+function updateResetButton() {
+    if(currentIndex === currentImages.length - 1){
+        resetBtn.style.display = 'inline-block';
+    } else {
+        resetBtn.style.display = 'none';
+    }
+}
+
 function showImage(index, imagesArray){
     currentImages = imagesArray;
     currentIndex = index;
-
     lightboxImg.classList.remove('show');
     lightboxImg.src = currentImages[currentIndex].src;
-
-    setTimeout(()=> lightboxImg.classList.add('show'), 50);
+    setTimeout(()=> lightboxImg.classList.add('show'),50);
     scale = 1;
     lightboxImg.style.transform = `scale(${scale})`;
     lightbox.style.display = 'flex';
+    updateResetButton();
 }
 
-// Configura clic en las imágenes
+// Click en miniaturas
 imgsGaleria.forEach((img,index)=>img.addEventListener('click',()=>showImage(index, imgsGaleria)));
 imgsProductos.forEach((img,index)=>img.addEventListener('click',()=>showImage(index, imgsProductos)));
 
-// Función para navegar imágenes (loop infinito)
+// Navegación horizontal circular
 function nextImage(){
-    lightboxImg.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-    lightboxImg.style.transform = 'translateX(-100%) scale(1)';
-    lightboxImg.style.opacity = 0;
-
-    setTimeout(()=>{
-        currentIndex = (currentIndex + 1) % currentImages.length;
-        lightboxImg.src = currentImages[currentIndex].src;
-        lightboxImg.style.transition = 'none';
-        lightboxImg.style.transform = 'translateX(100%) scale(1)';
-        lightboxImg.style.opacity = 0;
-
-        setTimeout(()=>{
-            lightboxImg.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-            lightboxImg.style.transform = 'translateX(0) scale(1)';
-            lightboxImg.style.opacity = 1;
-        }, 50);
-    }, 300);
+    currentIndex = (currentIndex + 1) % currentImages.length;
+    lightboxImg.src = currentImages[currentIndex].src;
+    updateResetButton();
 }
-
 function prevImage(){
-    lightboxImg.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-    lightboxImg.style.transform = 'translateX(100%) scale(1)';
-    lightboxImg.style.opacity = 0;
-
-    setTimeout(()=>{
-        currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
-        lightboxImg.src = currentImages[currentIndex].src;
-        lightboxImg.style.transition = 'none';
-        lightboxImg.style.transform = 'translateX(-100%) scale(1)';
-        lightboxImg.style.opacity = 0;
-
-        setTimeout(()=>{
-            lightboxImg.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-            lightboxImg.style.transform = 'translateX(0) scale(1)';
-            lightboxImg.style.opacity = 1;
-        }, 50);
-    }, 300);
+    currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
+    lightboxImg.src = currentImages[currentIndex].src;
+    updateResetButton();
 }
 
 nextLB.addEventListener('click', e => { e.stopPropagation(); nextImage(); });
 prevLB.addEventListener('click', e => { e.stopPropagation(); prevImage(); });
 
-// Cerrar lightbox
+resetBtn.addEventListener('click', ()=>{
+    currentIndex = currentImages.length - 2;
+    lightboxImg.src = currentImages[currentIndex].src;
+    updateResetButton();
+});
+
 closeLB.addEventListener('click', ()=>lightbox.style.display='none');
 lightbox.addEventListener('click', e => { if(e.target === lightbox) lightbox.style.display='none'; });
 
-// Zoom con rueda
 lightboxImg.addEventListener('wheel', function(e){
     e.preventDefault();
     scale += e.deltaY * -0.001;
@@ -466,17 +429,16 @@ lightboxImg.addEventListener('wheel', function(e){
     lightboxImg.style.transform = `scale(${scale})`;
 });
 
-// Swipe móvil (touch)
+// ---------- Swipe para móviles ----------
 let touchStartX = 0;
 let touchEndX = 0;
 lightboxImg.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
-lightboxImg.addEventListener('touchend', e => {
+lightboxImg.addEventListener('touchend', e => { 
     touchEndX = e.changedTouches[0].screenX;
-    if(touchEndX < touchStartX - 30) nextImage(); // swipe izquierda
-    if(touchEndX > touchStartX + 30) prevImage(); // swipe derecha
+    if(touchEndX < touchStartX - 30) nextImage();
+    if(touchEndX > touchStartX + 30) prevImage();
 });
 </script>
-
 </body>
 </html>
 
