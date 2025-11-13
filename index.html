@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Yenny Hair Salón</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+/* ---------- GENERAL ---------- */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #fff0f5;
+    overflow-x: hidden;
+}
+
+/* ---------- BOTONES FLOTANTES ---------- */
+.menu-flotante {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    gap: 10px;
+    z-index: 1001;
+}
+
+.menu-flotante button {
+    background: transparent;
+    border: 1px solid #d63384;
+    color: #d63384;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 20px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.menu-flotante button:hover {
+    background: rgba(214,51,132,0.2);
+    color: #a5005a; 
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .menu-flotante button {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+}
+
+/* ---------- PORTADA ---------- */
+.pantalla-tapiz {
+    width: 95%;
+    max-width: 1400px;
+    height: auto;
+    display: block;
+    margin: 50px auto 20px auto;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+}
+
+.pantalla-tapiz:hover {
+    transform: scale(1.05);
+}
+
+/* ---------- PORTALES ---------- */
+.pantalla-interna {
+    display: none;
+    position: fixed;
+    top:0;
+    left:0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    overflow-y: auto;
+    padding: 30px 20px;
+    box-sizing: border-box;
+    background: rgba(0,0,0,0.1); /* Opcional, para que el fondo se vea un poco */
+}
+
+.cerrar {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #d63384;
+    cursor: pointer;
+}
+
+/* ---------- FONDO ---------- */
+.fondo-general {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60%;
+    height: auto;
+    transform: translate(-50%, -50%);
+    object-fit: contain;
+    z-index: 0;
+    opacity: 1;
+    filter: brightness(1.2) saturate(1.3);
+}
+
+/* ---------- PRECIOS ---------- */
+.precios-lista {
+    position: relative;
+    z-index: 1;
+    max-width: 500px;
+    width: 90%;
+    margin: 0 auto;
+    text-align: center;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.precios-lista h2 {
+    font-size: 32px;
+    color: #ff1a8c;
+    text-align: center;
+    margin-bottom: 25px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.precios-lista ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.precios-lista ul li {
+    display: flex;
+    justify-content: space-between;
+    font-size: 20px;
+    color: #ff1a8c;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+    padding: 8px 0;
+    border-bottom: 1px dotted #ff1a8c;
+}
+
+.precios-lista ul li span:first-child { flex: 1; text-align: left; }
+.precios-lista ul li span:last-child { margin-left: 10px; }
+
+/* ---------- GALERÍA / PRODUCTOS ---------- */
+.galeria-interna, .productos-interna {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 50px;
+}
+
+.galeria-interna img, .productos-interna img {
+    width: 220px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.galeria-interna img:hover, .productos-interna img:hover {
+    transform: scale(1.05);
+}
+
+/* ---------- LIGHTBOX ---------- */
+.lightbox {
+    display: none;
+    position: fixed;
+    z-index: 3000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.lightbox img {
+    max-width: 80%;
+    max-height: 80%;
+    border-radius: 10px;
+    object-fit: contain;
+    opacity: 1;
+    cursor: grab;
+    transition: transform 0.3s ease;
+}
+
+.lightbox button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.3);
+    border: 1px solid rgba(255,255,255,0.6);
+    color: #d63384;
+    font-size: 24px;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#prev { left: 20px; }
+#next { right: 20px; }
+
+.lightbox button:hover { background: rgba(255,255,255,0.7); color: #a5005a; }
+.close-lightbox { position: absolute; top: 15px; right: 25px; font-size: 30px; color: rgba(255,255,255,0.8); cursor: pointer; }
+
+/* ---------- MÓVILES ---------- */
+@media (max-width: 768px) {
+    .galeria-interna, .productos-interna {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        gap: 10px;
+        justify-content: flex-start;
+    }
+    .galeria-interna img, .productos-interna img {
+        flex: 0 0 auto;
+        width: 80%;
+        height: auto;
+        margin-right: 10px;
+    }
+
+    .lightbox img { max-width: 95%; max-height: 80%; }
+}
+</style>
+</head>
+<body>
+
+<!-- BOTONES -->
+<div class="menu-flotante">
+    <button id="btn-home">Home</button>
+    <button id="btn-galeria">Galería</button>
+    <button id="btn-precios">Precios</button>
+    <button id="btn-productos">Productos</button>
+    <button id="btn-citas">Citas</button>
+</div>
+
+<!-- PANTALLA PRINCIPAL -->
+<img src="imagen/pantalla16.jpg" alt="Portada" class="pantalla-tapiz" id="portada">
+
+<!-- GALERÍA -->
+<div class="pantalla-interna" id="portal-galeria">
+    <span class="cerrar" onclick="cerrarPortal('portal-galeria')">×</span>
+    <img src="imagen/fondo17.png" alt="Fondo" class="fondo-general">
+    <div class="galeria-interna">
+        <img src="imagen/imagen1.jpg" alt="1">
+        <img src="imagen/imagen2.jpg" alt="2">
+        <img src="imagen/imagen3.jpg" alt="3">
+        <img src="imagen/imagen4.jpg" alt="4">
+        <img src="imagen/imagen5.jpg" alt="5">
+        <img src="imagen/imagen6.jpg" alt="6">
+        <img src="imagen/imagen7.jpg" alt="7">
+        <img src="imagen/imagen8.jpg" alt="8">
+    </div>
+</div>
+
+<!-- PRECIOS -->
+<div class="pantalla-interna" id="portal-precios">
+    <span class="cerrar" onclick="cerrarPortal('portal-precios')">×</span>
+    <img src="imagen/fondo17.png" alt="Fondo" class="fondo-general">
+    <div class="precios-lista">
+        <h2>💇‍♀️ Precios Profesionales</h2>
+        <ul>
+            <li><span>Lavado normal</span><span>55</span></li>
+            <li><span>Lavado con línea</span><span>70</span></li>
+            <li><span>Lavado con rolos</span><span>75</span></li>
+            <li><span>Color</span><span>120</span></li>
+            <li><span>Botox</span><span>150</span></li>
+            <li><span>Keratina</span><span>200</span></li>
+            <li><span>Microsring</span><span>200</span></li>
+            <li><span>Extensiones x línea</span><span>20</span></li>
+            <li><span>Extensiones completas</span><span>200</span></li>
+            <li><span>Lavado solo</span><span>10</span></li>
+            <li><span>Ampollas</span><span>8</span></li>
+            <li><span>Crema tratamiento</span><span>35</span></li>
+            <li><span>Gotero anticaída</span><span>40</span></li>
+            <li><span>Shampoo</span><span>20</span></li>
+        </ul>
+    </div>
+</div>
+
+<!-- PRODUCTOS -->
+<div class="pantalla-interna" id="portal-productos">
+    <span class="cerrar" onclick="cerrarPortal('portal-productos')">×</span>
+    <img src="imagen/fondo17.png" alt="Fondo" class="fondo-general">
+    <div class="productos-interna">
+        <img src="imagen/imagen9.jpg" alt="9">
+        <img src="imagen/imagen10.jpg" alt="10">
+        <img src="imagen/imagen11.jpg" alt="11">
+        <img src="imagen/imagen12.jpg" alt="12">
+        <img src="imagen/imagen13.jpg" alt="13">
+        <img src="imagen/imagen14.jpg" alt="14">
+    </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+    <span class="close-lightbox" id="close-lightbox">×</span>
+    <button id="prev">&#10094;</button>
+    <img src="" alt="Imagen ampliada" id="lightbox-img">
+    <button id="next">&#10095;</button>
+</div>
+
+<script>
+// ---------- PORTALES ----------
+function abrirPortal(id){
+    cerrarPortal('portal-galeria');
+    cerrarPortal('portal-precios');
+    cerrarPortal('portal-productos');
+    document.getElementById('portada').style.display = 'none';
+    const fondos = document.querySelectorAll('.fondo-general');
+    fondos.forEach(f => f.style.display = 'block');
+    document.getElementById(id).style.display = 'block';
+}
+function cerrarPortal(id){
+    document.getElementById(id).style.display = 'none';
+    const fondo = document.getElementById(id).querySelector('.fondo-general');
+    if(fondo) fondo.style.display = 'none';
+}
+
+// ---------- BOTONES ----------
+document.getElementById('btn-home').addEventListener('click', ()=>{ 
+    cerrarPortal('portal-galeria');
+    cerrarPortal('portal-precios');
+    cerrarPortal('portal-productos');
+    const fondos = document.querySelectorAll('.fondo-general');
+    fondos.forEach(f => f.style.display = 'none');
+    document.getElementById('portada').style.display = 'block';
+});
+document.getElementById('btn-galeria').addEventListener('click', ()=>abrirPortal('portal-galeria'));
+document.getElementById('btn-precios').addEventListener('click', ()=>abrirPortal('portal-precios'));
+document.getElementById('btn-productos').addEventListener('click', ()=>abrirPortal('portal-productos'));
+document.getElementById('btn-citas').addEventListener('click', ()=>alert('Sección de citas próximamente'));
+
+// ---------- LIGHTBOX ----------
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightbox-img');
+const closeLB = document.getElementById('close-lightbox');
+const prevLB = document.getElementById('prev');
+const nextLB = document.getElementById('next');
+
+const imgsGaleria = Array.from(document.querySelectorAll('.galeria-interna img'));
+const imgsProductos = Array.from(document.querySelectorAll('.productos-interna img'));
+let currentImages = [];
+let currentIndex = 0;
+let scale = 1;
+
+function showImage(index, imagesArray){
+    currentImages = imagesArray;
+    currentIndex = index;
+    lightboxImg.src = currentImages[currentIndex].src;
+    scale = 1;
+    lightboxImg.style.transform = `scale(${scale})`;
+    lightbox.style.display = 'flex';
+}
+
+imgsGaleria.forEach((img,index)=>img.addEventListener('click',()=>showImage(index, imgsGaleria)));
+imgsProductos.forEach((img,index)=>img.addEventListener('click',()=>showImage(index, imgsProductos)));
+
+nextLB.addEventListener('click', e => {
+    e.stopPropagation();
+    if(currentIndex < currentImages.length - 1){
+        currentIndex++;
+    } else {
+        lightboxImg.style.transform = 'scale(1.1)';
+        setTimeout(()=>lightboxImg.style.transform='scale(1)',200);
+        return;
+    }
+    lightboxImg.src = currentImages[currentIndex].src;
+    scale = 1;
+    lightboxImg.style.transform = `scale(${scale})`;
+});
+prevLB.addEventListener('click', e => {
+    e.stopPropagation();
+    if(currentIndex > 0){
+        currentIndex--;
+    } else {
+        lightboxImg.style.transform = 'scale(1.1)';
+        setTimeout(()=>lightboxImg.style.transform='scale(1)',200);
+        return;
+    }
+    lightboxImg.src = currentImages[currentIndex].src;
+    scale = 1;
+    lightboxImg.style.transform = `scale(${scale})`;
+});
+
+closeLB.addEventListener('click', ()=>lightbox.style.display='none');
+lightbox.addEventListener('click', e => { if(e.target === lightbox) lightbox.style.display='none'; });
+
+lightboxImg.addEventListener('wheel', function(e){
+    e.preventDefault();
+    scale += e.deltaY * -0.001;
+    scale = Math.min(Math.max(1, scale), 3);
+    lightboxImg.style.transform = `scale(${scale})`;
+});
+</script>
+
+</body>
+</html>
+
