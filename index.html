@@ -385,7 +385,6 @@ const lightboxImg = document.getElementById('lightbox-img');
 const closeLB = document.getElementById('close-lightbox');
 const prevLB = document.getElementById('prev');
 const nextLB = document.getElementById('next');
-const resetBtn = document.getElementById('reset');
 
 const imgsGaleria = Array.from(document.querySelectorAll('.galeria-interna img'));
 const imgsProductos = Array.from(document.querySelectorAll('.productos-interna img'));
@@ -393,103 +392,88 @@ let currentImages = [];
 let currentIndex = 0;
 let scale = 1;
 
-function updateResetButton() {
-    if(currentIndex === currentImages.length - 1){
-        resetBtn.style.display = 'inline-block';
-    } else {
-        resetBtn.style.display = 'none';
-    }
-}
-
+// Muestra la imagen en lightbox
 function showImage(index, imagesArray){
     currentImages = imagesArray;
     currentIndex = index;
 
-    // Animación fade-in
     lightboxImg.classList.remove('show');
     lightboxImg.src = currentImages[currentIndex].src;
 
     setTimeout(()=> lightboxImg.classList.add('show'), 50);
-
     scale = 1;
     lightboxImg.style.transform = `scale(${scale})`;
     lightbox.style.display = 'flex';
-    updateResetButton();
 }
 
+// Configura clic en las imágenes
 imgsGaleria.forEach((img,index)=>img.addEventListener('click',()=>showImage(index, imgsGaleria)));
 imgsProductos.forEach((img,index)=>img.addEventListener('click',()=>showImage(index, imgsProductos)));
 
-nextLB.addEventListener('click', e => {
-    e.stopPropagation();
-    if(currentIndex < currentImages.length - 1){
-        // Animación de salida a la izquierda
-        lightboxImg.style.transform = `translateX(-100%) scale(${scale})`;
+// Función para navegar imágenes (loop infinito)
+function nextImage(){
+    lightboxImg.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+    lightboxImg.style.transform = 'translateX(-100%) scale(1)';
+    lightboxImg.style.opacity = 0;
+
+    setTimeout(()=>{
+        currentIndex = (currentIndex + 1) % currentImages.length;
+        lightboxImg.src = currentImages[currentIndex].src;
+        lightboxImg.style.transition = 'none';
+        lightboxImg.style.transform = 'translateX(100%) scale(1)';
         lightboxImg.style.opacity = 0;
 
         setTimeout(()=>{
-            currentIndex++;
-            lightboxImg.src = currentImages[currentIndex].src;
-            lightboxImg.style.transition = 'none';
-            lightboxImg.style.transform = 'translateX(100%) scale(1)';
-            lightboxImg.style.opacity = 0;
+            lightboxImg.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+            lightboxImg.style.transform = 'translateX(0) scale(1)';
+            lightboxImg.style.opacity = 1;
+        }, 50);
+    }, 300);
+}
 
-            setTimeout(()=>{
-                lightboxImg.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-                lightboxImg.style.transform = 'translateX(0) scale(1)';
-                lightboxImg.style.opacity = 1;
-            }, 50);
-            updateResetButton();
-        }, 300);
-    } else {
-        lightboxImg.style.transform = 'scale(1.1)';
-        setTimeout(()=>lightboxImg.style.transform='scale(1)',200);
-        updateResetButton();
-    }
-});
+function prevImage(){
+    lightboxImg.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+    lightboxImg.style.transform = 'translateX(100%) scale(1)';
+    lightboxImg.style.opacity = 0;
 
-prevLB.addEventListener('click', e => {
-    e.stopPropagation();
-    if(currentIndex > 0){
-        // Animación de salida a la derecha
-        lightboxImg.style.transform = `translateX(100%) scale(${scale})`;
+    setTimeout(()=>{
+        currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
+        lightboxImg.src = currentImages[currentIndex].src;
+        lightboxImg.style.transition = 'none';
+        lightboxImg.style.transform = 'translateX(-100%) scale(1)';
         lightboxImg.style.opacity = 0;
 
         setTimeout(()=>{
-            currentIndex--;
-            lightboxImg.src = currentImages[currentIndex].src;
-            lightboxImg.style.transition = 'none';
-            lightboxImg.style.transform = 'translateX(-100%) scale(1)';
-            lightboxImg.style.opacity = 0;
+            lightboxImg.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+            lightboxImg.style.transform = 'translateX(0) scale(1)';
+            lightboxImg.style.opacity = 1;
+        }, 50);
+    }, 300);
+}
 
-            setTimeout(()=>{
-                lightboxImg.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-                lightboxImg.style.transform = 'translateX(0) scale(1)';
-                lightboxImg.style.opacity = 1;
-            }, 50);
-            updateResetButton();
-        }, 300);
-    } else {
-        lightboxImg.style.transform = 'scale(1.1)';
-        setTimeout(()=>lightboxImg.style.transform='scale(1)',200);
-        updateResetButton();
-    }
-});
+nextLB.addEventListener('click', e => { e.stopPropagation(); nextImage(); });
+prevLB.addEventListener('click', e => { e.stopPropagation(); prevImage(); });
 
-resetBtn.addEventListener('click', ()=>{
-    currentIndex = currentImages.length - 2; // retrocede a penúltima
-    lightboxImg.src = currentImages[currentIndex].src;
-    updateResetButton();
-});
-
+// Cerrar lightbox
 closeLB.addEventListener('click', ()=>lightbox.style.display='none');
 lightbox.addEventListener('click', e => { if(e.target === lightbox) lightbox.style.display='none'; });
 
+// Zoom con rueda
 lightboxImg.addEventListener('wheel', function(e){
     e.preventDefault();
     scale += e.deltaY * -0.001;
     scale = Math.min(Math.max(1, scale), 3);
     lightboxImg.style.transform = `scale(${scale})`;
+});
+
+// Swipe móvil (touch)
+let touchStartX = 0;
+let touchEndX = 0;
+lightboxImg.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
+lightboxImg.addEventListener('touchend', e => {
+    touchEndX = e.changedTouches[0].screenX;
+    if(touchEndX < touchStartX - 30) nextImage(); // swipe izquierda
+    if(touchEndX > touchStartX + 30) prevImage(); // swipe derecha
 });
 </script>
 
