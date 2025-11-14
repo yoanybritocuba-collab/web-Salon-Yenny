@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -85,7 +87,20 @@ body {
     cursor: pointer;
 }
 
-/* ---------- FONDO TRANSPARENTE ROTANDO ---------- */
+/* ---------- FONDO ESTÁTICO DETRÁS DEL DINÁMICO ---------- */
+.pantalla-interna::before {
+    content: "";
+    position: fixed;
+    top:0;
+    left:0;
+    width: 100%;
+    height: 100%;
+    background: url('imagen/fondo18.jpg') no-repeat center center;
+    background-size: cover;
+    z-index: 0;
+}
+
+/* ---------- FONDO DINÁMICO ROTANDO ---------- */
 @keyframes girarLateral {
     0% { transform: translate(-50%, -50%) rotateY(0deg); }
     100% { transform: translate(-50%, -50%) rotateY(360deg); }
@@ -98,7 +113,7 @@ body {
     height: auto;
     transform: translate(-50%, -50%);
     object-fit: contain;
-    z-index: 0;
+    z-index: 1; /* ahora encima del fondo18 */
     opacity: 1;
     filter: brightness(1.2) saturate(1.3);
     animation: girarLateral 20s linear infinite;
@@ -107,7 +122,7 @@ body {
 /* ---------- PRECIOS ---------- */
 .precios-lista {
     position: relative;
-    z-index: 1;
+    z-index: 2; /* encima de los fondos */
     max-width: 500px;
     width: 90%;
     margin: 0 auto;
@@ -142,7 +157,7 @@ body {
 /* ---------- GALERÍA / PRODUCTOS ---------- */
 .galeria-interna, .productos-interna {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -238,7 +253,7 @@ body {
 <!-- GALERÍA -->
 <div class="pantalla-interna" id="portal-galeria">
     <span class="cerrar" onclick="cerrarPortal('portal-galeria')">×</span>
-    <img src="imagen/fondo17.jpg" alt="Fondo" class="fondo-general">
+    <img src="imagen/fondo17.png" alt="Fondo" class="fondo-general">
     <div class="galeria-interna">
         <img src="imagen/imagen1.jpg" alt="1">
         <img src="imagen/imagen2.jpg" alt="2">
@@ -254,7 +269,7 @@ body {
 <!-- PRECIOS -->
 <div class="pantalla-interna" id="portal-precios">
     <span class="cerrar" onclick="cerrarPortal('portal-precios')">×</span>
-    <img src="imagen/fondo17.jpg" alt="Fondo" class="fondo-general">
+    <img src="imagen/fondo17.png" alt="Fondo" class="fondo-general">
     <div class="precios-lista">
         <h2>💇‍♀️ Precios Profesionales</h2>
         <ul>
@@ -279,7 +294,7 @@ body {
 <!-- PRODUCTOS -->
 <div class="pantalla-interna" id="portal-productos">
     <span class="cerrar" onclick="cerrarPortal('portal-productos')">×</span>
-    <img src="imagen/fondo17.jpg" alt="Fondo" class="fondo-general">
+    <img src="imagen/fondo17.png" alt="Fondo" class="fondo-general">
     <div class="productos-interna">
         <img src="imagen/imagen9.jpg" alt="9">
         <img src="imagen/imagen10.jpg" alt="10">
