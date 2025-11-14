@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -158,7 +157,7 @@ body {
     object-fit: cover;
     border-radius: 10px;
     cursor: pointer;
-    transition: transform 0.3s;
+    transition: all 0.3s ease;
 }
 .galeria-interna img:hover, .productos-interna img:hover {
     transform: scale(1.05);
@@ -216,9 +215,13 @@ body {
     }
     .galeria-interna img, .productos-interna img {
         flex:0 0 auto;
-        width:80%;
-        height:auto;
+        width: auto;
+        height: 2cm; /* pequeño en móvil */
         margin-right:10px;
+        transition: all 0.3s ease;
+    }
+    .galeria-interna img.active, .productos-interna img.active {
+        height: 6cm; /* ampliada cuando seleccionada */
     }
     .lightbox img { max-width:95%; max-height:80%; }
 }
@@ -347,6 +350,11 @@ const imgsGaleria = Array.from(document.querySelectorAll('.galeria-interna img')
 const imgsProductos = Array.from(document.querySelectorAll('.productos-interna img'));
 let currentImages = [], currentIndex = 0, scale = 1;
 
+// Manejo de clase active para móvil
+function setActiveMobile(imgs,index){
+    imgs.forEach((i,idx)=>i.classList.toggle('active', idx===index));
+}
+
 function showImage(index, imagesArray){
     currentImages = imagesArray;
     currentIndex = index;
@@ -354,6 +362,7 @@ function showImage(index, imagesArray){
     scale = 1;
     lightboxImg.style.transform = `scale(${scale})`;
     lightbox.style.display='flex';
+    if(window.innerWidth <=768) setActiveMobile(currentImages,currentIndex);
 }
 
 imgsGaleria.forEach((img,index)=>img.addEventListener('click',()=>showImage(index, imgsGaleria)));
@@ -362,16 +371,16 @@ imgsProductos.forEach((img,index)=>img.addEventListener('click',()=>showImage(in
 nextLB.addEventListener('click', e=>{
     e.stopPropagation();
     if(currentIndex < currentImages.length - 1) currentIndex++;
-    else { lightboxImg.style.transform='scale(1.1)'; setTimeout(()=>lightboxImg.style.transform='scale(1)',200); return; }
     lightboxImg.src = currentImages[currentIndex].src;
     scale=1; lightboxImg.style.transform=`scale(${scale})`;
+    if(window.innerWidth <=768) setActiveMobile(currentImages,currentIndex);
 });
 prevLB.addEventListener('click', e=>{
     e.stopPropagation();
     if(currentIndex > 0) currentIndex--;
-    else { lightboxImg.style.transform='scale(1.1)'; setTimeout(()=>lightboxImg.style.transform='scale(1)',200); return; }
     lightboxImg.src = currentImages[currentIndex].src;
     scale=1; lightboxImg.style.transform=`scale(${scale})`;
+    if(window.innerWidth <=768) setActiveMobile(currentImages,currentIndex);
 });
 
 closeLB.addEventListener('click', ()=>lightbox.style.display='none');
