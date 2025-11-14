@@ -86,21 +86,8 @@ body {
     cursor: pointer;
 }
 
-/* ---------- FONDO ESTÁTICO DETRÁS DEL DINÁMICO ---------- */
-.pantalla-interna::before {
-    content: "";
-    position: fixed;
-    top:0;
-    left:0;
-    width: 100%;
-    height: 100%;
-    background: url('imagen/fondo18.jpg') no-repeat center center;
-    background-size: cover;
-    z-index: 0;
-}
-
-/* ---------- FONDO DINÁMICO ROTANDO ---------- */
-@keyframes girarLateral {
+/* ---------- FONDO ROTANDO HORIZONTAL INFINITO ---------- */
+@keyframes girarHorizontal {
     0% { transform: translate(-50%, -50%) rotateY(0deg); }
     100% { transform: translate(-50%, -50%) rotateY(360deg); }
 }
@@ -112,16 +99,18 @@ body {
     height: auto;
     transform: translate(-50%, -50%);
     object-fit: contain;
-    z-index: 1; /* ahora encima del fondo18 */
+    z-index: 0;
     opacity: 1;
     filter: brightness(1.2) saturate(1.3);
-    animation: girarLateral 20s linear infinite;
+    animation: girarHorizontal 20s linear infinite;
+    display: none; /* Oculto por defecto */
+    transform-style: preserve-3d;
 }
 
 /* ---------- PRECIOS ---------- */
 .precios-lista {
     position: relative;
-    z-index: 2; /* encima de los fondos */
+    z-index: 1;
     max-width: 500px;
     width: 90%;
     margin: 0 auto;
@@ -156,7 +145,7 @@ body {
 /* ---------- GALERÍA / PRODUCTOS ---------- */
 .galeria-interna, .productos-interna {
     position: relative;
-    z-index: 2;
+    z-index: 1;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -164,15 +153,15 @@ body {
     margin-top: 50px;
 }
 .galeria-interna img, .productos-interna img {
-    width: 120px;   /* miniatura más pequeña */
-    height: 120px;
+    width: 220px;
+    height: 160px;
     object-fit: cover;
     border-radius: 10px;
     cursor: pointer;
     transition: transform 0.3s;
 }
 .galeria-interna img:hover, .productos-interna img:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 /* ---------- LIGHTBOX ---------- */
@@ -227,8 +216,8 @@ body {
     }
     .galeria-interna img, .productos-interna img {
         flex:0 0 auto;
-        width:80px;  /* miniatura móvil más pequeña */
-        height:80px;
+        width:80%;
+        height:auto;
         margin-right:10px;
     }
     .lightbox img { max-width:95%; max-height:80%; }
@@ -315,13 +304,18 @@ body {
 <script>
 // ---------- PORTALES ----------
 function abrirPortal(id){
-    cerrarPortal('portal-galeria');
-    cerrarPortal('portal-precios');
-    cerrarPortal('portal-productos');
+    ['portal-galeria','portal-precios','portal-productos'].forEach(p=>{
+        document.getElementById(p).style.display='none';
+        const fondo = document.getElementById(p).querySelector('.fondo-general');
+        if(fondo) fondo.style.display='none';
+    });
     document.getElementById('portada').style.display='none';
-    document.querySelectorAll('.fondo-general').forEach(f=>f.style.display='block');
-    document.getElementById(id).style.display='block';
+    const portal = document.getElementById(id);
+    portal.style.display='block';
+    const fondoActual = portal.querySelector('.fondo-general');
+    if(fondoActual) fondoActual.style.display='block';
 }
+
 function cerrarPortal(id){
     document.getElementById(id).style.display='none';
     const fondo = document.getElementById(id).querySelector('.fondo-general');
@@ -330,10 +324,11 @@ function cerrarPortal(id){
 
 // ---------- BOTONES ----------
 document.getElementById('btn-home').addEventListener('click', ()=>{
-    cerrarPortal('portal-galeria');
-    cerrarPortal('portal-precios');
-    cerrarPortal('portal-productos');
-    document.querySelectorAll('.fondo-general').forEach(f=>f.style.display='none');
+    ['portal-galeria','portal-precios','portal-productos'].forEach(p=>{
+        document.getElementById(p).style.display='none';
+        const fondo = document.getElementById(p).querySelector('.fondo-general');
+        if(fondo) fondo.style.display='none';
+    });
     document.getElementById('portada').style.display='block';
 });
 document.getElementById('btn-galeria').addEventListener('click', ()=>abrirPortal('portal-galeria'));
