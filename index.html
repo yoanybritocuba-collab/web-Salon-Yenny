@@ -42,6 +42,17 @@ body {
     transform: scale(1.1);
 }
 
+/* ---------- BOTONES MÁS PEQUEÑOS PARA MÓVILES ---------- */
+@media (max-width: 768px) {
+    .menu-flotante button {
+        padding: 5px 10px;
+        font-size: 12px;
+        border-radius: 15px;
+        height: 28px;
+        min-width: 50px;
+    }
+}
+
 /* ---------- PANTALLA INICIO ---------- */
 .pantalla-tapiz {
     width: 95%;
@@ -98,7 +109,7 @@ body {
     position: absolute; 
     top: 50%;
     left: 50%;
-    width: 40%;          /* reducido al 40% */
+    width: 40%; 
     max-width: 1200px;
     height: auto;
     transform: translate(-50%, -50%);
@@ -342,4 +353,5 @@ lightbox.addEventListener('click', e=>{ if(e.target===lightbox) lightbox.style.d
 
 </body>
 </html>
+
 
