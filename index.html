@@ -14,39 +14,35 @@ body {
     overflow-x: hidden;
 }
 
-/* ---------- BOTONES FLOTANTES ---------- */
+/* ---------- BOTONES CENTRADOS ---------- */
 .menu-flotante {
     position: fixed;
     top: 15px;
-    right: 15px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
-    gap: 10px;
+    gap: 12px;
     z-index: 1001;
+    backdrop-filter: blur(8px);
 }
 .menu-flotante button {
-    background: transparent;
+    background: rgba(255,255,255,0.3);
     border: 1px solid #d63384;
     color: #d63384;
     font-size: 14px;
     font-weight: bold;
     border-radius: 20px;
-    padding: 6px 12px;
+    padding: 8px 14px;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 .menu-flotante button:hover {
     background: rgba(214,51,132,0.2);
     color: #a5005a;
-    transform: scale(1.05);
-}
-@media (max-width: 768px) {
-    .menu-flotante button {
-        font-size: 12px;
-        padding: 5px 10px;
-    }
+    transform: scale(1.1);
 }
 
-/* ---------- PORTADA ---------- */
+/* ---------- PANTALLA INICIO ---------- */
 .pantalla-tapiz {
     width: 95%;
     max-width: 1400px;
@@ -61,7 +57,7 @@ body {
     transform: scale(1.05);
 }
 
-/* ---------- PORTALES ---------- */
+/* ---------- PANTALLAS INTERNAS ---------- */
 .pantalla-interna {
     display: none;
     position: fixed;
@@ -85,31 +81,37 @@ body {
     cursor: pointer;
 }
 
-/* ---------- FONDO ROTANDO HORIZONTAL INFINITO ---------- */
-@keyframes girarHorizontal {
-    0% { transform: translate(-50%, -50%) rotateY(0deg); }
-    100% { transform: translate(-50%, -50%) rotateY(360deg); }
-}
+/* ---------- FONDOS INTERNOS ---------- */
 .fondo-general {
     position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 1;
+}
+
+/* ---------- IMAGEN FLOTANTE ---------- */
+.fondo-rotativo {
+    position: absolute; 
     top: 50%;
     left: 50%;
-    width: 70%;
+    width: 40%;          /* reducido al 40% */
+    max-width: 1200px;
     height: auto;
     transform: translate(-50%, -50%);
     object-fit: contain;
-    z-index: 0;
-    opacity: 1;
-    filter: brightness(1.2) saturate(1.3);
-    animation: girarHorizontal 20s linear infinite;
-    display: none; /* Oculto por defecto */
-    transform-style: preserve-3d;
+    z-index: 1;
+    opacity: 0.85;
+    pointer-events: none;
 }
 
 /* ---------- PRECIOS ---------- */
 .precios-lista {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     max-width: 500px;
     width: 90%;
     margin: 0 auto;
@@ -120,47 +122,42 @@ body {
 .precios-lista h2 {
     font-size: 32px;
     color: #ff1a8c;
-    text-align: center;
     margin-bottom: 25px;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 .precios-lista ul {
     list-style: none;
     padding: 0;
-    margin: 0;
 }
 .precios-lista ul li {
     display: flex;
     justify-content: space-between;
     font-size: 20px;
     color: #ff1a8c;
-    text-shadow:1px 1px 1px rgba(0,0,0,0.1);
     padding: 8px 0;
     border-bottom: 1px dotted #ff1a8c;
 }
-.precios-lista ul li span:first-child { flex:1; text-align:left; }
-.precios-lista ul li span:last-child { margin-left:10px; }
 
-/* ---------- GALERÍA / PRODUCTOS ---------- */
+/* ---------- GALERÍA / PRODUCTOS GRID ---------- */
 .galeria-interna, .productos-interna {
     position: relative;
-    z-index: 1;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 15px;
     margin-top: 50px;
 }
 .galeria-interna img, .productos-interna img {
-    width: 220px;
+    width: 100%;
     height: 160px;
     object-fit: cover;
     border-radius: 10px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: transform 0.4s, box-shadow 0.4s;
 }
 .galeria-interna img:hover, .productos-interna img:hover {
     transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
 
 /* ---------- LIGHTBOX ---------- */
@@ -175,14 +172,11 @@ body {
     background: rgba(0,0,0,0.9);
     justify-content: center;
     align-items: center;
-    overflow: hidden;
 }
 .lightbox img {
     max-width: 80%;
     max-height: 80%;
     border-radius: 10px;
-    object-fit: contain;
-    cursor: grab;
     transition: transform 0.3s ease;
 }
 .lightbox button {
@@ -198,38 +192,22 @@ body {
     width: 50px;
     height: 50px;
     cursor:pointer;
-    transition: all 0.3s ease;
 }
-#prev { left:20px; } #next { right:20px; }
-.lightbox button:hover { background: rgba(255,255,255,0.7); color:#a5005a; }
-.close-lightbox { position:absolute; top:15px; right:25px; font-size:30px; color:rgba(255,255,255,0.8); cursor:pointer; }
-
-/* ---------- MÓVILES ---------- */
-@media (max-width: 768px) {
-    .galeria-interna, .productos-interna {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        gap: 10px;
-        justify-content: flex-start;
-    }
-    .galeria-interna img, .productos-interna img {
-        flex:0 0 auto;
-        width: auto;
-        height: 2cm; /* pequeño en móvil */
-        margin-right:10px;
-        transition: all 0.3s ease;
-    }
-    .galeria-interna img.active, .productos-interna img.active {
-        height: 6cm; /* ampliada cuando seleccionada */
-    }
-    .lightbox img { max-width:95%; max-height:80%; }
+#prev { left:20px; }
+#next { right:20px; }
+.close-lightbox {
+    position:absolute;
+    top:15px;
+    right:25px;
+    font-size:30px;
+    color:#fff;
+    cursor:pointer;
 }
 </style>
 </head>
 <body>
 
-<!-- BOTONES -->
+<!-- BOTONES CENTRADOS -->
 <div class="menu-flotante">
     <button id="btn-home">Home</button>
     <button id="btn-galeria">Galería</button>
@@ -238,29 +216,31 @@ body {
     <button id="btn-citas">Citas</button>
 </div>
 
-<!-- PANTALLA PRINCIPAL -->
+<!-- PANTALLA INICIO -->
 <img src="imagen/pantalla16.jpg" alt="Portada" class="pantalla-tapiz" id="portada">
 
 <!-- GALERÍA -->
 <div class="pantalla-interna" id="portal-galeria">
     <span class="cerrar" onclick="cerrarPortal('portal-galeria')">×</span>
-    <img src="imagen/fondo17.png" alt="Fondo" class="fondo-general">
+    <img src="imagen/fondo18.jpg" alt="Fondo" class="fondo-general">
+    <img src="imagen/pantalla17.png" alt="Flotante" class="fondo-rotativo">
     <div class="galeria-interna">
-        <img src="imagen/imagen1.jpg" alt="1">
-        <img src="imagen/imagen2.jpg" alt="2">
-        <img src="imagen/imagen3.jpg" alt="3">
-        <img src="imagen/imagen4.jpg" alt="4">
-        <img src="imagen/imagen5.jpg" alt="5">
-        <img src="imagen/imagen6.jpg" alt="6">
-        <img src="imagen/imagen7.jpg" alt="7">
-        <img src="imagen/imagen8.jpg" alt="8">
+        <img src="imagen/imagen1.jpg">
+        <img src="imagen/imagen2.jpg">
+        <img src="imagen/imagen3.jpg">
+        <img src="imagen/imagen4.jpg">
+        <img src="imagen/imagen5.jpg">
+        <img src="imagen/imagen6.jpg">
+        <img src="imagen/imagen7.jpg">
+        <img src="imagen/imagen8.jpg">
     </div>
 </div>
 
 <!-- PRECIOS -->
 <div class="pantalla-interna" id="portal-precios">
     <span class="cerrar" onclick="cerrarPortal('portal-precios')">×</span>
-    <img src="imagen/fondo17.png" alt="Fondo" class="fondo-general">
+    <img src="imagen/fondo18.jpg" alt="Fondo" class="fondo-general">
+    <img src="imagen/pantalla17.png" alt="Flotante" class="fondo-rotativo">
     <div class="precios-lista">
         <h2>💇‍♀️ Precios Profesionales</h2>
         <ul>
@@ -285,14 +265,15 @@ body {
 <!-- PRODUCTOS -->
 <div class="pantalla-interna" id="portal-productos">
     <span class="cerrar" onclick="cerrarPortal('portal-productos')">×</span>
-    <img src="imagen/fondo17.png" alt="Fondo" class="fondo-general">
+    <img src="imagen/fondo18.jpg" alt="Fondo" class="fondo-general">
+    <img src="imagen/pantalla17.png" alt="Flotante" class="fondo-rotativo">
     <div class="productos-interna">
-        <img src="imagen/imagen9.jpg" alt="9">
-        <img src="imagen/imagen10.jpg" alt="10">
-        <img src="imagen/imagen11.jpg" alt="11">
-        <img src="imagen/imagen12.jpg" alt="12">
-        <img src="imagen/imagen13.jpg" alt="13">
-        <img src="imagen/imagen14.jpg" alt="14">
+        <img src="imagen/imagen9.jpg">
+        <img src="imagen/imagen10.jpg">
+        <img src="imagen/imagen11.jpg">
+        <img src="imagen/imagen12.jpg">
+        <img src="imagen/imagen13.jpg">
+        <img src="imagen/imagen14.jpg">
     </div>
 </div>
 
@@ -300,38 +281,28 @@ body {
 <div class="lightbox" id="lightbox">
     <span class="close-lightbox" id="close-lightbox">×</span>
     <button id="prev">&#10094;</button>
-    <img src="" alt="Imagen ampliada" id="lightbox-img">
+    <img src="" alt="" id="lightbox-img">
     <button id="next">&#10095;</button>
 </div>
 
 <script>
 // ---------- PORTALES ----------
 function abrirPortal(id){
-    ['portal-galeria','portal-precios','portal-productos'].forEach(p=>{
-        document.getElementById(p).style.display='none';
-        const fondo = document.getElementById(p).querySelector('.fondo-general');
-        if(fondo) fondo.style.display='none';
-    });
+    cerrarPortal('portal-galeria');
+    cerrarPortal('portal-precios');
+    cerrarPortal('portal-productos');
     document.getElementById('portada').style.display='none';
-    const portal = document.getElementById(id);
-    portal.style.display='block';
-    const fondoActual = portal.querySelector('.fondo-general');
-    if(fondoActual) fondoActual.style.display='block';
+    document.getElementById(id).style.display='block';
 }
-
 function cerrarPortal(id){
     document.getElementById(id).style.display='none';
-    const fondo = document.getElementById(id).querySelector('.fondo-general');
-    if(fondo) fondo.style.display='none';
 }
 
 // ---------- BOTONES ----------
 document.getElementById('btn-home').addEventListener('click', ()=>{
-    ['portal-galeria','portal-precios','portal-productos'].forEach(p=>{
-        document.getElementById(p).style.display='none';
-        const fondo = document.getElementById(p).querySelector('.fondo-general');
-        if(fondo) fondo.style.display='none';
-    });
+    cerrarPortal('portal-galeria');
+    cerrarPortal('portal-precios');
+    cerrarPortal('portal-productos');
     document.getElementById('portada').style.display='block';
 });
 document.getElementById('btn-galeria').addEventListener('click', ()=>abrirPortal('portal-galeria'));
@@ -342,57 +313,33 @@ document.getElementById('btn-citas').addEventListener('click', ()=>alert('Secci�
 // ---------- LIGHTBOX ----------
 const lightbox = document.getElementById('lightbox');
 const lightboxImg = document.getElementById('lightbox-img');
-const closeLB = document.getElementById('close-lightbox');
-const prevLB = document.getElementById('prev');
-const nextLB = document.getElementById('next');
+let currentImages = [], currentIndex = 0;
 
-const imgsGaleria = Array.from(document.querySelectorAll('.galeria-interna img'));
-const imgsProductos = Array.from(document.querySelectorAll('.productos-interna img'));
-let currentImages = [], currentIndex = 0, scale = 1;
-
-// Manejo de clase active para móvil
-function setActiveMobile(imgs,index){
-    imgs.forEach((i,idx)=>i.classList.toggle('active', idx===index));
-}
-
-function showImage(index, imagesArray){
-    currentImages = imagesArray;
+function showImage(index, images){
+    currentImages = images;
     currentIndex = index;
     lightboxImg.src = currentImages[currentIndex].src;
-    scale = 1;
-    lightboxImg.style.transform = `scale(${scale})`;
-    lightbox.style.display='flex';
-    if(window.innerWidth <=768) setActiveMobile(currentImages,currentIndex);
+    lightbox.style.display = 'flex';
 }
 
-imgsGaleria.forEach((img,index)=>img.addEventListener('click',()=>showImage(index, imgsGaleria)));
-imgsProductos.forEach((img,index)=>img.addEventListener('click',()=>showImage(index, imgsProductos)));
+const galeriaImgs = Array.from(document.querySelectorAll('.galeria-interna img'));
+const productoImgs = Array.from(document.querySelectorAll('.productos-interna img'));
 
-nextLB.addEventListener('click', e=>{
-    e.stopPropagation();
-    if(currentIndex < currentImages.length - 1) currentIndex++;
+galeriaImgs.forEach((img,i)=>img.addEventListener('click',()=>showImage(i,galeriaImgs)));
+productoImgs.forEach((img,i)=>img.addEventListener('click',()=>showImage(i,productoImgs)));
+
+document.getElementById('next').addEventListener('click', ()=>{
+    if(currentIndex < currentImages.length-1) currentIndex++;
     lightboxImg.src = currentImages[currentIndex].src;
-    scale=1; lightboxImg.style.transform=`scale(${scale})`;
-    if(window.innerWidth <=768) setActiveMobile(currentImages,currentIndex);
 });
-prevLB.addEventListener('click', e=>{
-    e.stopPropagation();
+document.getElementById('prev').addEventListener('click', ()=>{
     if(currentIndex > 0) currentIndex--;
     lightboxImg.src = currentImages[currentIndex].src;
-    scale=1; lightboxImg.style.transform=`scale(${scale})`;
-    if(window.innerWidth <=768) setActiveMobile(currentImages,currentIndex);
 });
-
-closeLB.addEventListener('click', ()=>lightbox.style.display='none');
+document.getElementById('close-lightbox').addEventListener('click', ()=>lightbox.style.display='none');
 lightbox.addEventListener('click', e=>{ if(e.target===lightbox) lightbox.style.display='none'; });
-
-lightboxImg.addEventListener('wheel', function(e){
-    e.preventDefault();
-    scale += e.deltaY*-0.001;
-    scale = Math.min(Math.max(1,scale),3);
-    lightboxImg.style.transform = `scale(${scale})`;
-});
 </script>
 
 </body>
 </html>
+
