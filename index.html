@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -165,15 +164,15 @@ body {
     margin-top: 50px;
 }
 .galeria-interna img, .productos-interna img {
-    width: 220px;
-    height: 160px;
+    width: 120px;   /* miniatura más pequeña */
+    height: 120px;
     object-fit: cover;
     border-radius: 10px;
     cursor: pointer;
     transition: transform 0.3s;
 }
 .galeria-interna img:hover, .productos-interna img:hover {
-    transform: scale(1.05);
+    transform: scale(1.1);
 }
 
 /* ---------- LIGHTBOX ---------- */
@@ -228,8 +227,8 @@ body {
     }
     .galeria-interna img, .productos-interna img {
         flex:0 0 auto;
-        width:80%;
-        height:auto;
+        width:80px;  /* miniatura móvil más pequeña */
+        height:80px;
         margin-right:10px;
     }
     .lightbox img { max-width:95%; max-height:80%; }
