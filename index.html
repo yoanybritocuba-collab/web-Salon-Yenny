@@ -1085,7 +1085,7 @@ body {
                 <!-- Controles -->
                 <div class="controles-admin">
                     <button id="toggle-citas" class="btn-admin abierto" onclick="toggleSistemaCitas()">
-                        ✅ Sistema de Citas ABIERTO
+                        ✅ Sistema de Citas ABIERTO GLOBALMENTE
                     </button>
                     <button class="btn-admin" onclick="exportarDatos()">
                         📊 Exportar Datos
@@ -1095,9 +1095,9 @@ body {
                     </button>
                 </div>
                 
-                <!-- Estado del sistema -->
+                <!-- Estado del sistema - ACTUALIZADO PARA MOSTRAR GLOBAL -->
                 <div class="mensaje-info" id="estado-sistema">
-                    El sistema de citas está actualmente <strong>ABIERTO</strong> - Los clientes pueden agendar citas
+                    El sistema de citas está actualmente <strong>ABIERTO GLOBALMENTE</strong> - Los clientes pueden agendar citas desde cualquier dispositivo
                 </div>
                 
                 <!-- Estadísticas principales -->
@@ -1152,8 +1152,78 @@ body {
 </div>
 
 <script>
-// ---------- VARIABLES GLOBALES ----------
+// ---------- SISTEMA DE SINCRONIZACIÓN GLOBAL MEJORADO ----------
 let sistemaCitasAbierto = true;
+
+// Función mejorada para cargar el estado global
+function cargarEstadoGlobal() {
+    // Intentar cargar del localStorage local primero
+    const estadoLocal = localStorage.getItem('sistemaCitasAbierto');
+    const timestampLocal = localStorage.getItem('sistemaCitasTimestamp');
+    
+    // También verificar si hay un estado global guardado
+    const estadoGlobal = localStorage.getItem('sistemaCitasGlobal');
+    const timestampGlobal = localStorage.getItem('sistemaCitasGlobalTimestamp');
+    
+    // Resolver conflicto: usar el más reciente
+    if (estadoGlobal && timestampGlobal) {
+        const tiempoLocal = timestampLocal ? parseInt(timestampLocal) : 0;
+        const tiempoGlobal = parseInt(timestampGlobal);
+        
+        if (tiempoGlobal > tiempoLocal) {
+            // El estado global es más reciente
+            sistemaCitasAbierto = JSON.parse(estadoGlobal);
+            console.log('✅ Estado cargado desde sincronización global:', sistemaCitasAbierto);
+        } else if (estadoLocal !== null) {
+            // Usar estado local si es más reciente o no hay global
+            sistemaCitasAbierto = JSON.parse(estadoLocal);
+            console.log('✅ Estado cargado desde almacenamiento local:', sistemaCitasAbierto);
+        }
+    } else if (estadoLocal !== null) {
+        // Solo hay estado local
+        sistemaCitasAbierto = JSON.parse(estadoLocal);
+        console.log('✅ Estado cargado desde almacenamiento local:', sistemaCitasAbierto);
+    }
+    
+    // Forzar guardado global para sincronizar
+    guardarEstadoGlobal();
+}
+
+// Función mejorada para guardar el estado global
+function guardarEstadoGlobal() {
+    const timestamp = Date.now();
+    
+    // Guardar en localStorage local
+    localStorage.setItem('sistemaCitasAbierto', sistemaCitasAbierto);
+    localStorage.setItem('sistemaCitasTimestamp', timestamp.toString());
+    
+    // Guardar como estado global
+    localStorage.setItem('sistemaCitasGlobal', sistemaCitasAbierto);
+    localStorage.setItem('sistemaCitasGlobalTimestamp', timestamp.toString());
+    
+    console.log('💾 Estado guardado globalmente:', sistemaCitasAbierto, 'Timestamp:', timestamp);
+}
+
+// Función para verificar y sincronizar estado al cargar
+function verificarSincronizacion() {
+    const estadoGuardado = localStorage.getItem('sistemaCitasGlobal');
+    const timestampGuardado = localStorage.getItem('sistemaCitasGlobalTimestamp');
+    
+    if (estadoGuardado && timestampGuardado) {
+        const tiempoGuardado = parseInt(timestampGuardado);
+        const tiempoActual = Date.now();
+        const diferenciaHoras = (tiempoActual - tiempoGuardado) / (1000 * 60 * 60);
+        
+        // Si el estado tiene más de 24 horas, resetear a abierto por seguridad
+        if (diferenciaHoras > 24) {
+            console.warn('🔄 Estado muy antiguo, reseteando a ABIERTO por seguridad');
+            sistemaCitasAbierto = true;
+            guardarEstadoGlobal();
+        }
+    }
+}
+
+// ---------- VARIABLES GLOBALES ----------
 let citas = JSON.parse(localStorage.getItem('citasYenny')) || [];
 let horarioLaboral = {
     inicio: '09:00',
@@ -1179,7 +1249,7 @@ const preciosServicios = {
     'trensas': 70
 };
 
-// ---------- INICIALIZACIÓN ----------
+// ---------- INICIALIZACIÓN MEJORADA ----------
 document.addEventListener('DOMContentLoaded', function() {
     // Establecer fecha mínima como hoy
     const fechaInput = document.getElementById('fecha');
@@ -1187,19 +1257,25 @@ document.addEventListener('DOMContentLoaded', function() {
         fechaInput.min = new Date().toISOString().split('T')[0];
     }
     
-    // Cargar estado del sistema
-    const estadoGuardado = localStorage.getItem('sistemaCitasAbierto');
-    if (estadoGuardado !== null) {
-        sistemaCitasAbierto = JSON.parse(estadoGuardado);
-    }
+    // Cargar estado global sincronizado
+    cargarEstadoGlobal();
+    
+    // Verificar sincronización y estado antiguo
+    verificarSincronizacion();
     
     // Actualizar estado del botón de citas
     actualizarEstadoBotonCitas();
     
-    console.log('Sistema de citas cargado correctamente');
+    console.log('🌐 Sistema de citas cargado con sincronización global');
+    
+    // Sincronizar cada 30 segundos por si hay cambios en otras pestañas
+    setInterval(() => {
+        cargarEstadoGlobal();
+        actualizarEstadoBotonCitas();
+    }, 30000);
 });
 
-// ---------- ACTUALIZAR ESTADO BOTÓN CITAS ----------
+// ---------- ACTUALIZAR ESTADO BOTÓN CITAS MEJORADO ----------
 function actualizarEstadoBotonCitas() {
     const btnCitas = document.getElementById('btn-citas');
     if (!sistemaCitasAbierto) {
@@ -1215,6 +1291,11 @@ function actualizarEstadoBotonCitas() {
             abrirPortal('portal-citas');
         };
     }
+    
+    // Actualizar también el estado en el panel admin si está abierto
+    if (document.getElementById('admin-panel') && document.getElementById('admin-panel').style.display !== 'none') {
+        actualizarPanelAdmin();
+    }
 }
 
 function mostrarMensajeCitasCerradas() {
@@ -1223,9 +1304,11 @@ function mostrarMensajeCitasCerradas() {
     const mensajeInfo = document.getElementById('mensaje-info');
     const formCita = document.getElementById('form-cita');
     
-    mensajeCitasCerradas.style.display = 'block';
-    mensajeInfo.style.display = 'none';
-    formCita.style.display = 'none';
+    if (mensajeCitasCerradas) {
+        mensajeCitasCerradas.style.display = 'block';
+        mensajeInfo.style.display = 'none';
+        formCita.style.display = 'none';
+    }
     
     abrirPortal('portal-citas');
 }
@@ -1247,9 +1330,15 @@ function abrirPortal(id) {
         mostrarMensajeCitasCerradas();
     } else if (id === 'portal-citas') {
         // Restaurar vista normal de citas
-        document.getElementById('mensaje-citas-cerradas').style.display = 'none';
-        document.getElementById('mensaje-info').style.display = 'block';
-        document.getElementById('form-cita').style.display = 'block';
+        const mensajeCitasCerradas = document.getElementById('mensaje-citas-cerradas');
+        const mensajeInfo = document.getElementById('mensaje-info');
+        const formCita = document.getElementById('form-cita');
+        
+        if (mensajeCitasCerradas) {
+            mensajeCitasCerradas.style.display = 'none';
+            mensajeInfo.style.display = 'block';
+            formCita.style.display = 'block';
+        }
     }
 }
 
@@ -1299,6 +1388,25 @@ document.getElementById('btn-admin').addEventListener('click', () => abrirPortal
 
 // El botón de citas se maneja dinámicamente en actualizarEstadoBotonCitas()
 
+// ---------- TOGGLE SISTEMA CITAS MEJORADO ----------
+function toggleSistemaCitas() {
+    // Cambiar estado
+    sistemaCitasAbierto = !sistemaCitasAbierto;
+    
+    // Guardar estado GLOBAL
+    guardarEstadoGlobal();
+    
+    // Actualizar interfaz
+    actualizarEstadoBotonCitas();
+    actualizarPanelAdmin();
+    
+    // Mostrar mensaje de confirmación
+    const estado = sistemaCitasAbierto ? 'ABIERTO' : 'CERRADO';
+    alert(`✅ Sistema de citas ${estado} GLOBALMENTE\n\nEste cambio afecta a todos los dispositivos: PC, móviles y tablets.`);
+    
+    console.log('🔄 Estado cambiado globalmente:', sistemaCitasAbierto);
+}
+
 // ---------- SISTEMA INTELIGENTE DE CITAS ----------
 function calcularHorariosDisponibles() {
     if (!sistemaCitasAbierto) return;
@@ -1313,7 +1421,7 @@ function calcularHorariosDisponibles() {
     const fecha = fechaInput.value;
     
     if (!servicio || !fecha) {
-        horariosDiv.style.display = 'none';
+        if (horariosDiv) horariosDiv.style.display = 'none';
         document.getElementById('btn-reservar').disabled = true;
         return;
     }
@@ -1600,12 +1708,12 @@ function actualizarPanelAdmin() {
     const toggleBtn = document.getElementById('toggle-citas');
     
     if (sistemaCitasAbierto) {
-        estadoSistema.innerHTML = 'El sistema de citas está actualmente <strong style="color: #28a745;">ABIERTO</strong> - Los clientes pueden agendar citas';
-        toggleBtn.textContent = '❌ Cerrar Sistema de Citas';
+        estadoSistema.innerHTML = 'El sistema de citas está actualmente <strong style="color: #28a745;">ABIERTO GLOBALMENTE</strong> - Los clientes pueden agendar citas desde cualquier dispositivo';
+        toggleBtn.textContent = '❌ Cerrar Sistema de Citas Globalmente';
         toggleBtn.className = 'btn-admin abierto';
     } else {
-        estadoSistema.innerHTML = 'El sistema de citas está actualmente <strong style="color: #dc3545;">CERRADO</strong> - Los clientes NO pueden agendar citas';
-        toggleBtn.textContent = '✅ Abrir Sistema de Citas';
+        estadoSistema.innerHTML = 'El sistema de citas está actualmente <strong style="color: #dc3545;">CERRADO GLOBALMENTE</strong> - Los clientes NO pueden agendar citas desde ningún dispositivo';
+        toggleBtn.textContent = '✅ Abrir Sistema de Citas Globalmente';
         toggleBtn.className = 'btn-admin cerrado';
     }
 }
@@ -1699,16 +1807,6 @@ function formatearTelefono(telefono) {
     return telefono;
 }
 
-function toggleSistemaCitas() {
-    sistemaCitasAbierto = !sistemaCitasAbierto;
-    localStorage.setItem('sistemaCitasAbierto', sistemaCitasAbierto);
-    
-    // Actualizar botón de citas
-    actualizarEstadoBotonCitas();
-    
-    actualizarPanelAdmin();
-}
-
 function exportarDatos() {
     const citasSemana = citas.filter(cita => {
         const fechaCita = new Date(cita.fecha);
@@ -1746,6 +1844,20 @@ function cancelarCita(id) {
         actualizarPanelAdmin();
     }
 }
+
+// ---------- DETECCIÓN DE CAMBIOS EN OTRAS PESTAÑAS ----------
+window.addEventListener('storage', function(e) {
+    if (e.key === 'sistemaCitasGlobal') {
+        console.log('🔄 Cambio detectado en otra pestaña, sincronizando...');
+        cargarEstadoGlobal();
+        actualizarEstadoBotonCitas();
+        
+        // Si el panel admin está abierto, actualizarlo también
+        if (document.getElementById('admin-panel') && document.getElementById('admin-panel').style.display !== 'none') {
+            actualizarPanelAdmin();
+        }
+    }
+});
 
 // ---------- LIGHTBOX ----------
 let currentImages = [], currentIndex = 0;
