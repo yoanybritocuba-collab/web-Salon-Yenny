@@ -357,6 +357,96 @@ body {
   box-shadow: 0 0 0 2px rgba(214, 51, 132, 0.2);
 }
 
+/* Estilos para checkboxes de servicios múltiples */
+.servicios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.servicio-checkbox {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background: rgba(248, 249, 250, 0.9);
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.servicio-checkbox:hover {
+  background: rgba(214, 51, 132, 0.05);
+  border-color: var(--primary-color);
+}
+
+.servicio-checkbox input[type="checkbox"] {
+  margin-right: 10px;
+  transform: scale(1.2);
+}
+
+.servicio-info {
+  flex: 1;
+}
+
+.servicio-nombre {
+  font-weight: bold;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+.servicio-detalles {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #666;
+}
+
+.servicio-duracion {
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.servicio-precio {
+  color: var(--success-color);
+  font-weight: bold;
+}
+
+.resumen-servicios {
+  background: rgba(248, 249, 250, 0.9);
+  border-radius: 8px;
+  padding: 15px;
+  margin: 15px 0;
+  border-left: 4px solid var(--primary-color);
+}
+
+.resumen-servicios h4 {
+  margin: 0 0 10px 0;
+  color: var(--primary-color);
+}
+
+#lista-servicios-seleccionados {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#lista-servicios-seleccionados li {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px dotted #dee2e6;
+}
+
+#total-duracion, #total-precio {
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 2px solid var(--primary-color);
+}
+
 .btn-enviar {
   background: var(--primary-color);
   color: var(--white);
@@ -439,6 +529,14 @@ body {
   background: var(--primary-color);
   color: var(--white);
   border-color: var(--primary-dark);
+}
+
+.horario-btn.pasado {
+  background: #f8d7da;
+  border-color: #dc3545;
+  color: #721c24;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 /* ---------- PANEL ADMINISTRACIÓN MEJORADO ---------- */
@@ -695,6 +793,10 @@ body {
   .mensaje-advertencia h3 {
     font-size: 16px;
     margin-bottom: 10px;
+  }
+  
+  .servicios-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1021,7 +1123,7 @@ body {
             </div>
             
             <div class="mensaje-info" id="mensaje-info">
-                💡 Nuestro sistema IA calcula automáticamente los horarios disponibles según la duración de cada servicio
+                💡 Selecciona uno o varios servicios. El sistema calculará automáticamente el tiempo total y mostrará los horarios disponibles.
             </div>
             
             <form id="form-cita">
@@ -1038,17 +1140,23 @@ body {
                         ✅ Acepta cualquier formato: 1234567890, 123-456-7890, (123) 456-7890, etc.
                     </small>
                 </div>
+                
+                <!-- SERVICIOS MÚLTIPLES CON CHECKBOXES -->
                 <div class="form-group">
-                    <label for="servicio" class="required">Servicio deseado</label>
-                    <select id="servicio" name="servicio" required onchange="calcularHorariosDisponibles()">
-                        <option value="">Selecciona un servicio</option>
-                        <option value="keratina" data-duracion="120">Keratina (120 min)</option>
-                        <option value="lavado-normal" data-duracion="60">Lavado normal (60 min)</option>
-                        <option value="extensiones" data-duracion="90">Extensiones (90 min)</option>
-                        <option value="color" data-duracion="90">Color - Pintado (90 min)</option>
-                        <option value="trensas" data-duracion="60">Trensas (60 min)</option>
-                    </select>
+                    <label class="required">Servicios deseados</label>
+                    <div class="servicios-grid" id="servicios-grid">
+                        <!-- Los servicios se generan dinámicamente -->
+                    </div>
                 </div>
+                
+                <!-- RESUMEN DE SERVICIOS SELECCIONADOS -->
+                <div class="resumen-servicios" id="resumen-servicios" style="display: none;">
+                    <h4>📋 Resumen de Servicios Seleccionados</h4>
+                    <ul id="lista-servicios-seleccionados"></ul>
+                    <div id="total-duracion">Duración total: 0 minutos</div>
+                    <div id="total-precio">Precio total: $0</div>
+                </div>
+                
                 <div class="form-group">
                     <label for="fecha" class="required">Fecha preferida</label>
                     <input type="date" id="fecha" name="fecha" required onchange="calcularHorariosDisponibles()">
@@ -1057,13 +1165,16 @@ body {
                 <!-- Horarios disponibles calculados por IA -->
                 <div class="horarios-disponibles" id="horarios-disponibles" style="display: none;">
                     <h3>🕒 Horarios Disponibles</h3>
-                    <p id="info-horarios">Selecciona un servicio y fecha para ver horarios disponibles</p>
+                    <p id="info-horarios">Selecciona servicios y fecha para ver horarios disponibles</p>
                     <div class="horarios-grid" id="horarios-grid">
                         <!-- Los horarios se generan dinámicamente -->
                     </div>
                 </div>
                 
                 <input type="hidden" id="hora-seleccionada" name="hora-seleccionada">
+                <input type="hidden" id="servicios-seleccionados" name="servicios-seleccionados">
+                <input type="hidden" id="duracion-total" name="duracion-total">
+                <input type="hidden" id="precio-total" name="precio-total">
                 
                 <div class="form-group">
                     <label for="mensaje">Mensaje adicional</label>
@@ -1169,6 +1280,25 @@ body {
 // ---------- SISTEMA DE SINCRONIZACIÓN GLOBAL MEJORADO ----------
 let sistemaCitasAbierto = true;
 
+// ---------- NUEVO: LISTA COMPLETA DE SERVICIOS CON PRECIOS Y DURACIONES ----------
+const serviciosCompletos = [
+    { id: 'lavado-normal', nombre: 'Lavado y secado normal', duracion: 60, precio: 55 },
+    { id: 'lavado-linea', nombre: 'Lavado con línea', duracion: 60, precio: 70 },
+    { id: 'lavado-rolos', nombre: 'Lavado con Rolos', duracion: 60, precio: 75 },
+    { id: 'botox', nombre: 'Botox', duracion: 60, precio: 150 },
+    { id: 'microsring', nombre: 'Microsring', duracion: 120, precio: 200 },
+    { id: 'extensiones-linea', nombre: 'Extensiones x línea', duracion: 60, precio: 20 },
+    { id: 'lavado-solo', nombre: 'Lavado solo', duracion: 15, precio: 10 },
+    { id: 'ampollas', nombre: 'Ampollas', duracion: 10, precio: 8 },
+    { id: 'crema-tratamiento', nombre: 'Crema tratamiento', duracion: 15, precio: 35 },
+    { id: 'gotero-anticipada', nombre: 'Gotero anti caída', duracion: 10, precio: 40 },
+    { id: 'shampoo', nombre: 'Shampoo', duracion: 10, precio: 20 },
+    { id: 'keratina', nombre: 'Keratina', duracion: 120, precio: 200 },
+    { id: 'color', nombre: 'Color - Pintado', duracion: 90, precio: 120 },
+    { id: 'extensiones-completas', nombre: 'Extensiones completas', duracion: 90, precio: 200 },
+    { id: 'trensas', nombre: 'Trensas', duracion: 60, precio: 70 }
+];
+
 // Función MEJORADA para cargar el estado global con sincronización
 function cargarEstadoGlobal() {
     // Intentar cargar del localStorage local
@@ -1272,6 +1402,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Verificar sincronización y estado antiguo
     verificarSincronizacion();
     
+    // Inicializar servicios en el formulario de citas
+    inicializarServicios();
+    
     console.log('🌐 Sistema de citas cargado. Estado:', sistemaCitasAbierto);
     
     // Sincronización cada 10 segundos para mantener consistencia
@@ -1279,6 +1412,91 @@ document.addEventListener('DOMContentLoaded', function() {
         cargarEstadoGlobal();
     }, 10000);
 });
+
+// ---------- NUEVO: INICIALIZAR SERVICIOS EN EL FORMULARIO ----------
+function inicializarServicios() {
+    const serviciosGrid = document.getElementById('servicios-grid');
+    
+    serviciosCompletos.forEach(servicio => {
+        const servicioDiv = document.createElement('div');
+        servicioDiv.className = 'servicio-checkbox';
+        servicioDiv.innerHTML = `
+            <input type="checkbox" id="servicio-${servicio.id}" name="servicios" value="${servicio.id}" 
+                   data-duracion="${servicio.duracion}" data-precio="${servicio.precio}" 
+                   onchange="actualizarResumenServicios()">
+            <div class="servicio-info">
+                <div class="servicio-nombre">${servicio.nombre}</div>
+                <div class="servicio-detalles">
+                    <span class="servicio-duracion">⏱️ ${servicio.duracion} min</span>
+                    <span class="servicio-precio">💰 $${servicio.precio}</span>
+                </div>
+            </div>
+        `;
+        serviciosGrid.appendChild(servicioDiv);
+    });
+}
+
+// ---------- NUEVO: ACTUALIZAR RESUMEN DE SERVICIOS SELECCIONADOS ----------
+function actualizarResumenServicios() {
+    const checkboxes = document.querySelectorAll('input[name="servicios"]:checked');
+    const listaServicios = document.getElementById('lista-servicios-seleccionados');
+    const resumenDiv = document.getElementById('resumen-servicios');
+    const totalDuracion = document.getElementById('total-duracion');
+    const totalPrecio = document.getElementById('total-precio');
+    const serviciosSeleccionadosInput = document.getElementById('servicios-seleccionados');
+    const duracionTotalInput = document.getElementById('duracion-total');
+    const precioTotalInput = document.getElementById('precio-total');
+    
+    let duracionTotal = 0;
+    let precioTotal = 0;
+    let serviciosNombres = [];
+    
+    listaServicios.innerHTML = '';
+    
+    checkboxes.forEach(checkbox => {
+        const servicioId = checkbox.value;
+        const servicio = serviciosCompletos.find(s => s.id === servicioId);
+        
+        if (servicio) {
+            duracionTotal += servicio.duracion;
+            precioTotal += servicio.precio;
+            serviciosNombres.push(servicio.nombre);
+            
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span>${servicio.nombre}</span>
+                <span>⏱️${servicio.duracion}min - 💰$${servicio.precio}</span>
+            `;
+            listaServicios.appendChild(li);
+        }
+    });
+    
+    if (checkboxes.length > 0) {
+        resumenDiv.style.display = 'block';
+        totalDuracion.textContent = `Duración total: ${duracionTotal} minutos`;
+        totalPrecio.textContent = `Precio total: $${precioTotal}`;
+        
+        // Actualizar campos ocultos
+        serviciosSeleccionadosInput.value = JSON.stringify(serviciosNombres);
+        duracionTotalInput.value = duracionTotal;
+        precioTotalInput.value = precioTotal;
+        
+        // Recalcular horarios disponibles si hay fecha seleccionada
+        const fecha = document.getElementById('fecha').value;
+        if (fecha) {
+            calcularHorariosDisponibles();
+        }
+    } else {
+        resumenDiv.style.display = 'none';
+        serviciosSeleccionadosInput.value = '';
+        duracionTotalInput.value = '';
+        precioTotalInput.value = '';
+        
+        // Ocultar horarios disponibles
+        document.getElementById('horarios-disponibles').style.display = 'none';
+        document.getElementById('btn-reservar').disabled = true;
+    }
+}
 
 // ---------- ACTUALIZAR ESTADO BOTÓN CITAS MEJORADO ----------
 function actualizarEstadoBotonCitas() {
@@ -1372,125 +1590,29 @@ let horarioLaboral = {
     totalMinutos: 540
 };
 
-// Duración de servicios en minutos
-const duracionesServicios = {
-    'keratina': 120,
-    'lavado-normal': 60,
-    'extensiones': 90,
-    'color': 90,
-    'trensas': 60
-};
-
-// Precios de servicios
-const preciosServicios = {
-    'keratina': 200,
-    'lavado-normal': 55,
-    'extensiones': 200,
-    'color': 120,
-    'trensas': 70
-};
-
-// ---------- PORTALES ----------
-function abrirPortal(id) {
-    cerrarTodosLosPortales();
-    document.getElementById('portada').style.display = 'none';
-    document.getElementById(id).style.display = 'block';
-    actualizarBotonActivo(id);
-    
-    if (id === 'portal-admin') {
-        document.getElementById('admin-panel').style.display = 'none';
-        document.getElementById('admin-login').style.display = 'block';
-        document.getElementById('admin-password').value = '';
-    }
-    
-    if (id === 'portal-citas' && !sistemaCitasAbierto) {
-        setTimeout(() => {
-            mostrarMensajeCitasCerradas();
-        }, 100);
-    } else if (id === 'portal-citas') {
-        // Restaurar vista normal de citas
-        const mensajeCitasCerradas = document.getElementById('mensaje-citas-cerradas');
-        const mensajeInfo = document.getElementById('mensaje-info');
-        const formCita = document.getElementById('form-cita');
-        
-        if (mensajeCitasCerradas) {
-            mensajeCitasCerradas.style.display = 'none';
-            mensajeInfo.style.display = 'block';
-            formCita.style.display = 'block';
-        }
-    }
-}
-
-function cerrarPortal(id) {
-    document.getElementById(id).style.display = 'none';
-    document.getElementById('portada').style.display = 'block';
-    actualizarBotonActivo('home');
-}
-
-function cerrarTodosLosPortales() {
-    const portales = document.querySelectorAll('.pantalla-interna');
-    portales.forEach(portal => {
-        portal.style.display = 'none';
-    });
-}
-
-function actualizarBotonActivo(idSeccion) {
-    const botones = document.querySelectorAll('.menu-flotante button');
-    botones.forEach(boton => {
-        boton.classList.remove('active');
-    });
-    
-    let botonId = '';
-    switch(idSeccion) {
-        case 'portal-galeria': botonId = 'btn-galeria'; break;
-        case 'portal-precios': botonId = 'btn-precios'; break;
-        case 'portal-productos': botonId = 'btn-productos'; break;
-        case 'portal-citas': botonId = 'btn-citas'; break;
-        case 'portal-admin': botonId = 'btn-admin'; break;
-        default: botonId = 'btn-home'; break;
-    }
-    
-    document.getElementById(botonId).classList.add('active');
-}
-
-// ---------- BOTONES ----------
-document.getElementById('btn-home').addEventListener('click', () => {
-    cerrarTodosLosPortales();
-    document.getElementById('portada').style.display = 'block';
-    actualizarBotonActivo('home');
-});
-
-document.getElementById('btn-galeria').addEventListener('click', () => abrirPortal('portal-galeria'));
-document.getElementById('btn-precios').addEventListener('click', () => abrirPortal('portal-precios'));
-document.getElementById('btn-productos').addEventListener('click', () => abrirPortal('portal-productos'));
-document.getElementById('btn-admin').addEventListener('click', () => abrirPortal('portal-admin'));
-
-// El botón de citas se maneja dinámicamente en actualizarEstadoBotonCitas()
-
-// ---------- SISTEMA INTELIGENTE DE CITAS ----------
+// ---------- SISTEMA INTELIGENTE DE CITAS MEJORADO ----------
 function calcularHorariosDisponibles() {
     if (!sistemaCitasAbierto) return;
     
-    const servicioSelect = document.getElementById('servicio');
     const fechaInput = document.getElementById('fecha');
     const horariosDiv = document.getElementById('horarios-disponibles');
     const horariosGrid = document.getElementById('horarios-grid');
     const infoHorarios = document.getElementById('info-horarios');
+    const duracionTotalInput = document.getElementById('duracion-total');
     
-    const servicio = servicioSelect.value;
     const fecha = fechaInput.value;
+    const duracionTotal = parseInt(duracionTotalInput.value) || 0;
     
-    if (!servicio || !fecha) {
+    if (!fecha || duracionTotal === 0) {
         if (horariosDiv) horariosDiv.style.display = 'none';
         document.getElementById('btn-reservar').disabled = true;
         return;
     }
     
-    const duracion = duracionesServicios[servicio];
     const citasDelDia = citas.filter(cita => cita.fecha === fecha);
     
     // Generar horarios disponibles
-    const horariosDisponibles = generarHorariosDisponibles(citasDelDia, duracion);
+    const horariosDisponibles = generarHorariosDisponibles(citasDelDia, duracionTotal, fecha);
     
     if (horariosDisponibles.length === 0) {
         infoHorarios.innerHTML = '❌ No hay horarios disponibles para esta fecha. Por favor selecciona otra fecha.';
@@ -1500,7 +1622,7 @@ function calcularHorariosDisponibles() {
         return;
     }
     
-    infoHorarios.innerHTML = `✅ <strong>${horariosDisponibles.length} horarios disponibles</strong> para ${servicioSelect.options[servicioSelect.selectedIndex].text}`;
+    infoHorarios.innerHTML = `✅ <strong>${horariosDisponibles.length} horarios disponibles</strong> para ${duracionTotal} minutos de servicios`;
     
     // Mostrar horarios en grid
     horariosGrid.innerHTML = '';
@@ -1508,15 +1630,23 @@ function calcularHorariosDisponibles() {
         const botonHorario = document.createElement('button');
         botonHorario.type = 'button';
         botonHorario.className = 'horario-btn';
-        botonHorario.textContent = horario;
-        botonHorario.onclick = () => seleccionarHorario(horario, botonHorario);
+        botonHorario.textContent = horario.hora;
+        botonHorario.onclick = () => seleccionarHorario(horario.hora, botonHorario);
+        
+        // Marcar horarios pasados como no disponibles
+        if (horario.esPasado) {
+            botonHorario.classList.add('pasado');
+            botonHorario.disabled = true;
+            botonHorario.title = 'Este horario ya pasó';
+        }
+        
         horariosGrid.appendChild(botonHorario);
     });
     
     horariosDiv.style.display = 'block';
 }
 
-function generarHorariosDisponibles(citasDelDia, duracion) {
+function generarHorariosDisponibles(citasDelDia, duracionTotal, fechaSeleccionada) {
     const horariosDisponibles = [];
     const intervalo = 30; // Intervalo de 30 minutos
     
@@ -1524,30 +1654,50 @@ function generarHorariosDisponibles(citasDelDia, duracion) {
     const inicioMinutos = tiempoAMinutos(horarioLaboral.inicio);
     const finMinutos = tiempoAMinutos(horarioLaboral.fin);
     
+    // Verificar si la fecha seleccionada es hoy
+    const hoy = new Date().toISOString().split('T')[0];
+    const esHoy = fechaSeleccionada === hoy;
+    const ahora = new Date();
+    const minutosActuales = esHoy ? (ahora.getHours() * 60 + ahora.getMinutes()) : 0;
+    
     // Crear array de bloques ocupados
     const bloquesOcupados = [];
     citasDelDia.forEach(cita => {
         const inicioCita = tiempoAMinutos(cita.hora);
-        const finCita = inicioCita + cita.duracion;
+        const finCita = inicioCita + cita.duracionTotal;
         for (let minuto = inicioCita; minuto < finCita; minuto += intervalo) {
             bloquesOcupados.push(minuto);
         }
     });
     
     // Generar horarios disponibles
-    for (let minuto = inicioMinutos; minuto <= finMinutos - duracion; minuto += intervalo) {
+    for (let minuto = inicioMinutos; minuto <= finMinutos - duracionTotal; minuto += intervalo) {
+        // Verificar si el horario ya pasó (solo para hoy)
+        const esPasado = esHoy && minuto < minutosActuales;
+        
         let disponible = true;
         
-        // Verificar si el horario está disponible
-        for (let i = minuto; i < minuto + duracion; i += intervalo) {
-            if (bloquesOcupados.includes(i)) {
-                disponible = false;
-                break;
+        // Verificar si el horario está disponible (solo si no es pasado)
+        if (!esPasado) {
+            for (let i = minuto; i < minuto + duracionTotal; i += intervalo) {
+                if (bloquesOcupados.includes(i)) {
+                    disponible = false;
+                    break;
+                }
             }
         }
         
-        if (disponible) {
-            horariosDisponibles.push(minutosATiempo(minuto));
+        if (disponible && !esPasado) {
+            horariosDisponibles.push({
+                hora: minutosATiempo(minuto),
+                esPasado: false
+            });
+        } else if (disponible && esPasado) {
+            // Incluir horarios pasados pero marcarlos
+            horariosDisponibles.push({
+                hora: minutosATiempo(minuto),
+                esPasado: true
+            });
         }
     }
     
@@ -1605,16 +1755,20 @@ document.getElementById('form-cita').addEventListener('submit', function(e) {
         return;
     }
     
-    const servicioSelect = document.getElementById('servicio');
-    const servicio = servicioSelect.value;
-    const nombreServicio = servicioSelect.options[servicioSelect.selectedIndex].text;
-    const duracion = duracionesServicios[servicio];
+    const serviciosSeleccionados = JSON.parse(document.getElementById('servicios-seleccionados').value || '[]');
+    const duracionTotal = document.getElementById('duracion-total').value;
+    const precioTotal = document.getElementById('precio-total').value;
     const horaSeleccionada = document.getElementById('hora-seleccionada').value;
     
-    console.log('Servicio:', servicio, 'Hora:', horaSeleccionada);
+    console.log('Servicios:', serviciosSeleccionados, 'Hora:', horaSeleccionada);
     
     if (!horaSeleccionada) {
         mostrarMensaje('Por favor selecciona un horario disponible.', 'error');
+        return;
+    }
+    
+    if (serviciosSeleccionados.length === 0) {
+        mostrarMensaje('Por favor selecciona al menos un servicio.', 'error');
         return;
     }
     
@@ -1631,14 +1785,13 @@ document.getElementById('form-cita').addEventListener('submit', function(e) {
         id: Date.now(),
         nombre: document.getElementById('nombre').value.trim(),
         telefono: telefonoValidado,
-        servicio: servicio,
-        nombreServicio: nombreServicio,
+        servicios: serviciosSeleccionados,
         fecha: document.getElementById('fecha').value,
         hora: horaSeleccionada,
-        duracion: duracion,
+        duracionTotal: parseInt(duracionTotal),
+        precioTotal: parseInt(precioTotal),
         mensaje: document.getElementById('mensaje').value.trim(),
-        timestamp: new Date().toISOString(),
-        precio: preciosServicios[servicio] || 0
+        timestamp: new Date().toISOString()
     };
     
     // Validaciones adicionales
@@ -1654,7 +1807,7 @@ document.getElementById('form-cita').addEventListener('submit', function(e) {
     localStorage.setItem('citasYenny', JSON.stringify(citas));
     
     // Mostrar mensaje de éxito
-    mostrarMensaje(`¡Cita reservada con éxito!<br><strong>${nombreServicio}</strong><br>${cita.fecha} a las ${cita.hora}`, 'exito');
+    mostrarMensaje(`¡Cita reservada con éxito!<br><strong>${serviciosSeleccionados.join(', ')}</strong><br>${cita.fecha} a las ${cita.hora}<br>Duración: ${duracionTotal}min - Total: $${precioTotal}`, 'exito');
     
     // Cambiar el botón de citas a "Cita Realizada" en verde
     const btnCitas = document.getElementById('btn-citas');
@@ -1671,6 +1824,7 @@ document.getElementById('form-cita').addEventListener('submit', function(e) {
     setTimeout(() => {
         document.getElementById('form-cita').reset();
         document.getElementById('horarios-disponibles').style.display = 'none';
+        document.getElementById('resumen-servicios').style.display = 'none';
         document.getElementById('mensaje-exito').style.display = 'none';
         
         // Restaurar botón de reservar
@@ -1730,12 +1884,16 @@ function actualizarPanelAdmin() {
     
     // Estadísticas
     const totalCitasSemana = citasSemana.length;
-    const ingresosTotales = citasSemana.reduce((total, cita) => total + (cita.precio || 0), 0);
+    const ingresosTotales = citasSemana.reduce((total, cita) => total + (cita.precioTotal || 0), 0);
     
     // Calcular servicio más popular
     const serviciosCount = {};
     citasSemana.forEach(cita => {
-        serviciosCount[cita.servicio] = (serviciosCount[cita.servicio] || 0) + 1;
+        if (cita.servicios && Array.isArray(cita.servicios)) {
+            cita.servicios.forEach(servicio => {
+                serviciosCount[servicio] = (serviciosCount[servicio] || 0) + 1;
+            });
+        }
     });
     
     let servicioPopular = '-';
@@ -1753,7 +1911,7 @@ function actualizarPanelAdmin() {
     
     // Actualizar estadísticas
     document.getElementById('total-citas-semana').textContent = totalCitasSemana;
-    document.getElementById('servicio-popular').textContent = servicioPopular.charAt(0).toUpperCase() + servicioPopular.slice(1);
+    document.getElementById('servicio-popular').textContent = servicioPopular;
     document.getElementById('ingresos-totales').textContent = '$' + ingresosTotales;
     document.getElementById('clientes-nuevos').textContent = clientesNuevos;
     
@@ -1791,7 +1949,7 @@ function actualizarGraficoServicios(serviciosCount) {
         const barraDiv = document.createElement('div');
         barraDiv.className = 'barra-servicio';
         barraDiv.innerHTML = `
-            <span>${servicio.charAt(0).toUpperCase() + servicio.slice(1)}</span>
+            <span>${servicio}</span>
             <div class="barra-progreso">
                 <div class="barra-progreso-fill" style="width: ${porcentaje}%"></div>
             </div>
@@ -1843,10 +2001,10 @@ function actualizarListaCitasSemana(semana, citasSemana) {
                 citaDiv.innerHTML = `
                     <div class="cita-info">
                         <div class="cita-cliente">👤 ${cita.nombre}</div>
-                        <div class="cita-servicio">${cita.nombreServicio}</div>
-                        <div class="cita-horario">🕒 ${cita.hora} (${cita.duracion} min)</div>
+                        <div class="cita-servicio">${Array.isArray(cita.servicios) ? cita.servicios.join(', ') : cita.servicios}</div>
+                        <div class="cita-horario">🕒 ${cita.hora} (${cita.duracionTotal} min)</div>
                         <div class="cita-telefono">📞 ${formatearTelefono(cita.telefono)}</div>
-                        <div class="cita-precio">💰 $${cita.precio || 0}</div>
+                        <div class="cita-precio">💰 $${cita.precioTotal || 0}</div>
                     </div>
                     ${cita.mensaje ? `<div><strong>Mensaje:</strong> ${cita.mensaje}</div>` : ''}
                     <button onclick="cancelarCita(${cita.id})" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; margin-top: 5px; cursor: pointer;">Cancelar Cita</button>
@@ -1881,9 +2039,10 @@ function exportarDatos() {
         return;
     }
     
-    let csv = 'Nombre,Telefono,Servicio,Fecha,Hora,Precio,Mensaje\n';
+    let csv = 'Nombre,Telefono,Servicios,Fecha,Hora,Duracion Total,Precio Total,Mensaje\n';
     citasSemana.forEach(cita => {
-        csv += `"${cita.nombre}","${cita.telefono}","${cita.nombreServicio}","${cita.fecha}","${cita.hora}","${cita.precio || 0}","${cita.mensaje || ''}"\n`;
+        const servicios = Array.isArray(cita.servicios) ? cita.servicios.join('; ') : cita.servicios;
+        csv += `"${cita.nombre}","${cita.telefono}","${servicios}","${cita.fecha}","${cita.hora}","${cita.duracionTotal}","${cita.precioTotal || 0}","${cita.mensaje || ''}"\n`;
     });
     
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -1968,6 +2127,83 @@ document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowLeft') navegarImagen('prev');
     }
 });
+
+// ---------- PORTALES ----------
+function abrirPortal(id) {
+    cerrarTodosLosPortales();
+    document.getElementById('portada').style.display = 'none';
+    document.getElementById(id).style.display = 'block';
+    actualizarBotonActivo(id);
+    
+    if (id === 'portal-admin') {
+        document.getElementById('admin-panel').style.display = 'none';
+        document.getElementById('admin-login').style.display = 'block';
+        document.getElementById('admin-password').value = '';
+    }
+    
+    if (id === 'portal-citas' && !sistemaCitasAbierto) {
+        setTimeout(() => {
+            mostrarMensajeCitasCerradas();
+        }, 100);
+    } else if (id === 'portal-citas') {
+        // Restaurar vista normal de citas
+        const mensajeCitasCerradas = document.getElementById('mensaje-citas-cerradas');
+        const mensajeInfo = document.getElementById('mensaje-info');
+        const formCita = document.getElementById('form-cita');
+        
+        if (mensajeCitasCerradas) {
+            mensajeCitasCerradas.style.display = 'none';
+            mensajeInfo.style.display = 'block';
+            formCita.style.display = 'block';
+        }
+    }
+}
+
+function cerrarPortal(id) {
+    document.getElementById(id).style.display = 'none';
+    document.getElementById('portada').style.display = 'block';
+    actualizarBotonActivo('home');
+}
+
+function cerrarTodosLosPortales() {
+    const portales = document.querySelectorAll('.pantalla-interna');
+    portales.forEach(portal => {
+        portal.style.display = 'none';
+    });
+}
+
+function actualizarBotonActivo(idSeccion) {
+    const botones = document.querySelectorAll('.menu-flotante button');
+    botones.forEach(boton => {
+        boton.classList.remove('active');
+    });
+    
+    let botonId = '';
+    switch(idSeccion) {
+        case 'portal-galeria': botonId = 'btn-galeria'; break;
+        case 'portal-precios': botonId = 'btn-precios'; break;
+        case 'portal-productos': botonId = 'btn-productos'; break;
+        case 'portal-citas': botonId = 'btn-citas'; break;
+        case 'portal-admin': botonId = 'btn-admin'; break;
+        default: botonId = 'btn-home'; break;
+    }
+    
+    document.getElementById(botonId).classList.add('active');
+}
+
+// ---------- BOTONES ----------
+document.getElementById('btn-home').addEventListener('click', () => {
+    cerrarTodosLosPortales();
+    document.getElementById('portada').style.display = 'block';
+    actualizarBotonActivo('home');
+});
+
+document.getElementById('btn-galeria').addEventListener('click', () => abrirPortal('portal-galeria'));
+document.getElementById('btn-precios').addEventListener('click', () => abrirPortal('portal-precios'));
+document.getElementById('btn-productos').addEventListener('click', () => abrirPortal('portal-productos'));
+document.getElementById('btn-admin').addEventListener('click', () => abrirPortal('portal-admin'));
+
+// El botón de citas se maneja dinámicamente en actualizarEstadoBotonCitas()
 </script>
 
 </body>
