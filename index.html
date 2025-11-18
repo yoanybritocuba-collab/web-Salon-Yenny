@@ -684,6 +684,20 @@ body {
   text-align: center;
 }
 
+/* Mejora para mensaje de citas cerradas en móviles */
+@media (max-width: 768px) {
+  .mensaje-advertencia {
+    padding: 15px;
+    font-size: 14px;
+    margin: 10px 0;
+  }
+  
+  .mensaje-advertencia h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+}
+
 /* ---------- LIGHTBOX ---------- */
 .lightbox {
   display: none;
@@ -1155,62 +1169,80 @@ body {
 // ---------- SISTEMA DE SINCRONIZACIÓN GLOBAL MEJORADO ----------
 let sistemaCitasAbierto = true;
 
-// Función mejorada para cargar el estado global
+// Función MEJORADA para cargar el estado global con sincronización
 function cargarEstadoGlobal() {
-    // Intentar cargar del localStorage local primero
+    // Intentar cargar del localStorage local
     const estadoLocal = localStorage.getItem('sistemaCitasAbierto');
-    const timestampLocal = localStorage.getItem('sistemaCitasTimestamp');
     
-    // También verificar si hay un estado global guardado
-    const estadoGlobal = localStorage.getItem('sistemaCitasGlobal');
-    const timestampGlobal = localStorage.getItem('sistemaCitasGlobalTimestamp');
-    
-    // Resolver conflicto: usar el más reciente
-    if (estadoGlobal && timestampGlobal) {
-        const tiempoLocal = timestampLocal ? parseInt(timestampLocal) : 0;
-        const tiempoGlobal = parseInt(timestampGlobal);
-        
-        if (tiempoGlobal > tiempoLocal) {
-            // El estado global es más reciente
-            sistemaCitasAbierto = JSON.parse(estadoGlobal);
-            console.log('✅ Estado cargado desde sincronización global:', sistemaCitasAbierto);
-        } else if (estadoLocal !== null) {
-            // Usar estado local si es más reciente o no hay global
-            sistemaCitasAbierto = JSON.parse(estadoLocal);
-            console.log('✅ Estado cargado desde almacenamiento local:', sistemaCitasAbierto);
-        }
-    } else if (estadoLocal !== null) {
-        // Solo hay estado local
+    // SIEMPRE usar el estado local como fuente principal
+    if (estadoLocal !== null) {
         sistemaCitasAbierto = JSON.parse(estadoLocal);
         console.log('✅ Estado cargado desde almacenamiento local:', sistemaCitasAbierto);
     }
     
-    // Forzar guardado global para sincronizar
-    guardarEstadoGlobal();
+    // Forzar actualización visual inmediata
+    actualizarEstadoBotonCitas();
+    
+    // Si el panel admin está visible, actualizarlo también
+    if (document.getElementById('admin-panel') && document.getElementById('admin-panel').style.display !== 'none') {
+        actualizarPanelAdmin();
+    }
 }
 
-// Función mejorada para guardar el estado global
+// Función MEJORADA para guardar el estado global
 function guardarEstadoGlobal() {
     const timestamp = Date.now();
     
-    // Guardar en localStorage local
+    // Guardar en localStorage local (PRINCIPAL)
     localStorage.setItem('sistemaCitasAbierto', sistemaCitasAbierto);
     localStorage.setItem('sistemaCitasTimestamp', timestamp.toString());
     
-    // Guardar como estado global
+    // También guardar como estado global para sincronización entre pestañas
     localStorage.setItem('sistemaCitasGlobal', sistemaCitasAbierto);
     localStorage.setItem('sistemaCitasGlobalTimestamp', timestamp.toString());
     
-    console.log('💾 Estado guardado globalmente:', sistemaCitasAbierto, 'Timestamp:', timestamp);
+    console.log('💾 Estado guardado:', sistemaCitasAbierto, 'Timestamp:', timestamp);
+    
+    // Actualización visual inmediata
+    actualizarEstadoBotonCitas();
+    
+    // Si el panel admin está visible, actualizarlo también
+    if (document.getElementById('admin-panel') && document.getElementById('admin-panel').style.display !== 'none') {
+        actualizarPanelAdmin();
+    }
 }
 
-// Función para verificar y sincronizar estado al cargar
+// Función para sincronizar entre pestañas del MISMO dispositivo
+function configurarSincronizacionPestañas() {
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'sistemaCitasGlobal') {
+            console.log('🔄 Cambio detectado en otra pestaña, sincronizando...');
+            
+            // Cargar el nuevo estado global
+            const nuevoEstado = localStorage.getItem('sistemaCitasGlobal');
+            if (nuevoEstado !== null) {
+                sistemaCitasAbierto = JSON.parse(nuevoEstado);
+                console.log('✅ Estado sincronizado desde otra pestaña:', sistemaCitasAbierto);
+                
+                // Actualizar interfaz inmediatamente
+                actualizarEstadoBotonCitas();
+                
+                // Actualizar panel admin si está abierto
+                if (document.getElementById('admin-panel') && document.getElementById('admin-panel').style.display !== 'none') {
+                    actualizarPanelAdmin();
+                }
+            }
+        }
+    });
+}
+
+// Función MEJORADA para verificar sincronización
 function verificarSincronizacion() {
-    const estadoGuardado = localStorage.getItem('sistemaCitasGlobal');
-    const timestampGuardado = localStorage.getItem('sistemaCitasGlobalTimestamp');
+    const estadoGlobal = localStorage.getItem('sistemaCitasGlobal');
+    const timestampGlobal = localStorage.getItem('sistemaCitasGlobalTimestamp');
     
-    if (estadoGuardado && timestampGuardado) {
-        const tiempoGuardado = parseInt(timestampGuardado);
+    if (estadoGlobal && timestampGlobal) {
+        const tiempoGuardado = parseInt(timestampGlobal);
         const tiempoActual = Date.now();
         const diferenciaHoras = (tiempoActual - tiempoGuardado) / (1000 * 60 * 60);
         
@@ -1219,6 +1251,115 @@ function verificarSincronizacion() {
             console.warn('🔄 Estado muy antiguo, reseteando a ABIERTO por seguridad');
             sistemaCitasAbierto = true;
             guardarEstadoGlobal();
+        }
+    }
+}
+
+// ---------- INICIALIZACIÓN MEJORADA ----------
+document.addEventListener('DOMContentLoaded', function() {
+    // Establecer fecha mínima como hoy
+    const fechaInput = document.getElementById('fecha');
+    if (fechaInput) {
+        fechaInput.min = new Date().toISOString().split('T')[0];
+    }
+    
+    // Cargar estado global
+    cargarEstadoGlobal();
+    
+    // Configurar sincronización entre pestañas
+    configurarSincronizacionPestañas();
+    
+    // Verificar sincronización y estado antiguo
+    verificarSincronizacion();
+    
+    console.log('🌐 Sistema de citas cargado. Estado:', sistemaCitasAbierto);
+    
+    // Sincronización cada 10 segundos para mantener consistencia
+    setInterval(() => {
+        cargarEstadoGlobal();
+    }, 10000);
+});
+
+// ---------- ACTUALIZAR ESTADO BOTÓN CITAS MEJORADO ----------
+function actualizarEstadoBotonCitas() {
+    const btnCitas = document.getElementById('btn-citas');
+    if (!btnCitas) return;
+    
+    if (!sistemaCitasAbierto) {
+        btnCitas.textContent = '❌ Citas Cerradas';
+        btnCitas.classList.add('citas-cerradas');
+        btnCitas.onclick = function() {
+            abrirPortal('portal-citas');
+            setTimeout(() => {
+                mostrarMensajeCitasCerradas();
+            }, 100);
+        };
+    } else {
+        btnCitas.textContent = 'Citas';
+        btnCitas.classList.remove('citas-cerradas');
+        btnCitas.onclick = function() {
+            abrirPortal('portal-citas');
+        };
+    }
+    
+    console.log('🔘 Botón citas actualizado:', sistemaCitasAbierto);
+}
+
+// ---------- MOSTRAR MENSAJE CITAS CERRADAS ----------
+function mostrarMensajeCitasCerradas() {
+    const mensajeCitasCerradas = document.getElementById('mensaje-citas-cerradas');
+    const mensajeInfo = document.getElementById('mensaje-info');
+    const formCita = document.getElementById('form-cita');
+    const estadoCitasTexto = document.getElementById('estado-citas-texto');
+    
+    if (mensajeCitasCerradas && mensajeInfo && formCita) {
+        mensajeCitasCerradas.style.display = 'block';
+        mensajeInfo.style.display = 'none';
+        formCita.style.display = 'none';
+        
+        // Actualizar texto del estado
+        if (estadoCitasTexto) {
+            estadoCitasTexto.textContent = 'Cerrado hasta nuevo aviso';
+        }
+    }
+}
+
+// ---------- TOGGLE SISTEMA CITAS MEJORADO CON SINCRONIZACIÓN ----------
+function toggleSistemaCitas() {
+    // Cambiar estado
+    sistemaCitasAbierto = !sistemaCitasAbierto;
+    
+    // Guardar estado MEJORADO - se sincroniza automáticamente
+    guardarEstadoGlobal();
+    
+    // Mostrar mensaje de confirmación MEJORADO
+    const estado = sistemaCitasAbierto ? 'ABIERTO' : 'CERRADO';
+    const mensaje = sistemaCitasAbierto 
+        ? '✅ Sistema de citas ABIERTO\n\nLos clientes pueden agendar citas desde cualquier dispositivo.'
+        : '❌ Sistema de citas CERRADO\n\nLos clientes NO pueden agendar citas desde ningún dispositivo.';
+    
+    alert(mensaje);
+    
+    console.log('🔄 Estado cambiado:', sistemaCitasAbierto);
+    
+    // Forzar actualización visual inmediata en TODOS los elementos
+    actualizarEstadoBotonCitas();
+    
+    // Si estamos en el portal de citas, actualizar la vista
+    if (document.getElementById('portal-citas').style.display === 'block') {
+        if (!sistemaCitasAbierto) {
+            mostrarMensajeCitasCerradas();
+        } else {
+            // Restaurar vista normal de citas
+            const mensajeCitasCerradas = document.getElementById('mensaje-citas-cerradas');
+            const mensajeInfo = document.getElementById('mensaje-info');
+            const formCita = document.getElementById('form-cita');
+            
+            if (mensajeCitasCerradas) {
+                mensajeCitasCerradas.style.display = 'none';
+                mensajeInfo.style.display = 'block';
+                formCita.style.display = 'block';
+            }
         }
     }
 }
@@ -1249,70 +1390,6 @@ const preciosServicios = {
     'trensas': 70
 };
 
-// ---------- INICIALIZACIÓN MEJORADA ----------
-document.addEventListener('DOMContentLoaded', function() {
-    // Establecer fecha mínima como hoy
-    const fechaInput = document.getElementById('fecha');
-    if (fechaInput) {
-        fechaInput.min = new Date().toISOString().split('T')[0];
-    }
-    
-    // Cargar estado global sincronizado
-    cargarEstadoGlobal();
-    
-    // Verificar sincronización y estado antiguo
-    verificarSincronizacion();
-    
-    // Actualizar estado del botón de citas
-    actualizarEstadoBotonCitas();
-    
-    console.log('🌐 Sistema de citas cargado con sincronización global');
-    
-    // Sincronizar cada 30 segundos por si hay cambios en otras pestañas
-    setInterval(() => {
-        cargarEstadoGlobal();
-        actualizarEstadoBotonCitas();
-    }, 30000);
-});
-
-// ---------- ACTUALIZAR ESTADO BOTÓN CITAS MEJORADO ----------
-function actualizarEstadoBotonCitas() {
-    const btnCitas = document.getElementById('btn-citas');
-    if (!sistemaCitasAbierto) {
-        btnCitas.textContent = '❌ Citas Cerradas';
-        btnCitas.classList.add('citas-cerradas');
-        btnCitas.onclick = function() {
-            mostrarMensajeCitasCerradas();
-        };
-    } else {
-        btnCitas.textContent = 'Citas';
-        btnCitas.classList.remove('citas-cerradas');
-        btnCitas.onclick = function() {
-            abrirPortal('portal-citas');
-        };
-    }
-    
-    // Actualizar también el estado en el panel admin si está abierto
-    if (document.getElementById('admin-panel') && document.getElementById('admin-panel').style.display !== 'none') {
-        actualizarPanelAdmin();
-    }
-}
-
-function mostrarMensajeCitasCerradas() {
-    // Mostrar mensaje en lugar de abrir el formulario
-    const mensajeCitasCerradas = document.getElementById('mensaje-citas-cerradas');
-    const mensajeInfo = document.getElementById('mensaje-info');
-    const formCita = document.getElementById('form-cita');
-    
-    if (mensajeCitasCerradas) {
-        mensajeCitasCerradas.style.display = 'block';
-        mensajeInfo.style.display = 'none';
-        formCita.style.display = 'none';
-    }
-    
-    abrirPortal('portal-citas');
-}
-
 // ---------- PORTALES ----------
 function abrirPortal(id) {
     cerrarTodosLosPortales();
@@ -1327,7 +1404,9 @@ function abrirPortal(id) {
     }
     
     if (id === 'portal-citas' && !sistemaCitasAbierto) {
-        mostrarMensajeCitasCerradas();
+        setTimeout(() => {
+            mostrarMensajeCitasCerradas();
+        }, 100);
     } else if (id === 'portal-citas') {
         // Restaurar vista normal de citas
         const mensajeCitasCerradas = document.getElementById('mensaje-citas-cerradas');
@@ -1387,25 +1466,6 @@ document.getElementById('btn-productos').addEventListener('click', () => abrirPo
 document.getElementById('btn-admin').addEventListener('click', () => abrirPortal('portal-admin'));
 
 // El botón de citas se maneja dinámicamente en actualizarEstadoBotonCitas()
-
-// ---------- TOGGLE SISTEMA CITAS MEJORADO ----------
-function toggleSistemaCitas() {
-    // Cambiar estado
-    sistemaCitasAbierto = !sistemaCitasAbierto;
-    
-    // Guardar estado GLOBAL
-    guardarEstadoGlobal();
-    
-    // Actualizar interfaz
-    actualizarEstadoBotonCitas();
-    actualizarPanelAdmin();
-    
-    // Mostrar mensaje de confirmación
-    const estado = sistemaCitasAbierto ? 'ABIERTO' : 'CERRADO';
-    alert(`✅ Sistema de citas ${estado} GLOBALMENTE\n\nEste cambio afecta a todos los dispositivos: PC, móviles y tablets.`);
-    
-    console.log('🔄 Estado cambiado globalmente:', sistemaCitasAbierto);
-}
 
 // ---------- SISTEMA INTELIGENTE DE CITAS ----------
 function calcularHorariosDisponibles() {
@@ -1844,20 +1904,6 @@ function cancelarCita(id) {
         actualizarPanelAdmin();
     }
 }
-
-// ---------- DETECCIÓN DE CAMBIOS EN OTRAS PESTAÑAS ----------
-window.addEventListener('storage', function(e) {
-    if (e.key === 'sistemaCitasGlobal') {
-        console.log('🔄 Cambio detectado en otra pestaña, sincronizando...');
-        cargarEstadoGlobal();
-        actualizarEstadoBotonCitas();
-        
-        // Si el panel admin está abierto, actualizarlo también
-        if (document.getElementById('admin-panel') && document.getElementById('admin-panel').style.display !== 'none') {
-            actualizarPanelAdmin();
-        }
-    }
-});
 
 // ---------- LIGHTBOX ----------
 let currentImages = [], currentIndex = 0;
