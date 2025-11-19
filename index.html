@@ -2,11 +2,10 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Yenny Hair Salón - Panel Mejorado</title>
+<title>Yenny Hair Salón - Sistema de Citas</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Yenny Hair Salón - Sistema de citas con panel de horas">
+<meta name="description" content="Yenny Hair Salón - Sistema de citas con actualización automática">
 <style>
-/* ---------- VARIABLES & RESET ---------- */
 :root{
   --primary-glow: #ff00ff;
   --secondary-glow: #00ffff;
@@ -27,10 +26,9 @@ body{
   padding-bottom:60px;
 }
 
-/* MENU FLOTANTE - BAJADO PARA NO TAPAR CONTENIDO */
 .menu-flotante{
   position:fixed;
-  top: 80px; /* Cambiado de 20px a 80px para bajar el menú */
+  top: 20px;
   right:20px;
   z-index:1100;
   display:flex;
@@ -47,11 +45,10 @@ body{
 .menu-flotante button.active{ box-shadow:0 0 30px rgba(255,0,255,0.25); transform:translateY(-3px); }
 .menu-flotante button.citas-cerradas{ background:rgba(255,68,68,0.1); color:#ff4444; cursor:not-allowed; }
 
-/* PORTADA - AJUSTADA PARA NO SER TAPADA POR EL MENÚ */
 .portada-container{ 
   width:95%; 
   max-width:1400px; 
-  margin: 140px auto 30px; /* Aumentado el margen superior para bajar la portada */
+  margin: 100px auto 30px;
   position:relative;
   border-radius:20px; 
   overflow:hidden; 
@@ -61,11 +58,10 @@ body{
 .pantalla-tapiz{ width:100%; height:auto; display:block; object-fit:cover; transition:transform .45s; }
 .pantalla-tapiz:hover{ transform:scale(1.02); }
 
-/* PORTAL GENERAL - BAJADO PARA NO TAPAR BOTONES */
 .pantalla-interna{ 
   display:none; 
   position:fixed; 
-  inset: 60px 0 0 0; /* Ajustado para dejar espacio en la parte superior */
+  inset: 0;
   z-index:1000; 
   overflow:auto; 
   padding:30px; 
@@ -74,7 +70,7 @@ body{
 }
 .portal-content{ 
   max-width:1200px; 
-  margin: 40px auto 20px; /* Aumentado margen superior */
+  margin: 40px auto 20px;
   background: rgba(255,255,255,0.02); 
   border-radius:18px; 
   padding:28px; 
@@ -85,12 +81,10 @@ body{
 .cerrar{ position:absolute; top:18px; right:18px; width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:28px; color:var(--primary-glow); background:rgba(255,255,255,0.04); }
 .cerrar:hover{ transform:scale(1.06); background:rgba(255,0,255,0.08); }
 
-/* GALERIA / PRODUCTOS / PRECIOS */
 .grid-imagenes{ display:grid; grid-template-columns: repeat(auto-fill,minmax(180px,1fr)); gap:12px; margin-top:12px; }
 .grid-imagenes img{ width:100%; height:140px; object-fit:cover; border-radius:12px; cursor:pointer; border:1px solid rgba(255,255,255,0.06); transition:transform .18s, box-shadow .18s; }
 .grid-imagenes img:hover{ transform:translateY(-6px); box-shadow:0 12px 30px rgba(0,0,0,0.6); }
 
-/* IMAGENES CON TITULO - PARA LA SECCIÓN DE PRECIOS */
 .imagen-con-titulo {
   text-align: center;
   background: rgba(255,255,255,0.02);
@@ -116,16 +110,13 @@ body{
   font-size: 0.9em;
 }
 
-/* IMAGEN FLOTANTE DECORATIVA */
 .imagen-flotante{ position:absolute; right: -40px; top: -40px; width:240px; opacity:0.9; pointer-events:none; transform:rotate(-6deg); }
 
-/* FORMULARIO CITAS (resumen simplificado) */
 .citas-formulario{ background:rgba(0,0,0,0.25); padding:18px; border-radius:14px; border:1px solid rgba(255,255,255,0.04); }
 .form-group{ margin-bottom:14px; }
 .form-group label{ display:block; margin-bottom:6px; font-weight:700; color:#ddd; }
 .form-group input, .form-group select{ width:100%; padding:12px; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04); color:var(--text); }
 
-/* SERVICIOS GRID */
 .servicios-grid { 
   display: grid; 
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
@@ -165,7 +156,6 @@ body{
   color: #aaa;
 }
 
-/* HORARIOS - MEJORADO PARA MOSTRARSE DEBAJO DE LA FECHA */
 .horarios-disponibles {
   margin-top: 15px;
   padding: 15px;
@@ -207,175 +197,10 @@ body{
   color: #ff6666;
 }
 
-/* BOTON ENVIAR */
-.btn-enviar{ width:100%; padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.06); margin-top:12px; font-weight:900; cursor:pointer; }
+.btn-enviar{ width:100%; padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.06); margin-top:12px; font-weight:900; cursor:pointer; background: var(--primary-glow); color: white; transition: all 0.3s; }
+.btn-enviar:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,0,255,0.3); }
+.btn-enviar:disabled { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); cursor: not-allowed; transform: none; box-shadow: none; }
 
-/* SISTEMA MODERNO DE VISUALIZACIÓN DE IMÁGENES */
-.gallery-modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.95);
-  z-index: 2000;
-  touch-action: pan-y pinch-zoom;
-  overflow: hidden;
-}
-
-.gallery-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.gallery-slides {
-  display: flex;
-  transition: transform 0.3s ease;
-  height: 100%;
-  width: 100%;
-}
-
-.gallery-slide {
-  flex: 0 0 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-.gallery-slide img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-}
-
-.gallery-nav {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.gallery-prev, .gallery-next {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: white;
-  font-size: 24px;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  cursor: pointer;
-  pointer-events: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  backdrop-filter: blur(10px);
-}
-
-.gallery-prev:hover, .gallery-next:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-50%) scale(1.1);
-}
-
-.gallery-prev {
-  left: 20px;
-}
-
-.gallery-next {
-  right: 20px;
-}
-
-.gallery-close {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: white;
-  font-size: 24px;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  cursor: pointer;
-  pointer-events: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  backdrop-filter: blur(10px);
-  z-index: 2001;
-}
-
-.gallery-close:hover {
-  background: rgba(255, 0, 0, 0.3);
-  transform: scale(1.1);
-}
-
-.gallery-counter {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  background: rgba(0, 0, 0, 0.5);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 14px;
-  pointer-events: none;
-  backdrop-filter: blur(10px);
-}
-
-.gallery-thumbnails {
-  position: absolute;
-  bottom: 20px;
-  left: 0;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  padding: 0 20px;
-  overflow-x: auto;
-  pointer-events: auto;
-}
-
-.gallery-thumb {
-  width: 60px;
-  height: 60px;
-  border-radius: 6px;
-  overflow: hidden;
-  cursor: pointer;
-  opacity: 0.6;
-  transition: all 0.2s;
-  border: 2px solid transparent;
-  flex-shrink: 0;
-}
-
-.gallery-thumb.active {
-  opacity: 1;
-  border-color: var(--primary-glow);
-  transform: scale(1.1);
-}
-
-.gallery-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* LISTA DE PRECIOS */
 .lista-precios {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -399,7 +224,6 @@ body{
   color: var(--secondary-glow);
 }
 
-/* PANEL ADMIN MEJORADO */
 .admin-controls {
   display: flex;
   gap: 15px;
@@ -492,77 +316,6 @@ body{
   letter-spacing: 5px;
 }
 
-/* RESPONSIVE */
-@media(max-width:768px){
-  .imagen-flotante{ display:none; }
-  .grid-imagenes img{ height:110px; }
-  .horarios-grid{ grid-template-columns: repeat(3,1fr); }
-  .menu-flotante{ right:12px; top:12px; }
-  .servicios-grid { grid-template-columns: 1fr; }
-  .lista-precios { grid-template-columns: 1fr; }
-  .cita-item {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .cita-acciones {
-    margin-top: 10px;
-    width: 100%;
-    justify-content: flex-end;
-  }
-  .admin-controls {
-    flex-direction: column;
-  }
-  
-  /* Mejoras para móvil en la galería */
-  .gallery-prev, .gallery-next {
-    width: 40px;
-    height: 40px;
-    font-size: 18px;
-  }
-  
-  .gallery-close {
-    width: 40px;
-    height: 40px;
-    font-size: 18px;
-    top: 10px;
-    right: 10px;
-  }
-  
-  .gallery-counter {
-    top: 10px;
-    left: 10px;
-    font-size: 12px;
-  }
-  
-  .gallery-thumbnails {
-    bottom: 10px;
-  }
-  
-  .gallery-thumb {
-    width: 50px;
-    height: 50px;
-  }
-}
-
-/* Para pantallas muy pequeñas */
-@media(max-width:480px){
-  .grid-imagenes {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .gallery-prev, .gallery-next {
-    width: 35px;
-    height: 35px;
-    font-size: 16px;
-  }
-  
-  .gallery-thumb {
-    width: 40px;
-    height: 40px;
-  }
-}
-
-/* NOTIFICACIONES */
 .notificacion {
   position: fixed;
   top: 20px;
@@ -583,10 +336,56 @@ body{
   transform: translateX(0);
 }
 
-.notificacion.cerrar {
+.notificacion.error {
   background: rgba(255, 0, 0, 0.1);
   border-color: rgba(255, 0, 0, 0.3);
   color: #ff6666;
+}
+
+.actualizando {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  color: var(--secondary-glow);
+  padding: 10px 20px;
+  border-radius: 20px;
+  z-index: 2000;
+  backdrop-filter: blur(10px);
+  display: none;
+}
+
+.actualizando.mostrar {
+  display: block;
+}
+
+@media(max-width:768px){
+  .imagen-flotante{ display:none; }
+  .grid-imagenes img{ height:110px; }
+  .horarios-grid{ grid-template-columns: repeat(3,1fr); }
+  .menu-flotante{ right:12px; top:12px; }
+  .servicios-grid { grid-template-columns: 1fr; }
+  .lista-precios { grid-template-columns: 1fr; }
+  .cita-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .cita-acciones {
+    margin-top: 10px;
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .admin-controls {
+    flex-direction: column;
+  }
+}
+
+@media(max-width:480px){
+  .grid-imagenes {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 </style>
 </head>
@@ -605,23 +404,20 @@ body{
 <!-- PORTADA -->
 <div class="portada-container" id="home-viewport">
   <img id="portada" class="pantalla-tapiz" src="imagen/pantalla16.jpg" alt="Portada Yenny Hair Salón" onerror="this.style.opacity=.5; this.nextElementSibling.style.display='block'">
-  <!-- si no existe la imagen, mostrar fondo alterno -->
   <div id="portada-fallback" style="display:none; padding:60px; text-align:center; color:#ccc;">
     <h2>Yenny Hair Salón</h2>
     <p>Añade la imagen <strong>imagen/pantalla16.jpg</strong> en la carpeta <code>imagen/</code>.</p>
   </div>
 </div>
 
-<!-- PORTAL: GALERIA - CON IMÁGENES 1-8 -->
+<!-- PORTAL: GALERIA -->
 <div class="pantalla-interna" id="portal-galeria" aria-hidden="true">
   <span class="cerrar" data-close="portal-galeria">×</span>
   <div class="portal-content">
     <h2>✨ Galería</h2>
     <p style="color:#bbb">Haz clic en una imagen para verla en grande.</p>
-    <!-- Fondo decorativo -->
     <img src="imagen/fondo18.jpg" alt="" style="position:absolute; left:10px; top:10px; width:120px; opacity:0.04; pointer-events:none;">
     <div class="grid-imagenes" id="galeria-grid">
-      <!-- Galería con imágenes 1-8 -->
       <img src="imagen/imagen1.jpg" alt="Galería 1" data-full="imagen/imagen1.jpg">
       <img src="imagen/imagen2.jpg" alt="Galería 2" data-full="imagen/imagen2.jpg">
       <img src="imagen/imagen3.jpg" alt="Galería 3" data-full="imagen/imagen3.jpg">
@@ -634,18 +430,15 @@ body{
   </div>
 </div>
 
-<!-- PORTAL: PRECIOS - CON LAS 3 FOTOS ESPECÍFICAS -->
+<!-- PORTAL: PRECIOS -->
 <div class="pantalla-interna" id="portal-precios" aria-hidden="true">
   <span class="cerrar" data-close="portal-precios">×</span>
   <div class="portal-content">
     <h2>💳 Precios</h2>
     <p style="color:#bbb">Lista de precios de todos nuestros servicios.</p>
     
-    <div class="lista-precios" id="lista-precios">
-      <!-- Los precios se cargarán dinámicamente -->
-    </div>
+    <div class="lista-precios" id="lista-precios"></div>
     
-    <!-- 3 FOTOS ESPECÍFICAS CON TÍTULOS -->
     <h4 style="margin-top:30px; color:#ddd; text-align:center;">Nuestros Servicios Destacados</h4>
     <div class="grid-imagenes" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
       <div class="imagen-con-titulo">
@@ -664,14 +457,13 @@ body{
   </div>
 </div>
 
-<!-- PORTAL: PRODUCTOS - CON IMÁGENES 9-14 -->
+<!-- PORTAL: PRODUCTOS -->
 <div class="pantalla-interna" id="portal-productos" aria-hidden="true">
   <span class="cerrar" data-close="portal-productos">×</span>
   <div class="portal-content">
     <h2>🛍️ Productos</h2>
     <p style="color:#bbb">Productos disponibles en el salón.</p>
     <div class="grid-imagenes" id="productos-grid">
-      <!-- Productos con imágenes 9-14 -->
       <img src="imagen/imagen9.jpg" alt="Producto 9" data-full="imagen/imagen9.jpg">
       <img src="imagen/imagen10.jpg" alt="Producto 10" data-full="imagen/imagen10.jpg">
       <img src="imagen/imagen11.jpg" alt="Producto 11" data-full="imagen/imagen11.jpg">
@@ -682,7 +474,7 @@ body{
   </div>
 </div>
 
-<!-- PORTAL: CITAS - CON HORARIOS MEJORADOS -->
+<!-- PORTAL: CITAS -->
 <div class="pantalla-interna" id="portal-citas" aria-hidden="true">
   <span class="cerrar" data-close="portal-citas">×</span>
   <div class="portal-content">
@@ -706,9 +498,7 @@ body{
 
         <div class="form-group">
           <label>🎯 Servicios</label>
-          <div class="servicios-grid" id="servicios-grid">
-            <!-- Los servicios se cargarán dinámicamente -->
-          </div>
+          <div class="servicios-grid" id="servicios-grid"></div>
         </div>
 
         <div id="resumen-servicios" style="display:none; margin-bottom:10px; color:#ddd; background:rgba(255,255,255,0.02); padding:10px; border-radius:8px;">
@@ -723,7 +513,6 @@ body{
           <input id="fecha" type="date" onchange="calcularHorariosDisponibles()">
         </div>
 
-        <!-- HORARIOS DISPONIBLES - AHORA DEBAJO DE LA FECHA -->
         <div class="horarios-disponibles" id="horarios-disponibles" style="display:none;">
           <h3>🕒 Horarios Disponibles</h3>
           <p id="info-horarios" style="color:#bbb">Selecciona un horario para tu cita</p>
@@ -741,7 +530,7 @@ body{
   </div>
 </div>
 
-<!-- PORTAL: ADMIN MEJORADO -->
+<!-- PORTAL: ADMIN -->
 <div class="pantalla-interna" id="portal-admin" aria-hidden="true">
   <span class="cerrar" data-close="portal-admin">×</span>
   <div class="portal-content">
@@ -780,47 +569,25 @@ body{
   </div>
 </div>
 
-<!-- SISTEMA MODERNO DE VISUALIZACIÓN DE IMÁGENES -->
-<div class="gallery-modal" id="gallery-modal">
-  <div class="gallery-container">
-    <button class="gallery-close" id="gallery-close">×</button>
-    <div class="gallery-counter" id="gallery-counter">1 / 8</div>
-    
-    <div class="gallery-slides" id="gallery-slides">
-      <!-- Las diapositivas se generarán dinámicamente -->
-    </div>
-    
-    <div class="gallery-nav">
-      <button class="gallery-prev" id="gallery-prev">‹</button>
-      <button class="gallery-next" id="gallery-next">›</button>
-    </div>
-    
-    <div class="gallery-thumbnails" id="gallery-thumbnails">
-      <!-- Las miniaturas se generarán dinámicamente -->
-    </div>
-  </div>
+<!-- INDICADOR DE ACTUALIZACIÓN -->
+<div class="actualizando" id="indicador-actualizando">
+  🔄 Actualizando información...
 </div>
 
 <!-- IMAGEN FLOTA DECORATIVA -->
 <img src="imagen/pantalla17.png" class="imagen-flotante" alt="" onerror="this.style.display='none'">
 
 <script>
-/* ------------------- USUARIO: datos y servicios ------------------- */
-let sistemaCitasAbierto = JSON.parse(localStorage.getItem('sistemaCitasAbierto')) !== false; // Por defecto abierto
+// Variables globales
+let sistemaCitasAbierto = JSON.parse(localStorage.getItem('sistemaCitasAbierto')) !== false;
 let citas = JSON.parse(localStorage.getItem('citasYenny')) || [];
 let intervaloActualizacion = null;
 const CONTRASENA_ADMIN = "1994";
 
-/* Variables para la galería moderna */
-let galeriaActual = [];
-let indiceImagenActual = 0;
-let inicioX = 0;
-let movimientoX = 0;
-
-/* Horario */
+// Horario de trabajo
 const horarioLaboral = { inicio:'09:00', fin:'18:00', intervalo:30 };
 
-/* Servicios actualizados con los nuevos precios */
+// Servicios disponibles
 const serviciosCompletos = [
   {id:'lavado-normal', nombre:'Lavado normal', duracion:60, precio:55},
   {id:'lavado-linea', nombre:'Lavado con línea', duracion:60, precio:70},
@@ -838,7 +605,7 @@ const serviciosCompletos = [
   {id:'shampoo', nombre:'Shampoo', duracion:0, precio:20}
 ];
 
-/* ------------------- INIT ------------------- */
+// Inicialización
 document.addEventListener('DOMContentLoaded', ()=> {
   configurarMenu();
   cargarPortadasFallback();
@@ -851,13 +618,49 @@ document.addEventListener('DOMContentLoaded', ()=> {
   cargarListaPrecios();
   inicializarPanelAdmin();
   iniciarActualizacionAutomatica();
-  inicializarGaleriaModerno();
-  
-  // Inicializar la lista de citas
   renderAdminList();
+  
+  // Escuchar cambios en localStorage para actualización automática
+  window.addEventListener('storage', manejarCambiosStorage);
 });
 
-/* ------------------- SISTEMA MEJORADO DE ACTUALIZACIÓN DE CITAS ------------------- */
+// Sistema de actualización automática
+function manejarCambiosStorage(e) {
+  if (e.key === 'citasYenny') {
+    mostrarIndicadorActualizacion();
+    
+    // Actualizar datos locales
+    citas = JSON.parse(e.newValue || '[]');
+    
+    // Si el portal de citas está abierto, recalcular horarios
+    if (document.getElementById('portal-citas').style.display === 'block') {
+      const fecha = document.getElementById('fecha').value;
+      if (fecha) {
+        calcularHorariosDisponibles();
+      }
+    }
+    
+    // Si el panel admin está abierto, actualizar la lista
+    if (document.getElementById('portal-admin').style.display === 'block') {
+      renderAdminList();
+      actualizarEstadoSistema();
+    }
+    
+    // Ocultar indicador después de un momento
+    setTimeout(ocultarIndicadorActualizacion, 1000);
+  }
+}
+
+function mostrarIndicadorActualizacion() {
+  const indicador = document.getElementById('indicador-actualizando');
+  indicador.classList.add('mostrar');
+}
+
+function ocultarIndicadorActualizacion() {
+  const indicador = document.getElementById('indicador-actualizando');
+  indicador.classList.remove('mostrar');
+}
+
 function iniciarActualizacionAutomatica() {
   // Limpiar intervalo existente si hay uno
   if (intervaloActualizacion) {
@@ -901,11 +704,33 @@ function sincronizarCitas() {
   return false;
 }
 
+// Sistema de bloqueo de citas
+function verificarDisponibilidadCita(fecha, hora, duracion) {
+  // Verificar si ya existe una cita en ese horario
+  const citasExistentes = citas.filter(c => c.fecha === fecha);
+  const inicioCita = tiempoAMinutos(hora);
+  const finCita = inicioCita + duracion;
+  
+  for (const cita of citasExistentes) {
+    const inicioExistente = tiempoAMinutos(cita.hora);
+    const finExistente = inicioExistente + cita.duracionTotal;
+    
+    // Verificar superposición
+    if ((inicioCita >= inicioExistente && inicioCita < finExistente) ||
+        (finCita > inicioExistente && finCita <= finExistente) ||
+        (inicioCita <= inicioExistente && finCita >= finExistente)) {
+      return false; // Hay superposición
+    }
+  }
+  
+  return true; // Disponible
+}
+
 // Función para mostrar notificaciones
 function mostrarNotificacion(mensaje, tipo = 'info') {
   // Crear elemento de notificación
   const notificacion = document.createElement('div');
-  notificacion.className = `notificacion ${tipo === 'error' ? 'cerrar' : ''}`;
+  notificacion.className = `notificacion ${tipo === 'error' ? 'error' : ''}`;
   notificacion.textContent = mensaje;
   
   // Agregar al DOM
@@ -925,156 +750,7 @@ function mostrarNotificacion(mensaje, tipo = 'info') {
   }, 3000);
 }
 
-/* ------------------- SISTEMA MODERNO DE GALERÍA ------------------- */
-function inicializarGaleriaModerno() {
-  // Configurar eventos para la galería moderna
-  document.getElementById('gallery-close').addEventListener('click', cerrarGaleriaModerno);
-  document.getElementById('gallery-prev').addEventListener('click', galeriaAnterior);
-  document.getElementById('gallery-next').addEventListener('click', galeriaSiguiente);
-  
-  // Eventos táctiles para deslizar
-  const slides = document.getElementById('gallery-slides');
-  
-  slides.addEventListener('touchstart', (e) => {
-    inicioX = e.touches[0].clientX;
-    movimientoX = 0;
-  });
-  
-  slides.addEventListener('touchmove', (e) => {
-    movimientoX = e.touches[0].clientX - inicioX;
-  });
-  
-  slides.addEventListener('touchend', () => {
-    const umbral = 50; // Mínimo desplazamiento para cambiar de imagen
-    
-    if (movimientoX > umbral) {
-      galeriaAnterior();
-    } else if (movimientoX < -umbral) {
-      galeriaSiguiente();
-    }
-    
-    inicioX = 0;
-    movimientoX = 0;
-  });
-  
-  // Eventos de teclado
-  document.addEventListener('keydown', (e) => {
-    if (document.getElementById('gallery-modal').style.display === 'flex') {
-      if (e.key === 'ArrowLeft') {
-        galeriaAnterior();
-      } else if (e.key === 'ArrowRight') {
-        galeriaSiguiente();
-      } else if (e.key === 'Escape') {
-        cerrarGaleriaModerno();
-      }
-    }
-  });
-}
-
-function abrirGaleriaModerno(imagenes, indiceInicial) {
-  galeriaActual = imagenes;
-  indiceImagenActual = indiceInicial;
-  
-  const modal = document.getElementById('gallery-modal');
-  const slides = document.getElementById('gallery-slides');
-  const thumbnails = document.getElementById('gallery-thumbnails');
-  
-  // Limpiar contenido anterior
-  slides.innerHTML = '';
-  thumbnails.innerHTML = '';
-  
-  // Crear diapositivas
-  imagenes.forEach((imagen, index) => {
-    const slide = document.createElement('div');
-    slide.className = 'gallery-slide';
-    
-    const img = document.createElement('img');
-    img.src = imagen.src;
-    img.alt = imagen.alt;
-    
-    slide.appendChild(img);
-    slides.appendChild(slide);
-    
-    // Crear miniaturas
-    const thumb = document.createElement('div');
-    thumb.className = 'gallery-thumb';
-    if (index === indiceInicial) {
-      thumb.classList.add('active');
-    }
-    
-    const thumbImg = document.createElement('img');
-    thumbImg.src = imagen.src;
-    thumbImg.alt = imagen.alt;
-    
-    thumb.appendChild(thumbImg);
-    thumb.addEventListener('click', () => {
-      cambiarImagenGaleria(index);
-    });
-    
-    thumbnails.appendChild(thumb);
-  });
-  
-  // Mostrar modal
-  modal.style.display = 'flex';
-  
-  // Actualizar contador
-  actualizarContadorGaleria();
-  
-  // Posicionar en la imagen correcta
-  slides.style.transform = `translateX(-${indiceImagenActual * 100}%)`;
-}
-
-function cerrarGaleriaModerno() {
-  document.getElementById('gallery-modal').style.display = 'none';
-  galeriaActual = [];
-}
-
-function galeriaAnterior() {
-  if (indiceImagenActual > 0) {
-    cambiarImagenGaleria(indiceImagenActual - 1);
-  } else {
-    // Si estamos en la primera imagen, ir a la última
-    cambiarImagenGaleria(galeriaActual.length - 1);
-  }
-}
-
-function galeriaSiguiente() {
-  if (indiceImagenActual < galeriaActual.length - 1) {
-    cambiarImagenGaleria(indiceImagenActual + 1);
-  } else {
-    // Si estamos en la última imagen, ir a la primera
-    cambiarImagenGaleria(0);
-  }
-}
-
-function cambiarImagenGaleria(nuevoIndice) {
-  indiceImagenActual = nuevoIndice;
-  
-  const slides = document.getElementById('gallery-slides');
-  const thumbnails = document.getElementById('gallery-thumbnails').children;
-  
-  // Mover diapositivas
-  slides.style.transform = `translateX(-${indiceImagenActual * 100}%)`;
-  
-  // Actualizar miniaturas activas
-  for (let i = 0; i < thumbnails.length; i++) {
-    if (i === indiceImagenActual) {
-      thumbnails[i].classList.add('active');
-    } else {
-      thumbnails[i].classList.remove('active');
-    }
-  }
-  
-  // Actualizar contador
-  actualizarContadorGaleria();
-}
-
-function actualizarContadorGaleria() {
-  const counter = document.getElementById('gallery-counter');
-  counter.textContent = `${indiceImagenActual + 1} / ${galeriaActual.length}`;
-}
-
-/* ------------------- PANEL ADMIN MEJORADO ------------------- */
+// Panel Admin
 function inicializarPanelAdmin() {
   // Configurar botones del panel admin
   document.getElementById('btn-abrir-sistema').addEventListener('click', () => {
@@ -1236,7 +912,7 @@ function cancelarCita(idCita) {
   }
 }
 
-/* ------------------- ADMIN (mostrar citas locales) ------------------- */
+// Mostrar lista de citas en admin
 function renderAdminList(){
   const cont = document.getElementById('admin-list');
   cont.innerHTML = '';
@@ -1287,7 +963,7 @@ function renderAdminList(){
   });
 }
 
-/* ------------------- MENU Y NAVEGACION ------------------- */
+// Navegación
 function configurarMenu(){
   const ids = ['home','galeria','precios','productos','citas','admin'];
   ids.forEach(id => {
@@ -1298,7 +974,11 @@ function configurarMenu(){
       // toggle active
       document.querySelectorAll('.menu-flotante button').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
-      if(id === 'home'){ document.getElementById('home-viewport').scrollIntoView({behavior:'smooth'}); document.getElementById('portada').style.display='block'; return; }
+      if(id === 'home'){ 
+        document.getElementById('home-viewport').scrollIntoView({behavior:'smooth'}); 
+        document.getElementById('portada').style.display='block'; 
+        return; 
+      }
       const portalId = 'portal-' + id;
       abrirPortal(portalId);
       
@@ -1312,7 +992,6 @@ function configurarMenu(){
   });
 }
 
-/* Abrir Portal */
 function abrirPortal(id){
   document.getElementById('portada').style.display='none';
   document.querySelectorAll('.pantalla-interna').forEach(p=>p.style.display='none');
@@ -1323,7 +1002,6 @@ function abrirPortal(id){
   }
 }
 
-/* Cerrar portales */
 function inicializarPortalesCerrar(){
   document.querySelectorAll('.cerrar').forEach(btn=>{
     const target = btn.getAttribute('data-close');
@@ -1337,72 +1015,25 @@ function inicializarPortalesCerrar(){
     });
   });
 }
+
 function cerrarPortal(id){
   const p = document.getElementById(id);
   if(p){ p.style.display='none'; p.setAttribute('aria-hidden','true'); }
 }
 
-/* ------------------- FALLBACKS DE IMAGENES ------------------- */
 function cargarPortadasFallback(){
   const portada = document.getElementById('portada');
   const fallback = document.getElementById('portada-fallback');
   portada.addEventListener('error', ()=> { portada.style.display='none'; fallback.style.display='block'; });
 }
 
-/* ------------------- GALERIA / PREVISUALIZACION IMAGEN ------------------- */
+// Galería
 function inicializarGaleriaClicks(){
-  // Para galería (imágenes 1-8)
-  const galeriaGrid = document.getElementById('galeria-grid');
-  if (galeriaGrid) {
-    const galeriaImagenes = Array.from(galeriaGrid.querySelectorAll('img'));
-    galeriaImagenes.forEach((img, index) => {
-      img.addEventListener('click', (e) => {
-        const imagenes = galeriaImagenes.map(img => ({
-          src: img.getAttribute('data-full') || img.src,
-          alt: img.alt
-        }));
-        abrirGaleriaModerno(imagenes, index);
-      });
-      
-      // si imagen no carga se atenúa
-      img.addEventListener('error', ()=> { 
-        img.style.opacity = 0.35; 
-        img.title = 'Imagen no encontrada: ' + img.getAttribute('src'); 
-      });
+  document.querySelectorAll('[data-full]').forEach(img=>{
+    img.addEventListener('click', (e)=>{
+      const src = img.getAttribute('data-full') || img.src;
+      window.open(src, '_blank');
     });
-  }
-  
-  // Para productos (imágenes 9-14)
-  const productosGrid = document.getElementById('productos-grid');
-  if (productosGrid) {
-    const productosImagenes = Array.from(productosGrid.querySelectorAll('img'));
-    productosImagenes.forEach((img, index) => {
-      img.addEventListener('click', (e) => {
-        const imagenes = productosImagenes.map(img => ({
-          src: img.getAttribute('data-full') || img.src,
-          alt: img.alt
-        }));
-        abrirGaleriaModerno(imagenes, index);
-      });
-      
-      // si imagen no carga se atenúa
-      img.addEventListener('error', ()=> { 
-        img.style.opacity = 0.35; 
-        img.title = 'Imagen no encontrada: ' + img.getAttribute('src'); 
-      });
-    });
-  }
-  
-  // Para las imágenes en precios
-  document.querySelectorAll('.imagen-con-titulo img').forEach((img, index, array) => {
-    img.addEventListener('click', (e) => {
-      const imagenes = array.map(img => ({
-        src: img.getAttribute('data-full') || img.src,
-        alt: img.alt
-      }));
-      abrirGaleriaModerno(imagenes, index);
-    });
-    
     // si imagen no carga se atenúa
     img.addEventListener('error', ()=> { 
       img.style.opacity = 0.35; 
@@ -1411,7 +1042,7 @@ function inicializarGaleriaClicks(){
   });
 }
 
-/* ------------------- SERVICIOS (checkboxes dinámicos) ------------------- */
+// Servicios
 function inicializarServicios(){
   const serviciosGrid = document.getElementById('servicios-grid');
   serviciosGrid.innerHTML = '';
@@ -1450,7 +1081,6 @@ function inicializarServicios(){
   actualizarResumenServicios();
 }
 
-/* Actualizar resumen */
 function actualizarResumenServicios(){
   const checked = Array.from(document.querySelectorAll('input[name="servicios"]:checked'));
   const lista = document.getElementById('lista-servicios-seleccionados');
@@ -1495,7 +1125,6 @@ function actualizarResumenServicios(){
   }
 }
 
-/* ------------------- LISTA DE PRECIOS ------------------- */
 function cargarListaPrecios() {
   const listaPrecios = document.getElementById('lista-precios');
   if (!listaPrecios) return;
@@ -1513,7 +1142,7 @@ function cargarListaPrecios() {
   });
 }
 
-/* ------------------- HORARIOS DISPONIBLES - MEJORADO ------------------- */
+// Horarios
 function inicializarFechaMin(){
   const fechaInput = document.getElementById('fecha');
   const hoy = new Date();
@@ -1651,7 +1280,7 @@ function seleccionarHorario(horario, boton){
   document.getElementById('btn-reservar').disabled = false;
 }
 
-/* ------------------- ENVIO FORMULARIO ------------------- */
+// Formulario de citas
 document.getElementById('form-cita').addEventListener('submit', function(e){
   e.preventDefault();
   if(!sistemaCitasAbierto){ 
@@ -1663,6 +1292,7 @@ document.getElementById('form-cita').addEventListener('submit', function(e){
   const duracionTotal = document.getElementById('duracion-total').value;
   const precioTotal = document.getElementById('precio-total').value;
   const horaSeleccionada = document.getElementById('hora-seleccionada').value;
+  const fechaSeleccionada = document.getElementById('fecha').value;
 
   if(!horaSeleccionada){ 
     mostrarNotificacion('❌ Por favor selecciona un horario', 'error'); 
@@ -1679,7 +1309,7 @@ document.getElementById('form-cita').addEventListener('submit', function(e){
     nombre: document.getElementById('nombre').value.trim(),
     telefono: document.getElementById('telefono').value.trim(),
     servicios: serviciosSeleccionados,
-    fecha: document.getElementById('fecha').value,
+    fecha: fechaSeleccionada,
     hora: horaSeleccionada,
     duracionTotal: parseInt(duracionTotal),
     precioTotal: parseInt(precioTotal),
@@ -1692,29 +1322,48 @@ document.getElementById('form-cita').addEventListener('submit', function(e){
     return; 
   }
 
-  citas.push(cita);
-  localStorage.setItem('citasYenny', JSON.stringify(citas));
-  
-  // Mostrar notificación de éxito
-  mostrarNotificacion(`✅ Cita reservada exitosamente para ${cita.nombre}`);
-  
-  // reset form
-  document.getElementById('form-cita').reset();
-  document.querySelectorAll('.servicio-item').forEach(item => {
-    item.classList.remove('seleccionado');
-  });
-  document.getElementById('resumen-servicios').style.display='none';
-  document.getElementById('horarios-disponibles').style.display='none';
-  document.getElementById('btn-reservar').disabled = true;
-  
-  // Actualizar panel admin si está abierto
-  if (document.getElementById('portal-admin').style.display === 'block') {
-    renderAdminList();
-    actualizarEstadoSistema();
+  // VERIFICAR DISPONIBILIDAD ANTES DE RESERVAR
+  if (!verificarDisponibilidadCita(cita.fecha, cita.hora, cita.duracionTotal)) {
+    mostrarNotificacion('❌ Este horario ya no está disponible. Por favor, selecciona otro horario.', 'error');
+    calcularHorariosDisponibles(); // Recalcular para mostrar estado actual
+    return;
+  }
+
+  try {
+    citas.push(cita);
+    localStorage.setItem('citasYenny', JSON.stringify(citas));
+    
+    // Mostrar notificación de éxito
+    mostrarNotificacion(`✅ Cita reservada exitosamente para ${cita.nombre}`);
+    
+    // reset form
+    document.getElementById('form-cita').reset();
+    document.querySelectorAll('.servicio-item').forEach(item => {
+      item.classList.remove('seleccionado');
+    });
+    document.getElementById('resumen-servicios').style.display='none';
+    document.getElementById('horarios-disponibles').style.display='none';
+    document.getElementById('btn-reservar').disabled = true;
+    
+    // Actualizar panel admin si está abierto
+    if (document.getElementById('portal-admin').style.display === 'block') {
+      renderAdminList();
+      actualizarEstadoSistema();
+    }
+    
+    // Forzar actualización en otras pestañas
+    const event = new StorageEvent('storage', {
+      key: 'citasYenny',
+      newValue: localStorage.getItem('citasYenny')
+    });
+    window.dispatchEvent(event);
+    
+  } catch (error) {
+    console.error('Error al guardar la cita:', error);
+    mostrarNotificacion('❌ Error al guardar la cita', 'error');
   }
 });
 
-/* ------------------- BOTON CITAS ABIERTO/CERRADO ------------------- */
 function actualizarEstadoBotonCitas(){
   const btn = document.getElementById('btn-citas');
   if(!btn) return;
@@ -1726,6 +1375,7 @@ function actualizarEstadoBotonCitas(){
     btn.classList.remove('citas-cerradas'); 
   }
 }
+
 function actualizarVistaCitas(){
   const msg = document.getElementById('mensaje-citas-cerradas');
   const form = document.getElementById('form-cita');
@@ -1738,9 +1388,8 @@ function actualizarVistaCitas(){
   }
 }
 
-/* ------------------- INICIALIZAR CLICKS PARA IMAGENES YA CREADAS EN DOM (por si cargan después) ------------------- */
+// Inicializar clicks para imágenes
 setTimeout(()=>{ inicializarGaleriaClicks(); }, 500);
-
 </script>
 </body>
 </html>
