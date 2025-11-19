@@ -561,6 +561,33 @@ body{
     height: 40px;
   }
 }
+
+/* NOTIFICACIONES */
+.notificacion {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 255, 0, 0.1);
+  border: 1px solid rgba(0, 255, 0, 0.3);
+  color: #66ff66;
+  padding: 15px 20px;
+  border-radius: 10px;
+  z-index: 2000;
+  backdrop-filter: blur(10px);
+  transform: translateX(150%);
+  transition: transform 0.3s ease;
+  max-width: 300px;
+}
+
+.notificacion.mostrar {
+  transform: translateX(0);
+}
+
+.notificacion.cerrar {
+  background: rgba(255, 0, 0, 0.1);
+  border-color: rgba(255, 0, 0, 0.3);
+  color: #ff6666;
+}
 </style>
 </head>
 <body>
@@ -725,11 +752,13 @@ body{
       <button class="admin-control-btn abrir-sistema" id="btn-abrir-sistema">✅ Abrir Sistema de Citas</button>
       <button class="admin-control-btn cerrar-sistema" id="btn-cerrar-sistema">❌ Cerrar Sistema de Citas</button>
       <button class="admin-control-btn" id="btn-actualizar">🔄 Actualizar Lista</button>
+      <button class="admin-control-btn" id="btn-exportar-citas">📤 Exportar Citas</button>
     </div>
     
     <div id="estado-sistema" style="margin-bottom: 20px; padding: 15px; border-radius: 10px; background: rgba(255,255,255,0.03);">
       <h3>Estado del Sistema: <span id="texto-estado">Cargando...</span></h3>
       <p id="ultima-actualizacion" style="color:#bbb; font-size: 0.9em;">Última actualización: -</p>
+      <p id="total-citas" style="color:#bbb; font-size: 0.9em;">Total de citas: 0</p>
     </div>
     
     <h3>📋 Lista de Citas</h3>
@@ -823,7 +852,78 @@ document.addEventListener('DOMContentLoaded', ()=> {
   inicializarPanelAdmin();
   iniciarActualizacionAutomatica();
   inicializarGaleriaModerno();
+  
+  // Inicializar la lista de citas
+  renderAdminList();
 });
+
+/* ------------------- SISTEMA MEJORADO DE ACTUALIZACIÓN DE CITAS ------------------- */
+function iniciarActualizacionAutomatica() {
+  // Limpiar intervalo existente si hay uno
+  if (intervaloActualizacion) {
+    clearInterval(intervaloActualizacion);
+  }
+  
+  // Actualizar cada 2 segundos cuando el panel admin esté abierto
+  intervaloActualizacion = setInterval(() => {
+    // Verificar si el panel admin está abierto
+    if (document.getElementById('portal-admin').style.display === 'block') {
+      actualizarEstadoSistema();
+      renderAdminList();
+    }
+  }, 2000);
+}
+
+// Función para sincronizar citas desde localStorage
+function sincronizarCitas() {
+  try {
+    const citasGuardadas = localStorage.getItem('citasYenny');
+    if (citasGuardadas) {
+      const nuevasCitas = JSON.parse(citasGuardadas);
+      
+      // Verificar si hay cambios
+      if (JSON.stringify(citas) !== JSON.stringify(nuevasCitas)) {
+        citas = nuevasCitas;
+        console.log('Citas sincronizadas desde localStorage:', citas.length);
+        
+        // Si el panel admin está abierto, actualizar la vista
+        if (document.getElementById('portal-admin').style.display === 'block') {
+          renderAdminList();
+          actualizarEstadoSistema();
+        }
+        
+        return true;
+      }
+    }
+  } catch (error) {
+    console.error('Error al sincronizar citas:', error);
+  }
+  return false;
+}
+
+// Función para mostrar notificaciones
+function mostrarNotificacion(mensaje, tipo = 'info') {
+  // Crear elemento de notificación
+  const notificacion = document.createElement('div');
+  notificacion.className = `notificacion ${tipo === 'error' ? 'cerrar' : ''}`;
+  notificacion.textContent = mensaje;
+  
+  // Agregar al DOM
+  document.body.appendChild(notificacion);
+  
+  // Mostrar con animación
+  setTimeout(() => {
+    notificacion.classList.add('mostrar');
+  }, 100);
+  
+  // Ocultar después de 3 segundos
+  setTimeout(() => {
+    notificacion.classList.remove('mostrar');
+    setTimeout(() => {
+      document.body.removeChild(notificacion);
+    }, 300);
+  }, 3000);
+}
 
 /* ------------------- SISTEMA MODERNO DE GALERÍA ------------------- */
 function inicializarGaleriaModerno() {
@@ -986,8 +1086,12 @@ function inicializarPanelAdmin() {
   });
   
   document.getElementById('btn-actualizar').addEventListener('click', () => {
-    renderAdminList();
-    actualizarEstadoSistema();
+    sincronizarCitas();
+    mostrarNotificacion('✅ Lista de citas actualizada');
+  });
+  
+  document.getElementById('btn-exportar-citas').addEventListener('click', () => {
+    exportarCitas();
   });
   
   // Configurar modal de contraseña
@@ -1024,6 +1128,9 @@ function verificarPassword() {
     // Actualizar el estado activo del menú
     document.querySelectorAll('.menu-flotante button').forEach(b => b.classList.remove('active'));
     document.getElementById('btn-admin').classList.add('active');
+    
+    // Sincronizar citas al abrir el panel
+    sincronizarCitas();
   } else {
     document.getElementById('mensaje-error').style.display = 'block';
     document.getElementById('admin-password').value = '';
@@ -1042,12 +1149,14 @@ function abrirCerrarSistema(abrir) {
   const mensaje = abrir ? 
     '✅ Sistema de citas ABIERTO. Los clientes pueden reservar citas.' :
     '❌ Sistema de citas CERRADO. Los clientes NO pueden reservar citas.';
-  alert(mensaje);
+  
+  mostrarNotificacion(mensaje, abrir ? 'info' : 'error');
 }
 
 function actualizarEstadoSistema() {
   const textoEstado = document.getElementById('texto-estado');
   const estadoSistema = document.getElementById('estado-sistema');
+  const totalCitas = document.getElementById('total-citas');
   
   if (sistemaCitasAbierto) {
     textoEstado.textContent = 'ABIERTO ✅';
@@ -1061,29 +1170,69 @@ function actualizarEstadoSistema() {
     estadoSistema.style.border = '1px solid rgba(255,0,0,0.2)';
   }
   
+  // Actualizar contador de citas
+  totalCitas.textContent = `Total de citas: ${citas.length}`;
+  
   // Actualizar fecha y hora de última actualización
   const ahora = new Date();
   document.getElementById('ultima-actualizacion').textContent = 
     `Última actualización: ${ahora.toLocaleDateString()} ${ahora.toLocaleTimeString()}`;
 }
 
-function iniciarActualizacionAutomatica() {
-  // Actualizar cada 3 segundos
-  intervaloActualizacion = setInterval(() => {
-    // Verificar si el panel admin está abierto
-    if (document.getElementById('portal-admin').style.display === 'block') {
-      actualizarEstadoSistema();
-      renderAdminList();
-    }
-  }, 3000);
+function exportarCitas() {
+  if (citas.length === 0) {
+    mostrarNotificacion('❌ No hay citas para exportar', 'error');
+    return;
+  }
+  
+  // Crear contenido CSV
+  let csvContent = "data:text/csv;charset=utf-8,";
+  csvContent += "ID,Nombre,Telefono,Fecha,Hora,Duración,Precio Total,Servicios\n";
+  
+  citas.forEach(cita => {
+    const servicios = cita.servicios.join('; ');
+    const fila = [
+      cita.id,
+      `"${cita.nombre}"`,
+      cita.telefono,
+      cita.fecha,
+      cita.hora,
+      cita.duracionTotal,
+      cita.precioTotal,
+      `"${servicios}"`
+    ].join(',');
+    csvContent += fila + "\n";
+  });
+  
+  // Crear enlace de descarga
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", `citas_yenny_${new Date().toISOString().split('T')[0]}.csv`);
+  document.body.appendChild(link);
+  
+  // Descargar archivo
+  link.click();
+  document.body.removeChild(link);
+  
+  mostrarNotificacion('✅ Citas exportadas correctamente');
 }
 
 function cancelarCita(idCita) {
   if (confirm('¿Estás seguro de que deseas cancelar esta cita?')) {
+    // Encontrar la cita para mostrar información
+    const citaCancelada = citas.find(cita => cita.id === idCita);
+    
+    // Eliminar la cita
     citas = citas.filter(cita => cita.id !== idCita);
     localStorage.setItem('citasYenny', JSON.stringify(citas));
+    
+    // Actualizar la vista
     renderAdminList();
-    alert('✅ Cita cancelada exitosamente');
+    actualizarEstadoSistema();
+    
+    // Mostrar notificación
+    mostrarNotificacion(`✅ Cita de ${citaCancelada.nombre} cancelada exitosamente`);
   }
 }
 
@@ -1091,6 +1240,9 @@ function cancelarCita(idCita) {
 function renderAdminList(){
   const cont = document.getElementById('admin-list');
   cont.innerHTML = '';
+  
+  // Sincronizar citas antes de renderizar
+  sincronizarCitas();
   
   if(!citas.length){ 
     cont.innerHTML = '<p style="color:#bbb; text-align:center; padding:20px;">No hay citas registradas.</p>'; 
@@ -1149,6 +1301,13 @@ function configurarMenu(){
       if(id === 'home'){ document.getElementById('home-viewport').scrollIntoView({behavior:'smooth'}); document.getElementById('portada').style.display='block'; return; }
       const portalId = 'portal-' + id;
       abrirPortal(portalId);
+      
+      // Si se abre el panel admin, sincronizar citas
+      if (id === 'admin') {
+        setTimeout(() => {
+          sincronizarCitas();
+        }, 100);
+      }
     });
   });
 }
@@ -1387,6 +1546,9 @@ function calcularHorariosDisponibles(){
     return; 
   }
 
+  // Sincronizar citas antes de calcular horarios
+  sincronizarCitas();
+  
   const citasDelDia = citas.filter(c=>c.fecha === fecha);
   const horarios = generarHorariosDisponibles(citasDelDia, duracion, fecha);
 
@@ -1492,15 +1654,25 @@ function seleccionarHorario(horario, boton){
 /* ------------------- ENVIO FORMULARIO ------------------- */
 document.getElementById('form-cita').addEventListener('submit', function(e){
   e.preventDefault();
-  if(!sistemaCitasAbierto){ alert('❌ El sistema de citas está temporalmente cerrado'); return; }
+  if(!sistemaCitasAbierto){ 
+    mostrarNotificacion('❌ El sistema de citas está temporalmente cerrado', 'error'); 
+    return; 
+  }
 
   const serviciosSeleccionados = JSON.parse(document.getElementById('servicios-seleccionados').value || '[]');
   const duracionTotal = document.getElementById('duracion-total').value;
   const precioTotal = document.getElementById('precio-total').value;
   const horaSeleccionada = document.getElementById('hora-seleccionada').value;
 
-  if(!horaSeleccionada){ alert('Por favor selecciona un horario'); return; }
-  if(serviciosSeleccionados.length===0){ alert('Selecciona al menos un servicio'); return; }
+  if(!horaSeleccionada){ 
+    mostrarNotificacion('❌ Por favor selecciona un horario', 'error'); 
+    return; 
+  }
+  
+  if(serviciosSeleccionados.length===0){ 
+    mostrarNotificacion('❌ Selecciona al menos un servicio', 'error'); 
+    return; 
+  }
 
   const cita = {
     id: Date.now(),
@@ -1515,12 +1687,17 @@ document.getElementById('form-cita').addEventListener('submit', function(e){
     estado: 'confirmada'
   };
 
-  if(!cita.nombre || !cita.telefono || !cita.fecha){ alert('Completa todos los campos'); return; }
+  if(!cita.nombre || !cita.telefono || !cita.fecha){ 
+    mostrarNotificacion('❌ Completa todos los campos', 'error'); 
+    return; 
+  }
 
   citas.push(cita);
   localStorage.setItem('citasYenny', JSON.stringify(citas));
-  alert(`✅ Cita reservada exitosamente!\n\n📅 Fecha: ${cita.fecha}\n🕒 Hora: ${cita.hora}\n⏱ Duración: ${cita.duracionTotal} minutos\n💰 Total: $${cita.precioTotal}\n\n¡Te esperamos!`);
-
+  
+  // Mostrar notificación de éxito
+  mostrarNotificacion(`✅ Cita reservada exitosamente para ${cita.nombre}`);
+  
   // reset form
   document.getElementById('form-cita').reset();
   document.querySelectorAll('.servicio-item').forEach(item => {
@@ -1529,7 +1706,12 @@ document.getElementById('form-cita').addEventListener('submit', function(e){
   document.getElementById('resumen-servicios').style.display='none';
   document.getElementById('horarios-disponibles').style.display='none';
   document.getElementById('btn-reservar').disabled = true;
-  renderAdminList();
+  
+  // Actualizar panel admin si está abierto
+  if (document.getElementById('portal-admin').style.display === 'block') {
+    renderAdminList();
+    actualizarEstadoSistema();
+  }
 });
 
 /* ------------------- BOTON CITAS ABIERTO/CERRADO ------------------- */
