@@ -2,2209 +2,1563 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Yenny Hair Salón - Belleza y Estilo Profesional</title>
+<title>Yenny Hair Salón - Panel Mejorado</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Yenny Hair Salón - Servicios profesionales de belleza, tratamientos capilares y productos de calidad">
+<meta name="description" content="Yenny Hair Salón - Sistema de citas con panel de horas">
 <style>
-/* ---------- GENERAL ---------- */
-:root {
-  --primary-color: #d63384;
-  --primary-dark: #a5005a;
-  --light-pink: #fff0f5;
-  --text-dark: #333;
-  --white: #ffffff;
-  --shadow: 0 4px 6px rgba(0,0,0,0.1);
-  --success-color: #28a745;
-  --warning-color: #ffc107;
-  --danger-color: #dc3545;
+/* ---------- VARIABLES & RESET ---------- */
+:root{
+  --primary-glow: #ff00ff;
+  --secondary-glow: #00ffff;
+  --dark-bg: #0a0a0f;
+  --card-bg: rgba(255,255,255,0.03);
+  --text: rgba(255,255,255,0.95);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(255,0,255,0.07) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(0,255,255,0.06) 0%, transparent 50%),
+    linear-gradient(135deg,var(--dark-bg),#050508);
+  color:var(--text);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  overflow-x:hidden;
+  padding-bottom:60px;
 }
 
-* {
-  box-sizing: border-box;
+/* MENU FLOTANTE - BAJADO PARA NO TAPAR CONTENIDO */
+.menu-flotante{
+  position:fixed;
+  top: 80px; /* Cambiado de 20px a 80px para bajar el menú */
+  right:20px;
+  z-index:1100;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
 }
-
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: var(--light-pink);
-  color: var(--text-dark);
-  overflow-x: hidden;
-  line-height: 1.6;
+.menu-flotante button{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.06);
+  color:var(--primary-glow);
+  padding:10px 16px;border-radius:20px;font-weight:700;cursor:pointer;
+  transition:all .25s;
 }
+.menu-flotante button.active{ box-shadow:0 0 30px rgba(255,0,255,0.25); transform:translateY(-3px); }
+.menu-flotante button.citas-cerradas{ background:rgba(255,68,68,0.1); color:#ff4444; cursor:not-allowed; }
 
-/* ---------- IMAGEN FLOTANTE SOLO EN GALERÍA, PRECIOS Y PRODUCTOS ---------- */
-.imagen-flotante-portal {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 15vw; /* 15% del ancho de la ventana */
-  height: auto;
-  z-index: 9999;
-  pointer-events: none;
-  filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
-  /* ANIMACIÓN DE TROMPO VERTICAL EN 2D - GIRO CONTINUO */
-  animation: girarTrompoVertical 3s linear infinite;
+/* PORTADA - AJUSTADA PARA NO SER TAPADA POR EL MENÚ */
+.portada-container{ 
+  width:95%; 
+  max-width:1400px; 
+  margin: 140px auto 30px; /* Aumentado el margen superior para bajar la portada */
+  position:relative;
+  border-radius:20px; 
+  overflow:hidden; 
+  border:1px solid rgba(255,255,255,0.06); 
+  box-shadow:0 30px 60px rgba(0,0,0,0.6); 
 }
+.pantalla-tapiz{ width:100%; height:auto; display:block; object-fit:cover; transition:transform .45s; }
+.pantalla-tapiz:hover{ transform:scale(1.02); }
 
-@keyframes girarTrompoVertical {
-  0% {
-    transform: translateX(-50%) rotateY(0deg);
-  }
-  100% {
-    transform: translateX(-50%) rotateY(360deg);
-  }
+/* PORTAL GENERAL - BAJADO PARA NO TAPAR BOTONES */
+.pantalla-interna{ 
+  display:none; 
+  position:fixed; 
+  inset: 60px 0 0 0; /* Ajustado para dejar espacio en la parte superior */
+  z-index:1000; 
+  overflow:auto; 
+  padding:30px; 
+  background:rgba(10,10,15,0.96); 
+  backdrop-filter:blur(20px); 
 }
-
-@media (max-width: 768px) {
-  .imagen-flotante-portal {
-    width: 25vw; /* Un poco más grande en móviles */
-    bottom: 15px;
-  }
+.portal-content{ 
+  max-width:1200px; 
+  margin: 40px auto 20px; /* Aumentado margen superior */
+  background: rgba(255,255,255,0.02); 
+  border-radius:18px; 
+  padding:28px; 
+  border:1px solid rgba(255,255,255,0.08); 
+  position:relative; 
+  box-shadow:0 20px 60px rgba(0,0,0,0.45); 
 }
+.cerrar{ position:absolute; top:18px; right:18px; width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:28px; color:var(--primary-glow); background:rgba(255,255,255,0.04); }
+.cerrar:hover{ transform:scale(1.06); background:rgba(255,0,255,0.08); }
 
-/* ---------- BOTONES FLOTANTES ---------- */
-.menu-flotante {
-  position: fixed;
-  top: 15px;
-  right: 15px;
-  display: flex;
-  gap: 10px;
-  z-index: 1001;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
+/* GALERIA / PRODUCTOS / PRECIOS */
+.grid-imagenes{ display:grid; grid-template-columns: repeat(auto-fill,minmax(180px,1fr)); gap:12px; margin-top:12px; }
+.grid-imagenes img{ width:100%; height:140px; object-fit:cover; border-radius:12px; cursor:pointer; border:1px solid rgba(255,255,255,0.06); transition:transform .18s, box-shadow .18s; }
+.grid-imagenes img:hover{ transform:translateY(-6px); box-shadow:0 12px 30px rgba(0,0,0,0.6); }
 
-.menu-flotante button {
-  background: var(--white);
-  border: 1px solid var(--primary-color);
-  color: var(--primary-color);
-  font-size: 14px;
-  font-weight: bold;
-  border-radius: 20px;
-  padding: 8px 16px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow);
-}
-
-.menu-flotante button:hover, 
-.menu-flotante button:focus {
-  background: var(--primary-color);
-  color: var(--white);
-  transform: translateY(-2px);
-  outline: none;
-}
-
-.menu-flotante button.active {
-  background: var(--primary-color);
-  color: var(--white);
-}
-
-/* Botón de citas cuando está realizado */
-.menu-flotante button.cita-realizada {
-  background: var(--success-color);
-  border-color: var(--success-color);
-  color: var(--white);
-  animation: pulse 2s infinite;
-}
-
-/* Botón de citas cuando está deshabilitado */
-.menu-flotante button.citas-cerradas {
-  background: var(--danger-color);
-  border-color: var(--danger-color);
-  color: var(--white);
-  cursor: not-allowed;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-/* ---------- PORTADA ---------- */
-.portada-container {
-  width: 95%;
-  max-width: 1400px;
-  margin: 50px auto 20px;
-  position: relative;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: var(--shadow);
-}
-
-.pantalla-tapiz {
-  width: 100%;
-  height: auto;
-  display: block;
-  transition: transform 0.5s ease;
-}
-
-.pantalla-tapiz:hover {
-  transform: scale(1.02);
-}
-
-/* ---------- PORTALES ---------- */
-.pantalla-interna {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1000;
-  overflow-y: auto;
-  padding: 30px 20px;
-  box-sizing: border-box;
-  background: rgba(0,0,0,0.1);
-  backdrop-filter: blur(5px);
-}
-
-/* ---------- FONDOS PARA PORTALES ---------- */
-/* Fondo estático - ÚLTIMO FONDO detrás de todo */
-.fondo-estatico {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 0; /* Más bajo que todo */
-  opacity: 0.9;
-}
-
-/* Contenido de los portales - TRANSPARENTE para ver el fondo */
-.portal-content {
-  position: relative;
-  z-index: 3; /* Por encima del fondo estático */
-  background: rgba(255, 255, 255, 0.75); /* Más transparente */
-  border-radius: 15px;
-  padding: 30px;
-  max-width: 1200px;
-  margin: 0 auto;
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(5px);
-}
-
-.cerrar {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  font-size: 28px;
-  font-weight: bold;
-  color: var(--primary-color);
-  cursor: pointer;
-  z-index: 4; /* Por encima de todo */
-  background: rgba(255, 255, 255, 0.9);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--shadow);
-  transition: all 0.3s ease;
-}
-
-.cerrar:hover {
-  background: var(--primary-color);
-  color: var(--white);
-}
-
-/* ---------- PRECIOS ---------- */
-.precios-lista {
-  position: relative;
-  z-index: 1;
-  max-width: 600px;
-  width: 90%;
-  margin: 0 auto;
+/* IMAGENES CON TITULO - PARA LA SECCIÓN DE PRECIOS */
+.imagen-con-titulo {
   text-align: center;
-  padding: 20px;
-}
-
-.precios-lista h2 {
-  font-size: 32px;
-  color: var(--primary-color);
-  text-align: center;
-  margin-bottom: 25px;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-}
-
-.precios-lista ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.precios-lista ul li {
-  display: flex;
-  justify-content: space-between;
-  font-size: 18px;
-  color: var(--text-dark);
-  padding: 12px 0;
-  border-bottom: 1px dotted var(--primary-color);
-  transition: background-color 0.3s;
-}
-
-.precios-lista ul li:hover {
-  background-color: rgba(214, 51, 132, 0.05);
-}
-
-.precios-lista ul li span:first-child { 
-  flex: 1; 
-  text-align: left; 
-}
-
-.precios-lista ul li span:last-child { 
-  margin-left: 10px; 
-  font-weight: bold;
-  color: var(--primary-color);
-}
-
-/* ---------- GALERÍA / PRODUCTOS ---------- */
-.galeria-interna, .productos-interna {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
-  margin-top: 30px;
-}
-
-.galeria-item, .producto-item {
-  position: relative;
-  border-radius: 10px;
-  overflow: hidden;
-  cursor: pointer;
-  box-shadow: var(--shadow);
-  transition: all 0.4s ease;
-  background: rgba(255, 255, 255, 0.8); /* Fondo semi-transparente */
-  backdrop-filter: blur(3px);
-}
-
-.galeria-item img, .producto-item img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  transition: all 0.4s ease;
-}
-
-.galeria-item:hover, .producto-item:hover {
-  transform: translateY(-10px) scale(1.02);
-  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-  background: rgba(255, 255, 255, 0.95);
-}
-
-.galeria-item:hover img, .producto-item:hover img {
-  transform: scale(1.1);
-  filter: brightness(1.1);
-}
-
-/* ELIMINADO: Overlay con nombres de las imágenes */
-.galeria-overlay, .producto-overlay {
-  display: none; /* OCULTAR LOS NOMBRES DEBAJO DE LAS FOTOS */
-}
-
-/* ---------- FORMULARIO DE CITAS INTELIGENTE ---------- */
-.citas-formulario {
-  position: relative;
-  z-index: 1;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.85);
-  border-radius: 15px;
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(5px);
-}
-
-.citas-formulario h2 {
-  color: var(--primary-color);
-  text-align: center;
-  margin-bottom: 25px;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: bold;
-  color: var(--text-dark);
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 16px;
-  transition: border-color 0.3s;
-  background: rgba(255, 255, 255, 0.9);
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  border-color: var(--primary-color);
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(214, 51, 132, 0.2);
-}
-
-/* Estilos para checkboxes de servicios múltiples */
-.servicios-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 12px;
-  margin-top: 10px;
-}
-
-.servicio-checkbox {
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  background: rgba(248, 249, 250, 0.9);
-  border-radius: 8px;
-  border: 1px solid #dee2e6;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.servicio-checkbox:hover {
-  background: rgba(214, 51, 132, 0.05);
-  border-color: var(--primary-color);
-}
-
-.servicio-checkbox input[type="checkbox"] {
-  margin-right: 10px;
-  transform: scale(1.2);
-}
-
-.servicio-info {
-  flex: 1;
-}
-
-.servicio-nombre {
-  font-weight: bold;
-  color: var(--text-dark);
-  margin-bottom: 4px;
-}
-
-.servicio-detalles {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: #666;
-}
-
-.servicio-duracion {
-  color: var(--primary-color);
-  font-weight: bold;
-}
-
-.servicio-precio {
-  color: var(--success-color);
-  font-weight: bold;
-}
-
-.resumen-servicios {
-  background: rgba(248, 249, 250, 0.9);
-  border-radius: 8px;
-  padding: 15px;
-  margin: 15px 0;
-  border-left: 4px solid var(--primary-color);
-}
-
-.resumen-servicios h4 {
-  margin: 0 0 10px 0;
-  color: var(--primary-color);
-}
-
-#lista-servicios-seleccionados {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-#lista-servicios-seleccionados li {
-  display: flex;
-  justify-content: space-between;
-  padding: 5px 0;
-  border-bottom: 1px dotted #dee2e6;
-}
-
-#total-duracion, #total-precio {
-  font-weight: bold;
-  color: var(--primary-color);
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 2px solid var(--primary-color);
-}
-
-.btn-enviar {
-  background: var(--primary-color);
-  color: var(--white);
-  border: none;
-  padding: 12px 25px;
-  font-size: 16px;
-  font-weight: bold;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  width: 100%;
-}
-
-.btn-enviar:hover {
-  background: var(--primary-dark);
-  transform: translateY(-2px);
-}
-
-.btn-enviar.exito {
-  background: var(--success-color);
-  animation: pulse 2s infinite;
-}
-
-.btn-enviar:disabled {
-  background: #6c757d;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* ---------- HORARIOS DISPONIBLES ---------- */
-.horarios-disponibles {
-  background: rgba(248, 249, 250, 0.9);
-  border-radius: 10px;
-  padding: 20px;
-  margin: 20px 0;
-  border: 2px dashed var(--primary-color);
-  backdrop-filter: blur(3px);
-}
-
-.horarios-disponibles h3 {
-  color: var(--primary-color);
-  margin-bottom: 15px;
-  text-align: center;
-}
-
-.horarios-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: 10px;
-  margin-top: 15px;
-}
-
-.horario-btn {
-  background: var(--white);
-  border: 2px solid var(--primary-color);
-  color: var(--primary-color);
+  background: rgba(255,255,255,0.02);
+  border-radius: 12px;
   padding: 10px;
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: all 0.3s;
+}
+.imagen-con-titulo:hover {
+  background: rgba(255,255,255,0.05);
+  transform: translateY(-5px);
+}
+.imagen-con-titulo img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
   border-radius: 8px;
+  margin-bottom: 8px;
+}
+.imagen-con-titulo .titulo {
+  font-weight: 700;
+  color: var(--primary-glow);
+  font-size: 0.9em;
+}
+
+/* IMAGEN FLOTANTE DECORATIVA */
+.imagen-flotante{ position:absolute; right: -40px; top: -40px; width:240px; opacity:0.9; pointer-events:none; transform:rotate(-6deg); }
+
+/* FORMULARIO CITAS (resumen simplificado) */
+.citas-formulario{ background:rgba(0,0,0,0.25); padding:18px; border-radius:14px; border:1px solid rgba(255,255,255,0.04); }
+.form-group{ margin-bottom:14px; }
+.form-group label{ display:block; margin-bottom:6px; font-weight:700; color:#ddd; }
+.form-group input, .form-group select{ width:100%; padding:12px; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04); color:var(--text); }
+
+/* SERVICIOS GRID */
+.servicios-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+  gap: 12px; 
+  margin-top: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 10px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 10px;
+}
+.servicio-item {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 12px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  text-align: center;
-  font-weight: bold;
+  transition: all 0.2s;
 }
-
-.horario-btn:hover {
-  background: var(--primary-color);
-  color: var(--white);
-  transform: translateY(-2px);
+.servicio-item:hover {
+  background: rgba(255,255,255,0.05);
+  transform: translateY(-3px);
 }
-
-.horario-btn.ocupado {
-  background: #e9ecef;
-  border-color: #6c757d;
-  color: #6c757d;
-  cursor: not-allowed;
-  text-decoration: line-through;
+.servicio-item.seleccionado {
+  background: rgba(0,255,255,0.1);
+  border-color: rgba(0,255,255,0.3);
+  box-shadow: 0 5px 15px rgba(0,255,255,0.1);
 }
-
-.horario-btn.seleccionado {
-  background: var(--primary-color);
-  color: var(--white);
-  border-color: var(--primary-dark);
+.servicio-item input {
+  margin-right: 8px;
 }
-
-.horario-btn.pasado {
-  background: #f8d7da;
-  border-color: #dc3545;
-  color: #721c24;
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-/* ---------- PANEL ADMINISTRACIÓN MEJORADO ---------- */
-.admin-panel {
-  background: rgba(255, 255, 255, 0.85);
-  border-radius: 15px;
-  padding: 30px;
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(5px);
-}
-
-.admin-login {
-  max-width: 400px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.admin-panel h2 {
-  color: var(--primary-color);
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-/* Estadísticas del panel admin */
-.estadisticas-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
-}
-
-.estadistica-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-  box-shadow: var(--shadow);
-}
-
-.estadistica-card h3 {
-  margin: 0 0 10px 0;
-  font-size: 14px;
-  opacity: 0.9;
-}
-
-.estadistica-card .numero {
-  font-size: 32px;
-  font-weight: bold;
-  margin: 0;
-}
-
-.estadistica-card.servicios {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
-
-.estadistica-card.ingresos {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-}
-
-.estadistica-card.clientes {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-}
-
-/* Gráfico de servicios */
-.grafico-servicios {
-  background: rgba(248, 249, 250, 0.9);
-  border-radius: 10px;
-  padding: 20px;
-  margin: 20px 0;
-  backdrop-filter: blur(3px);
-}
-
-.barra-servicio {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.barra-servicio span {
-  min-width: 150px;
-  font-weight: bold;
-}
-
-.barra-progreso {
-  flex: 1;
-  background: #e9ecef;
-  height: 20px;
-  border-radius: 10px;
-  overflow: hidden;
-  margin: 0 10px;
-}
-
-.barra-progreso-fill {
-  height: 100%;
-  background: var(--primary-color);
-  transition: width 0.5s ease;
-}
-
-.barra-servicio .cantidad {
-  min-width: 50px;
-  text-align: right;
-  font-weight: bold;
-}
-
-/* Lista de citas semanales */
-.lista-citas {
-  margin: 30px 0;
-}
-
-.dia-citas {
-  background: rgba(248, 249, 250, 0.9);
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-  border-left: 4px solid var(--primary-color);
-  backdrop-filter: blur(3px);
-}
-
-.dia-citas h4 {
-  color: var(--primary-color);
-  margin: 0 0 15px 0;
+.servicio-info {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  margin-top: 5px;
+  font-size: 0.85em;
+  color: #aaa;
 }
 
-.contador-dia {
-  background: var(--primary-color);
-  color: white;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 14px;
-}
-
-.cita-item {
-  background: var(--white);
-  border-radius: 8px;
+/* HORARIOS - MEJORADO PARA MOSTRARSE DEBAJO DE LA FECHA */
+.horarios-disponibles {
+  margin-top: 15px;
   padding: 15px;
-  margin-bottom: 10px;
-  border: 1px solid #e9ecef;
-  transition: all 0.3s ease;
+  background: rgba(0,0,0,0.25);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.04);
 }
-
-.cita-item:hover {
-  box-shadow: var(--shadow);
+.horarios-grid{ 
+  display:grid; 
+  grid-template-columns: repeat(auto-fit,minmax(110px,1fr)); 
+  gap:10px; 
+  margin-top:14px; 
+}
+.horario-btn{ 
+  padding:12px;
+  border-radius:10px;
+  border:2px solid rgba(0,255,255,0.12); 
+  background:rgba(255,255,255,0.03); 
+  color:var(--secondary-glow); 
+  cursor:pointer; 
+  font-weight:700;
+  transition: all 0.2s;
+}
+.horario-btn:hover {
+  background: rgba(0,255,255,0.1);
   transform: translateY(-2px);
 }
-
-.cita-info {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 10px;
-  margin-bottom: 10px;
+.horario-btn.seleccionado{ 
+  background:rgba(0,255,255,0.18); 
+  box-shadow:0 10px 30px rgba(0,255,255,0.08); 
+  transform:scale(1.03); 
+}
+.horario-btn.ocupado, .horario-btn.pasado{ 
+  cursor:not-allowed; 
+  opacity:0.4; 
+  text-decoration:line-through;
+  background: rgba(255,0,0,0.1);
+  border-color: rgba(255,0,0,0.2);
+  color: #ff6666;
 }
 
-.cita-cliente {
-  font-weight: bold;
-  color: var(--primary-color);
-}
+/* BOTON ENVIAR */
+.btn-enviar{ width:100%; padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.06); margin-top:12px; font-weight:900; cursor:pointer; }
 
-.cita-servicio {
-  color: var(--text-dark);
-  background: #e9ecef;
-  padding: 4px 8px;
-  border-radius: 4px;
-  display: inline-block;
-}
-
-.cita-horario {
-  color: var(--success-color);
-  font-weight: bold;
-}
-
-.controles-admin {
-  display: flex;
-  gap: 15px;
-  margin: 30px 0;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.btn-admin {
-  background: var(--primary-color);
-  color: var(--white);
-  border: none;
-  padding: 12px 25px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: bold;
-}
-
-.btn-admin:hover {
-  background: var(--primary-dark);
-  transform: translateY(-2px);
-}
-
-.btn-admin.cerrado {
-  background: var(--danger-color);
-}
-
-.btn-admin.abierto {
-  background: var(--success-color);
-}
-
-/* ---------- MENSAJES ---------- */
-.mensaje-exito {
-  background-color: rgba(212, 237, 218, 0.9);
-  color: #155724;
-  padding: 12px;
-  border-radius: 8px;
-  margin: 15px 0;
-  text-align: center;
-  display: none;
-}
-
-.mensaje-error {
-  background-color: rgba(248, 215, 218, 0.9);
-  color: #721c24;
-  padding: 12px;
-  border-radius: 8px;
-  margin: 15px 0;
-  text-align: center;
-  display: none;
-}
-
-.mensaje-info {
-  background-color: rgba(204, 231, 255, 0.9);
-  color: #004085;
-  padding: 12px;
-  border-radius: 8px;
-  margin: 15px 0;
-  text-align: center;
-}
-
-.mensaje-advertencia {
-  background-color: rgba(255, 243, 205, 0.9);
-  color: #856404;
-  padding: 12px;
-  border-radius: 8px;
-  margin: 15px 0;
-  text-align: center;
-}
-
-/* Mejora para mensaje de citas cerradas en móviles */
-@media (max-width: 768px) {
-  .mensaje-advertencia {
-    padding: 15px;
-    font-size: 14px;
-    margin: 10px 0;
-  }
-  
-  .mensaje-advertencia h3 {
-    font-size: 16px;
-    margin-bottom: 10px;
-  }
-  
-  .servicios-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ---------- LIGHTBOX ---------- */
-.lightbox {
+/* SISTEMA MODERNO DE VISUALIZACIÓN DE IMÁGENES */
+.gallery-modal {
   display: none;
   position: fixed;
-  z-index: 3000;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.9);
-  justify-content: center;
-  align-items: center;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 2000;
+  touch-action: pan-y pinch-zoom;
   overflow: hidden;
 }
 
-.lightbox-content {
+.gallery-container {
   position: relative;
-  max-width: 90%;
-  max-height: 90%;
+  width: 100%;
+  height: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 
-.lightbox img {
-  max-width: 100%;
-  max-height: 80vh;
-  border-radius: 10px;
-  object-fit: contain;
-  cursor: grab;
+.gallery-slides {
+  display: flex;
   transition: transform 0.3s ease;
+  height: 100%;
+  width: 100%;
 }
 
-.lightbox button {
+.gallery-slide {
+  flex: 0 0 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.gallery-slide img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.gallery-nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.gallery-prev, .gallery-next {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(255,255,255,0.8);
-  border: 1px solid rgba(255,255,255,0.6);
-  color: var(--primary-color);
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
   font-size: 24px;
-  font-weight: bold;
-  border-radius: 50%;
   width: 50px;
   height: 50px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#prev { left: 20px; } 
-#next { right: 20px; }
-
-.lightbox button:hover { 
-  background: var(--white); 
-  color: var(--primary-dark); 
-}
-
-.close-lightbox { 
-  position: absolute; 
-  top: 15px; 
-  right: 25px; 
-  font-size: 30px; 
-  color: rgba(255,255,255,0.8); 
-  cursor: pointer; 
-  background: rgba(0,0,0,0.5);
-  width: 40px;
-  height: 40px;
   border-radius: 50%;
+  cursor: pointer;
+  pointer-events: auto;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s;
+  backdrop-filter: blur(10px);
 }
 
-.lightbox-caption {
-  color: var(--white);
+.gallery-prev:hover, .gallery-next:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.gallery-prev {
+  left: 20px;
+}
+
+.gallery-next {
+  right: 20px;
+}
+
+.gallery-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  font-size: 24px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  backdrop-filter: blur(10px);
+  z-index: 2001;
+}
+
+.gallery-close:hover {
+  background: rgba(255, 0, 0, 0.3);
+  transform: scale(1.1);
+}
+
+.gallery-counter {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  pointer-events: none;
+  backdrop-filter: blur(10px);
+}
+
+.gallery-thumbnails {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 20px;
+  overflow-x: auto;
+  pointer-events: auto;
+}
+
+.gallery-thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+  flex-shrink: 0;
+}
+
+.gallery-thumb.active {
+  opacity: 1;
+  border-color: var(--primary-glow);
+  transform: scale(1.1);
+}
+
+.gallery-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* LISTA DE PRECIOS */
+.lista-precios {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
   margin-top: 15px;
-  text-align: center;
-  font-size: 18px;
+}
+.precio-item {
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+  padding: 15px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.precio-nombre {
+  font-weight: 700;
+  margin-bottom: 5px;
+  color: var(--primary-glow);
+}
+.precio-valor {
+  font-size: 1.2em;
+  font-weight: 700;
+  color: var(--secondary-glow);
 }
 
-/* ---------- MÓVILES ---------- */
-@media (max-width: 768px) {
-  .menu-flotante {
-    top: 10px;
-    right: 10px;
-    gap: 5px;
-  }
-  
-  .menu-flotante button {
-    font-size: 12px;
-    padding: 6px 12px;
-  }
-  
-  .portada-container {
-    margin-top: 70px;
-  }
-  
-  .portal-content {
-    padding: 20px 15px;
-  }
-  
-  .precios-lista h2 {
-    font-size: 24px;
-  }
-  
-  .precios-lista ul li {
-    font-size: 16px;
-    padding: 10px 0;
-  }
-  
-  .galeria-interna, .productos-interna {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 15px;
-  }
-  
-  .galeria-item img, .producto-item img {
-    height: 150px;
-  }
-  
-  .horarios-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  
-  .cita-info {
-    grid-template-columns: 1fr;
-  }
-  
-  .controles-admin {
-    flex-direction: column;
-  }
-  
-  .btn-admin {
-    width: 100%;
-  }
-  
-  .estadisticas-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .barra-servicio {
+/* PANEL ADMIN MEJORADO */
+.admin-controls {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.admin-control-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--text);
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+.admin-control-btn:hover {
+  background: rgba(255,255,255,0.08);
+  transform: translateY(-2px);
+}
+.admin-control-btn.cerrar-sistema {
+  background: rgba(255,0,0,0.1);
+  border-color: rgba(255,0,0,0.3);
+  color: #ff6666;
+}
+.admin-control-btn.abrir-sistema {
+  background: rgba(0,255,0,0.1);
+  border-color: rgba(0,255,0,0.3);
+  color: #66ff66;
+}
+.cita-item {
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.cita-info {
+  flex: 1;
+}
+.cita-acciones {
+  display: flex;
+  gap: 10px;
+}
+.btn-cancelar {
+  background: rgba(255,0,0,0.1);
+  border: 1px solid rgba(255,0,0,0.3);
+  color: #ff6666;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+.btn-cancelar:hover {
+  background: rgba(255,0,0,0.2);
+  transform: translateY(-2px);
+}
+.password-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  background: rgba(0,0,0,0.85);
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.password-content {
+  background: rgba(255,255,255,0.02);
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid rgba(255,255,255,0.08);
+  max-width: 400px;
+  width: 100%;
+}
+.password-input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.04);
+  color: var(--text);
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 1.2em;
+  letter-spacing: 5px;
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .imagen-flotante{ display:none; }
+  .grid-imagenes img{ height:110px; }
+  .horarios-grid{ grid-template-columns: repeat(3,1fr); }
+  .menu-flotante{ right:12px; top:12px; }
+  .servicios-grid { grid-template-columns: 1fr; }
+  .lista-precios { grid-template-columns: 1fr; }
+  .cita-item {
     flex-direction: column;
     align-items: flex-start;
   }
-  
-  .barra-progreso {
+  .cita-acciones {
+    margin-top: 10px;
     width: 100%;
-    margin: 5px 0;
+    justify-content: flex-end;
+  }
+  .admin-controls {
+    flex-direction: column;
   }
   
-  .lightbox button {
+  /* Mejoras para móvil en la galería */
+  .gallery-prev, .gallery-next {
     width: 40px;
     height: 40px;
     font-size: 18px;
   }
   
-  #prev { left: 10px; } 
-  #next { right: 10px; }
-  
-  .close-lightbox {
+  .gallery-close {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
     top: 10px;
-    right: 15px;
-    font-size: 24px;
-    width: 35px;
-    height: 35px;
+    right: 10px;
+  }
+  
+  .gallery-counter {
+    top: 10px;
+    left: 10px;
+    font-size: 12px;
+  }
+  
+  .gallery-thumbnails {
+    bottom: 10px;
+  }
+  
+  .gallery-thumb {
+    width: 50px;
+    height: 50px;
   }
 }
 
-/* ---------- ANIMACIONES ---------- */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.fade-in {
-  animation: fadeIn 0.5s ease forwards;
+/* Para pantallas muy pequeñas */
+@media(max-width:480px){
+  .grid-imagenes {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .gallery-prev, .gallery-next {
+    width: 35px;
+    height: 35px;
+    font-size: 16px;
+  }
+  
+  .gallery-thumb {
+    width: 40px;
+    height: 40px;
+  }
 }
 </style>
 </head>
 <body>
 
-<!-- BOTONES -->
-<div class="menu-flotante">
-    <button id="btn-home" class="active">Home</button>
-    <button id="btn-galeria">Galería</button>
-    <button id="btn-precios">Precios</button>
-    <button id="btn-productos">Productos</button>
-    <button id="btn-citas">Citas</button>
-    <button id="btn-admin">Portal Admin</button>
+<!-- MENU -->
+<div class="menu-flotante" role="navigation" aria-label="Menú principal">
+  <button id="btn-home" class="active">🏠 Home</button>
+  <button id="btn-galeria">🖼️ Galería</button>
+  <button id="btn-precios">💰 Precios</button>
+  <button id="btn-productos">🛍️ Productos</button>
+  <button id="btn-citas">📅 Citas</button>
+  <button id="btn-admin">👑 Admin</button>
 </div>
 
-<!-- PANTALLA PRINCIPAL -->
-<div class="portada-container fade-in">
-    <img src="imagen/pantalla16.jpg" alt="Yenny Hair Salón - Servicios profesionales de belleza" class="pantalla-tapiz" id="portada">
+<!-- PORTADA -->
+<div class="portada-container" id="home-viewport">
+  <img id="portada" class="pantalla-tapiz" src="imagen/pantalla16.jpg" alt="Portada Yenny Hair Salón" onerror="this.style.opacity=.5; this.nextElementSibling.style.display='block'">
+  <!-- si no existe la imagen, mostrar fondo alterno -->
+  <div id="portada-fallback" style="display:none; padding:60px; text-align:center; color:#ccc;">
+    <h2>Yenny Hair Salón</h2>
+    <p>Añade la imagen <strong>imagen/pantalla16.jpg</strong> en la carpeta <code>imagen/</code>.</p>
+  </div>
 </div>
 
-<!-- GALERÍA -->
-<div class="pantalla-interna" id="portal-galeria">
-    <span class="cerrar" onclick="cerrarPortal('portal-galeria')" aria-label="Cerrar galería">×</span>
-    <!-- Fondo estático - ÚLTIMO FONDO -->
-    <img src="imagen/fondo18.jpg" alt="Fondo estático" class="fondo-estatico">
-    <!-- IMAGEN FLOTANTE SOLO EN GALERÍA -->
-    <img src="imagen/fondo19.png" alt="Decoración Yenny Hair Salón" class="imagen-flotante-portal">
-    <div class="portal-content">
-        <h2>Nuestros Trabajos</h2>
-        <div class="galeria-interna">
-            <div class="galeria-item">
-                <img src="imagen/imagen1.jpg" alt="Corte de cabello estilo 1">
-                <!-- ELIMINADO: nombre debajo de la imagen -->
-            </div>
-            <div class="galeria-item">
-                <img src="imagen/imagen2.jpg" alt="Coloración profesional">
-                <!-- ELIMINADO: nombre debajo de la imagen -->
-            </div>
-            <div class="galeria-item">
-                <img src="imagen/imagen3.jpg" alt="Tratamiento de keratina">
-                <!-- ELIMINADO: nombre debajo de la imagen -->
-            </div>
-            <div class="galeria-item">
-                <img src="imagen/imagen4.jpg" alt="Peinado para evento especial">
-                <!-- ELIMINADO: nombre debajo de la imagen -->
-            </div>
-            <div class="galeria-item">
-                <img src="imagen/imagen5.jpg" alt="Extensiones capilares">
-                <!-- ELIMINADO: nombre debajo de la imagen -->
-            </div>
-            <div class="galeria-item">
-                <img src="imagen/imagen6.jpg" alt="Tintes Profesionales">
-                <!-- CAMBIADO: Maquillaje Profesional → Tintes Profesionales -->
-            </div>
+<!-- PORTAL: GALERIA - CON IMÁGENES 1-8 -->
+<div class="pantalla-interna" id="portal-galeria" aria-hidden="true">
+  <span class="cerrar" data-close="portal-galeria">×</span>
+  <div class="portal-content">
+    <h2>✨ Galería</h2>
+    <p style="color:#bbb">Haz clic en una imagen para verla en grande.</p>
+    <!-- Fondo decorativo -->
+    <img src="imagen/fondo18.jpg" alt="" style="position:absolute; left:10px; top:10px; width:120px; opacity:0.04; pointer-events:none;">
+    <div class="grid-imagenes" id="galeria-grid">
+      <!-- Galería con imágenes 1-8 -->
+      <img src="imagen/imagen1.jpg" alt="Galería 1" data-full="imagen/imagen1.jpg">
+      <img src="imagen/imagen2.jpg" alt="Galería 2" data-full="imagen/imagen2.jpg">
+      <img src="imagen/imagen3.jpg" alt="Galería 3" data-full="imagen/imagen3.jpg">
+      <img src="imagen/imagen4.jpg" alt="Galería 4" data-full="imagen/imagen4.jpg">
+      <img src="imagen/imagen5.jpg" alt="Galería 5" data-full="imagen/imagen5.jpg">
+      <img src="imagen/imagen6.jpg" alt="Galería 6" data-full="imagen/imagen6.jpg">
+      <img src="imagen/imagen7.jpg" alt="Galería 7" data-full="imagen/imagen7.jpg">
+      <img src="imagen/imagen8.jpg" alt="Galería 8" data-full="imagen/imagen8.jpg">
+    </div>
+  </div>
+</div>
+
+<!-- PORTAL: PRECIOS - CON LAS 3 FOTOS ESPECÍFICAS -->
+<div class="pantalla-interna" id="portal-precios" aria-hidden="true">
+  <span class="cerrar" data-close="portal-precios">×</span>
+  <div class="portal-content">
+    <h2>💳 Precios</h2>
+    <p style="color:#bbb">Lista de precios de todos nuestros servicios.</p>
+    
+    <div class="lista-precios" id="lista-precios">
+      <!-- Los precios se cargarán dinámicamente -->
+    </div>
+    
+    <!-- 3 FOTOS ESPECÍFICAS CON TÍTULOS -->
+    <h4 style="margin-top:30px; color:#ddd; text-align:center;">Nuestros Servicios Destacados</h4>
+    <div class="grid-imagenes" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+      <div class="imagen-con-titulo">
+        <img src="imagen/imagen2.jpg" alt="Keratina" data-full="imagen/imagen2.jpg">
+        <div class="titulo">KERATINA</div>
+      </div>
+      <div class="imagen-con-titulo">
+        <img src="imagen/imagen6.jpg" alt="Tintes" data-full="imagen/imagen6.jpg">
+        <div class="titulo">TINTES</div>
+      </div>
+      <div class="imagen-con-titulo">
+        <img src="imagen/imagen1.jpg" alt="Extensiones" data-full="imagen/imagen1.jpg">
+        <div class="titulo">EXTENSIONES</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PORTAL: PRODUCTOS - CON IMÁGENES 9-14 -->
+<div class="pantalla-interna" id="portal-productos" aria-hidden="true">
+  <span class="cerrar" data-close="portal-productos">×</span>
+  <div class="portal-content">
+    <h2>🛍️ Productos</h2>
+    <p style="color:#bbb">Productos disponibles en el salón.</p>
+    <div class="grid-imagenes" id="productos-grid">
+      <!-- Productos con imágenes 9-14 -->
+      <img src="imagen/imagen9.jpg" alt="Producto 9" data-full="imagen/imagen9.jpg">
+      <img src="imagen/imagen10.jpg" alt="Producto 10" data-full="imagen/imagen10.jpg">
+      <img src="imagen/imagen11.jpg" alt="Producto 11" data-full="imagen/imagen11.jpg">
+      <img src="imagen/imagen12.jpg" alt="Producto 12" data-full="imagen/imagen12.jpg">
+      <img src="imagen/imagen13.jpg" alt="Producto 13" data-full="imagen/imagen13.jpg">
+      <img src="imagen/imagen14.jpg" alt="Producto 14" data-full="imagen/imagen14.jpg">
+    </div>
+  </div>
+</div>
+
+<!-- PORTAL: CITAS - CON HORARIOS MEJORADOS -->
+<div class="pantalla-interna" id="portal-citas" aria-hidden="true">
+  <span class="cerrar" data-close="portal-citas">×</span>
+  <div class="portal-content">
+    <div class="citas-formulario">
+      <h2>💫 Sistema Inteligente de Citas</h2>
+
+      <div class="mensaje-cerrado" id="mensaje-citas-cerradas" style="display:none; background:rgba(255,68,68,0.08); padding:18px; border-radius:10px; color:#ffaaaa; margin-bottom:12px;">
+        <h3>🚫 SISTEMA DE CITAS CERRADO</h3>
+        <p>El sistema de citas no está disponible en este momento.</p>
+      </div>
+
+      <form id="form-cita">
+        <div class="form-group">
+          <label for="nombre">👤 Nombre completo</label>
+          <input id="nombre" name="nombre" required placeholder="Tu nombre">
         </div>
-    </div>
-</div>
-
-<!-- PRECIOS -->
-<div class="pantalla-interna" id="portal-precios">
-    <span class="cerrar" onclick="cerrarPortal('portal-precios')" aria-label="Cerrar precios">×</span>
-    <!-- Fondo estático - ÚLTIMO FONDO -->
-    <img src="imagen/fondo18.jpg" alt="Fondo estático" class="fondo-estatico">
-    <!-- IMAGEN FLOTANTE SOLO EN PRECIOS -->
-    <img src="imagen/fondo19.png" alt="Decoración Yenny Hair Salón" class="imagen-flotante-portal">
-    <div class="portal-content">
-        <div class="precios-lista">
-            <h2>💇‍♀️ Precios Profesionales</h2>
-            <ul>
-                <li><span>Lavado normal</span><span>$55</span></li>
-                <li><span>Lavado con línea</span><span>$70</span></li>
-                <li><span>Lavado con rolos</span><span>$75</span></li>
-                <li><span>Color</span><span>$120</span></li>
-                <li><span>Botox</span><span>$150</span></li>
-                <li><span>Keratina</span><span>$200</span></li>
-                <li><span>Microsring</span><span>$200</span></li>
-                <li><span>Extensiones x línea</span><span>$20</span></li>
-                <li><span>Extensiones completas</span><span>$200</span></li>
-                <li><span>Lavado solo</span><span>$10</span></li>
-                <li><span>Ampollas</span><span>$8</span></li>
-                <li><span>Crema tratamiento</span><span>$35</span></li>
-                <li><span>Gotero anticaída</span><span>$40</span></li>
-                <li><span>Shampoo</span><span>$20</span></li>
-            </ul>
+        <div class="form-group">
+          <label for="telefono">📞 Teléfono</label>
+          <input id="telefono" name="telefono" required placeholder="Ej: 600123456">
         </div>
-    </div>
-</div>
 
-<!-- PRODUCTOS -->
-<div class="pantalla-interna" id="portal-productos">
-    <span class="cerrar" onclick="cerrarPortal('portal-productos')" aria-label="Cerrar productos">×</span>
-    <!-- Fondo estático - ÚLTIMO FONDO -->
-    <img src="imagen/fondo18.jpg" alt="Fondo estático" class="fondo-estatico">
-    <!-- IMAGEN FLOTANTE SOLO EN PRODUCTOS -->
-    <img src="imagen/fondo19.png" alt="Decoración Yenny Hair Salón" class="imagen-flotante-portal">
-    <div class="portal-content">
-        <h2>Productos Profesionales</h2>
-        <div class="productos-interna">
-            <div class="producto-item">
-                <img src="imagen/imagen9.jpg" alt="Shampoo profesional">
-                <!-- ELIMINADO: nombre debajo de la imagen -->
-            </div>
-            <div class="producto-item">
-                <img src="imagen/imagen10.jpg" alt="Acondicionador reparador">
-                <!-- ELIMINADO: nombre debajo de la imagen -->
-            </div>
-            <div class="producto-item">
-                <img src="imagen/imagen11.jpg" alt="Tratamiento capilar">
-                <!-- ELIMINADO: nombre debajo de la imagen -->
-            </div>
-            <div class="producto-item">
-                <img src="imagen/imagen12.jpg" alt="Productos para coloración">
-                <!-- ELIMINADO: nombre debajo de la imagen -->
-            </div>
-            <div class="producto-item">
-                <img src="imagen/imagen13.jpg" alt="Serum nutritivo">
-                <!-- ELIMINADO: nombre debajo de la imagen -->
-            </div>
-            <div class="producto-item">
-                <img src="imagen/imagen14.jpg" alt="Kit completo de cuidado">
-                <!-- ELIMINADO: nombre debajo de la imagen -->
-            </div>
+        <div class="form-group">
+          <label>🎯 Servicios</label>
+          <div class="servicios-grid" id="servicios-grid">
+            <!-- Los servicios se cargarán dinámicamente -->
+          </div>
         </div>
-    </div>
-</div>
 
-<!-- CITAS INTELIGENTES -->
-<div class="pantalla-interna" id="portal-citas">
-    <span class="cerrar" onclick="cerrarPortal('portal-citas')" aria-label="Cerrar formulario de citas">×</span>
-    <!-- Fondo estático - ÚLTIMO FONDO -->
-    <img src="imagen/fondo18.jpg" alt="Fondo estático" class="fondo-estatico">
-    <div class="portal-content">
-        <div class="citas-formulario">
-            <h2>Reserva tu Cita - Sistema Inteligente</h2>
-            <div class="mensaje-exito" id="mensaje-exito">¡Cita reservada con éxito! Te contactaremos pronto.</div>
-            <div class="mensaje-error" id="mensaje-error">Por favor, completa todos los campos requeridos.</div>
-            
-            <!-- Mensaje cuando las citas están cerradas -->
-            <div class="mensaje-advertencia" id="mensaje-citas-cerradas" style="display: none;">
-                <h3>❌ Citas Temporalmente Cerradas</h3>
-                <p>El sistema de citas está temporalmente deshabilitado. Por favor, intenta más tarde o contacta directamente con el salón.</p>
-                <p><strong>Estado:</strong> <span id="estado-citas-texto">Cerrado hasta nuevo aviso</span></p>
-            </div>
-            
-            <div class="mensaje-info" id="mensaje-info">
-                💡 Selecciona uno o varios servicios. El sistema calculará automáticamente el tiempo total y mostrará los horarios disponibles.
-            </div>
-            
-            <form id="form-cita">
-                <div class="form-group">
-                    <label for="nombre" class="required">Nombre completo</label>
-                    <input type="text" id="nombre" name="nombre" required>
-                </div>
-                <div class="form-group">
-                    <label for="telefono" class="required">Teléfono</label>
-                    <input type="tel" id="telefono" name="telefono" 
-                           placeholder="Ej: 1234567890, 123-456-7890, (123) 456-7890"
-                           title="Puedes usar cualquier formato de teléfono" required>
-                    <small style="color: #666; font-size: 12px; margin-top: 5px; display: block;">
-                        ✅ Acepta cualquier formato: 1234567890, 123-456-7890, (123) 456-7890, etc.
-                    </small>
-                </div>
-                
-                <!-- SERVICIOS MÚLTIPLES CON CHECKBOXES -->
-                <div class="form-group">
-                    <label class="required">Servicios deseados</label>
-                    <div class="servicios-grid" id="servicios-grid">
-                        <!-- Los servicios se generan dinámicamente -->
-                    </div>
-                </div>
-                
-                <!-- RESUMEN DE SERVICIOS SELECCIONADOS -->
-                <div class="resumen-servicios" id="resumen-servicios" style="display: none;">
-                    <h4>📋 Resumen de Servicios Seleccionados</h4>
-                    <ul id="lista-servicios-seleccionados"></ul>
-                    <div id="total-duracion">Duración total: 0 minutos</div>
-                    <div id="total-precio">Precio total: $0</div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="fecha" class="required">Fecha preferida</label>
-                    <input type="date" id="fecha" name="fecha" required onchange="calcularHorariosDisponibles()">
-                </div>
-                
-                <!-- Horarios disponibles calculados por IA -->
-                <div class="horarios-disponibles" id="horarios-disponibles" style="display: none;">
-                    <h3>🕒 Horarios Disponibles</h3>
-                    <p id="info-horarios">Selecciona servicios y fecha para ver horarios disponibles</p>
-                    <div class="horarios-grid" id="horarios-grid">
-                        <!-- Los horarios se generan dinámicamente -->
-                    </div>
-                </div>
-                
-                <input type="hidden" id="hora-seleccionada" name="hora-seleccionada">
-                <input type="hidden" id="servicios-seleccionados" name="servicios-seleccionados">
-                <input type="hidden" id="duracion-total" name="duracion-total">
-                <input type="hidden" id="precio-total" name="precio-total">
-                
-                <div class="form-group">
-                    <label for="mensaje">Mensaje adicional</label>
-                    <textarea id="mensaje" name="mensaje" placeholder="Información adicional que quieras compartir..."></textarea>
-                </div>
-                <button type="submit" class="btn-enviar" id="btn-reservar" disabled>Reservar Cita</button>
-            </form>
+        <div id="resumen-servicios" style="display:none; margin-bottom:10px; color:#ddd; background:rgba(255,255,255,0.02); padding:10px; border-radius:8px;">
+          <h4 style="color:var(--primary-glow)">📋 Resumen</h4>
+          <ul id="lista-servicios-seleccionados"></ul>
+          <div id="total-duracion">⏱️ Duración total: 0 minutos</div>
+          <div id="total-precio">💰 Precio total: $0</div>
         </div>
-    </div>
-</div>
 
-<!-- PORTAL ADMINISTRACIÓN MEJORADO -->
-<div class="pantalla-interna" id="portal-admin">
-    <span class="cerrar" onclick="cerrarPortal('portal-admin')" aria-label="Cerrar admin">×</span>
-    <!-- Fondo estático - ÚLTIMO FONDO -->
-    <img src="imagen/fondo18.jpg" alt="Fondo estático" class="fondo-estatico">
-    <div class="portal-content">
-        <div class="admin-panel">
-            <!-- Login -->
-            <div id="admin-login">
-                <h2>🔐 Acceso Administrativo</h2>
-                <div class="form-group">
-                    <label for="admin-password">Contraseña</label>
-                    <input type="password" id="admin-password" placeholder="Ingresa la contraseña">
-                </div>
-                <button class="btn-enviar" onclick="verificarAdmin()">Ingresar</button>
-            </div>
-            
-            <!-- Panel Admin Mejorado -->
-            <div id="admin-panel" style="display: none;">
-                <h2>👑 Panel de Administración - Yenny Hair Salón</h2>
-                
-                <!-- Controles -->
-                <div class="controles-admin">
-                    <button id="toggle-citas" class="btn-admin abierto" onclick="toggleSistemaCitas()">
-                        ✅ Sistema de Citas ABIERTO GLOBALMENTE
-                    </button>
-                    <button class="btn-admin" onclick="exportarDatos()">
-                        📊 Exportar Datos
-                    </button>
-                    <button class="btn-admin" onclick="actualizarPanelAdmin()">
-                        🔄 Actualizar
-                    </button>
-                </div>
-                
-                <!-- Estado del sistema - ACTUALIZADO PARA MOSTRAR GLOBAL -->
-                <div class="mensaje-info" id="estado-sistema">
-                    El sistema de citas está actualmente <strong>ABIERTO GLOBALMENTE</strong> - Los clientes pueden agendar citas desde cualquier dispositivo
-                </div>
-                
-                <!-- Estadísticas principales -->
-                <div class="estadisticas-grid">
-                    <div class="estadistica-card">
-                        <h3>CITAS SEMANALES</h3>
-                        <div class="numero" id="total-citas-semana">0</div>
-                    </div>
-                    <div class="estadistica-card servicios">
-                        <h3>SERVICIOS POPULARES</h3>
-                        <div class="numero" id="servicio-popular">-</div>
-                    </div>
-                    <div class="estadistica-card ingresos">
-                        <h3>INGRESOS ESTIMADOS</h3>
-                        <div class="numero" id="ingresos-totales">$0</div>
-                    </div>
-                    <div class="estadistica-card clientes">
-                        <h3>CLIENTES NUEVOS</h3>
-                        <div class="numero" id="clientes-nuevos">0</div>
-                    </div>
-                </div>
-                
-                <!-- Gráfico de servicios -->
-                <div class="grafico-servicios">
-                    <h3>📈 Distribución de Servicios Esta Semana</h3>
-                    <div id="grafico-barras">
-                        <!-- Se genera dinámicamente -->
-                    </div>
-                </div>
-                
-                <!-- Lista de citas de la semana -->
-                <div class="lista-citas">
-                    <h3>📅 Citas de la Semana</h3>
-                    <div id="lista-citas-semana">
-                        <!-- Las citas se cargan dinámicamente -->
-                    </div>
-                </div>
-            </div>
+        <div class="form-group">
+          <label for="fecha">📅 Fecha preferida</label>
+          <input id="fecha" type="date" onchange="calcularHorariosDisponibles()">
         </div>
+
+        <!-- HORARIOS DISPONIBLES - AHORA DEBAJO DE LA FECHA -->
+        <div class="horarios-disponibles" id="horarios-disponibles" style="display:none;">
+          <h3>🕒 Horarios Disponibles</h3>
+          <p id="info-horarios" style="color:#bbb">Selecciona un horario para tu cita</p>
+          <div class="horarios-grid" id="horarios-grid"></div>
+        </div>
+
+        <input type="hidden" id="hora-seleccionada" name="hora-seleccionada">
+        <input type="hidden" id="servicios-seleccionados" name="servicios-seleccionados">
+        <input type="hidden" id="duracion-total" name="duracion-total">
+        <input type="hidden" id="precio-total" name="precio-total">
+
+        <button class="btn-enviar" id="btn-reservar" disabled type="submit">✨ Confirmar Cita</button>
+      </form>
     </div>
+  </div>
 </div>
 
-<!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox">
-    <span class="close-lightbox" id="close-lightbox">×</span>
-    <button id="prev" aria-label="Imagen anterior">&#10094;</button>
-    <div class="lightbox-content">
-        <img src="" alt="Imagen ampliada" id="lightbox-img">
-        <div class="lightbox-caption" id="lightbox-caption"></div>
+<!-- PORTAL: ADMIN MEJORADO -->
+<div class="pantalla-interna" id="portal-admin" aria-hidden="true">
+  <span class="cerrar" data-close="portal-admin">×</span>
+  <div class="portal-content">
+    <h2>👑 Panel Admin</h2>
+    <p style="color:#bbb">Panel de administración del sistema de citas</p>
+    
+    <div class="admin-controls">
+      <button class="admin-control-btn abrir-sistema" id="btn-abrir-sistema">✅ Abrir Sistema de Citas</button>
+      <button class="admin-control-btn cerrar-sistema" id="btn-cerrar-sistema">❌ Cerrar Sistema de Citas</button>
+      <button class="admin-control-btn" id="btn-actualizar">🔄 Actualizar Lista</button>
     </div>
-    <button id="next" aria-label="Imagen siguiente">&#10095;</button>
+    
+    <div id="estado-sistema" style="margin-bottom: 20px; padding: 15px; border-radius: 10px; background: rgba(255,255,255,0.03);">
+      <h3>Estado del Sistema: <span id="texto-estado">Cargando...</span></h3>
+      <p id="ultima-actualizacion" style="color:#bbb; font-size: 0.9em;">Última actualización: -</p>
+    </div>
+    
+    <h3>📋 Lista de Citas</h3>
+    <div id="admin-list" style="color:#ddd"></div>
+  </div>
 </div>
+
+<!-- MODAL DE CONTRASEÑA -->
+<div class="password-modal" id="password-modal">
+  <div class="password-content">
+    <h2 style="text-align: center; margin-bottom: 20px;">🔐 Acceso Administrativo</h2>
+    <p style="color:#bbb; text-align: center; margin-bottom: 15px;">Ingresa la contraseña para acceder al panel de administración</p>
+    <input type="password" class="password-input" id="admin-password" placeholder="****" maxlength="4">
+    <div style="display: flex; gap: 10px;">
+      <button class="btn-enviar" id="btn-verificar-password" style="flex: 1;">Verificar</button>
+      <button class="admin-control-btn" id="btn-cancelar-password" style="flex: 1;">Cancelar</button>
+    </div>
+    <p id="mensaje-error" style="color: #ff6666; text-align: center; margin-top: 10px; display: none;">❌ Contraseña incorrecta</p>
+  </div>
+</div>
+
+<!-- SISTEMA MODERNO DE VISUALIZACIÓN DE IMÁGENES -->
+<div class="gallery-modal" id="gallery-modal">
+  <div class="gallery-container">
+    <button class="gallery-close" id="gallery-close">×</button>
+    <div class="gallery-counter" id="gallery-counter">1 / 8</div>
+    
+    <div class="gallery-slides" id="gallery-slides">
+      <!-- Las diapositivas se generarán dinámicamente -->
+    </div>
+    
+    <div class="gallery-nav">
+      <button class="gallery-prev" id="gallery-prev">‹</button>
+      <button class="gallery-next" id="gallery-next">›</button>
+    </div>
+    
+    <div class="gallery-thumbnails" id="gallery-thumbnails">
+      <!-- Las miniaturas se generarán dinámicamente -->
+    </div>
+  </div>
+</div>
+
+<!-- IMAGEN FLOTA DECORATIVA -->
+<img src="imagen/pantalla17.png" class="imagen-flotante" alt="" onerror="this.style.display='none'">
 
 <script>
-// ---------- SISTEMA DE SINCRONIZACIÓN GLOBAL MEJORADO ----------
-let sistemaCitasAbierto = true;
+/* ------------------- USUARIO: datos y servicios ------------------- */
+let sistemaCitasAbierto = JSON.parse(localStorage.getItem('sistemaCitasAbierto')) !== false; // Por defecto abierto
+let citas = JSON.parse(localStorage.getItem('citasYenny')) || [];
+let intervaloActualizacion = null;
+const CONTRASENA_ADMIN = "1994";
 
-// ---------- NUEVO: LISTA COMPLETA DE SERVICIOS CON PRECIOS Y DURACIONES ----------
+/* Variables para la galería moderna */
+let galeriaActual = [];
+let indiceImagenActual = 0;
+let inicioX = 0;
+let movimientoX = 0;
+
+/* Horario */
+const horarioLaboral = { inicio:'09:00', fin:'18:00', intervalo:30 };
+
+/* Servicios actualizados con los nuevos precios */
 const serviciosCompletos = [
-    { id: 'lavado-normal', nombre: 'Lavado y secado normal', duracion: 60, precio: 55 },
-    { id: 'lavado-linea', nombre: 'Lavado con línea', duracion: 60, precio: 70 },
-    { id: 'lavado-rolos', nombre: 'Lavado con Rolos', duracion: 60, precio: 75 },
-    { id: 'botox', nombre: 'Botox', duracion: 60, precio: 150 },
-    { id: 'microsring', nombre: 'Microsring', duracion: 120, precio: 200 },
-    { id: 'extensiones-linea', nombre: 'Extensiones x línea', duracion: 60, precio: 20 },
-    { id: 'lavado-solo', nombre: 'Lavado solo', duracion: 15, precio: 10 },
-    { id: 'ampollas', nombre: 'Ampollas', duracion: 10, precio: 8 },
-    { id: 'crema-tratamiento', nombre: 'Crema tratamiento', duracion: 15, precio: 35 },
-    { id: 'gotero-anticipada', nombre: 'Gotero anti caída', duracion: 10, precio: 40 },
-    { id: 'shampoo', nombre: 'Shampoo', duracion: 10, precio: 20 },
-    { id: 'keratina', nombre: 'Keratina', duracion: 120, precio: 200 },
-    { id: 'color', nombre: 'Color - Pintado', duracion: 90, precio: 120 },
-    { id: 'extensiones-completas', nombre: 'Extensiones completas', duracion: 90, precio: 200 },
-    { id: 'trensas', nombre: 'Trensas', duracion: 60, precio: 70 }
+  {id:'lavado-normal', nombre:'Lavado normal', duracion:60, precio:55},
+  {id:'lavado-linea', nombre:'Lavado con línea', duracion:60, precio:70},
+  {id:'lavado-rolos', nombre:'Lavado con rolos', duracion:90, precio:75},
+  {id:'color', nombre:'Color', duracion:120, precio:120},
+  {id:'botox', nombre:'Botox', duracion:120, precio:150},
+  {id:'keratina', nombre:'Keratina', duracion:120, precio:200},
+  {id:'microsring', nombre:'Microsring', duracion:120, precio:200},
+  {id:'extensiones-linea', nombre:'Extensiones x línea', duracion:25, precio:20},
+  {id:'extensiones-completas', nombre:'Extensiones completas', duracion:130, precio:200},
+  {id:'lavado-solo', nombre:'Lavado solo', duracion:20, precio:10},
+  {id:'ampollas', nombre:'Ampollas', duracion:0, precio:8},
+  {id:'crema-tratamiento', nombre:'Crema tratamiento', duracion:0, precio:35},
+  {id:'gotero-anticaida', nombre:'Gotero anticaída', duracion:0, precio:40},
+  {id:'shampoo', nombre:'Shampoo', duracion:0, precio:20}
 ];
 
-// Función MEJORADA para cargar el estado global con sincronización
-function cargarEstadoGlobal() {
-    // Intentar cargar del localStorage local
-    const estadoLocal = localStorage.getItem('sistemaCitasAbierto');
-    
-    // SIEMPRE usar el estado local como fuente principal
-    if (estadoLocal !== null) {
-        sistemaCitasAbierto = JSON.parse(estadoLocal);
-        console.log('✅ Estado cargado desde almacenamiento local:', sistemaCitasAbierto);
-    }
-    
-    // Forzar actualización visual inmediata
-    actualizarEstadoBotonCitas();
-    
-    // Si el panel admin está visible, actualizarlo también
-    if (document.getElementById('admin-panel') && document.getElementById('admin-panel').style.display !== 'none') {
-        actualizarPanelAdmin();
-    }
-}
-
-// Función MEJORADA para guardar el estado global
-function guardarEstadoGlobal() {
-    const timestamp = Date.now();
-    
-    // Guardar en localStorage local (PRINCIPAL)
-    localStorage.setItem('sistemaCitasAbierto', sistemaCitasAbierto);
-    localStorage.setItem('sistemaCitasTimestamp', timestamp.toString());
-    
-    // También guardar como estado global para sincronización entre pestañas
-    localStorage.setItem('sistemaCitasGlobal', sistemaCitasAbierto);
-    localStorage.setItem('sistemaCitasGlobalTimestamp', timestamp.toString());
-    
-    console.log('💾 Estado guardado:', sistemaCitasAbierto, 'Timestamp:', timestamp);
-    
-    // Actualización visual inmediata
-    actualizarEstadoBotonCitas();
-    
-    // Si el panel admin está visible, actualizarlo también
-    if (document.getElementById('admin-panel') && document.getElementById('admin-panel').style.display !== 'none') {
-        actualizarPanelAdmin();
-    }
-}
-
-// Función para sincronizar entre pestañas del MISMO dispositivo
-function configurarSincronizacionPestañas() {
-    window.addEventListener('storage', function(e) {
-        if (e.key === 'sistemaCitasGlobal') {
-            console.log('🔄 Cambio detectado en otra pestaña, sincronizando...');
-            
-            // Cargar el nuevo estado global
-            const nuevoEstado = localStorage.getItem('sistemaCitasGlobal');
-            if (nuevoEstado !== null) {
-                sistemaCitasAbierto = JSON.parse(nuevoEstado);
-                console.log('✅ Estado sincronizado desde otra pestaña:', sistemaCitasAbierto);
-                
-                // Actualizar interfaz inmediatamente
-                actualizarEstadoBotonCitas();
-                
-                // Actualizar panel admin si está abierto
-                if (document.getElementById('admin-panel') && document.getElementById('admin-panel').style.display !== 'none') {
-                    actualizarPanelAdmin();
-                }
-            }
-        }
-    });
-}
-
-// Función MEJORADA para verificar sincronización
-function verificarSincronizacion() {
-    const estadoGlobal = localStorage.getItem('sistemaCitasGlobal');
-    const timestampGlobal = localStorage.getItem('sistemaCitasGlobalTimestamp');
-    
-    if (estadoGlobal && timestampGlobal) {
-        const tiempoGuardado = parseInt(timestampGlobal);
-        const tiempoActual = Date.now();
-        const diferenciaHoras = (tiempoActual - tiempoGuardado) / (1000 * 60 * 60);
-        
-        // Si el estado tiene más de 24 horas, resetear a abierto por seguridad
-        if (diferenciaHoras > 24) {
-            console.warn('🔄 Estado muy antiguo, reseteando a ABIERTO por seguridad');
-            sistemaCitasAbierto = true;
-            guardarEstadoGlobal();
-        }
-    }
-}
-
-// ---------- INICIALIZACIÓN MEJORADA ----------
-document.addEventListener('DOMContentLoaded', function() {
-    // Establecer fecha mínima como hoy
-    const fechaInput = document.getElementById('fecha');
-    if (fechaInput) {
-        fechaInput.min = new Date().toISOString().split('T')[0];
-    }
-    
-    // Cargar estado global
-    cargarEstadoGlobal();
-    
-    // Configurar sincronización entre pestañas
-    configurarSincronizacionPestañas();
-    
-    // Verificar sincronización y estado antiguo
-    verificarSincronizacion();
-    
-    // Inicializar servicios en el formulario de citas
-    inicializarServicios();
-    
-    console.log('🌐 Sistema de citas cargado. Estado:', sistemaCitasAbierto);
-    
-    // Sincronización cada 10 segundos para mantener consistencia
-    setInterval(() => {
-        cargarEstadoGlobal();
-    }, 10000);
+/* ------------------- INIT ------------------- */
+document.addEventListener('DOMContentLoaded', ()=> {
+  configurarMenu();
+  cargarPortadasFallback();
+  inicializarServicios();
+  inicializarGaleriaClicks();
+  inicializarPortalesCerrar();
+  inicializarFechaMin();
+  actualizarEstadoBotonCitas();
+  actualizarVistaCitas();
+  cargarListaPrecios();
+  inicializarPanelAdmin();
+  iniciarActualizacionAutomatica();
+  inicializarGaleriaModerno();
 });
 
-// ---------- NUEVO: INICIALIZAR SERVICIOS EN EL FORMULARIO ----------
-function inicializarServicios() {
-    const serviciosGrid = document.getElementById('servicios-grid');
+/* ------------------- SISTEMA MODERNO DE GALERÍA ------------------- */
+function inicializarGaleriaModerno() {
+  // Configurar eventos para la galería moderna
+  document.getElementById('gallery-close').addEventListener('click', cerrarGaleriaModerno);
+  document.getElementById('gallery-prev').addEventListener('click', galeriaAnterior);
+  document.getElementById('gallery-next').addEventListener('click', galeriaSiguiente);
+  
+  // Eventos táctiles para deslizar
+  const slides = document.getElementById('gallery-slides');
+  
+  slides.addEventListener('touchstart', (e) => {
+    inicioX = e.touches[0].clientX;
+    movimientoX = 0;
+  });
+  
+  slides.addEventListener('touchmove', (e) => {
+    movimientoX = e.touches[0].clientX - inicioX;
+  });
+  
+  slides.addEventListener('touchend', () => {
+    const umbral = 50; // Mínimo desplazamiento para cambiar de imagen
     
-    serviciosCompletos.forEach(servicio => {
-        const servicioDiv = document.createElement('div');
-        servicioDiv.className = 'servicio-checkbox';
-        servicioDiv.innerHTML = `
-            <input type="checkbox" id="servicio-${servicio.id}" name="servicios" value="${servicio.id}" 
-                   data-duracion="${servicio.duracion}" data-precio="${servicio.precio}" 
-                   onchange="actualizarResumenServicios()">
-            <div class="servicio-info">
-                <div class="servicio-nombre">${servicio.nombre}</div>
-                <div class="servicio-detalles">
-                    <span class="servicio-duracion">⏱️ ${servicio.duracion} min</span>
-                    <span class="servicio-precio">💰 $${servicio.precio}</span>
-                </div>
-            </div>
-        `;
-        serviciosGrid.appendChild(servicioDiv);
-    });
+    if (movimientoX > umbral) {
+      galeriaAnterior();
+    } else if (movimientoX < -umbral) {
+      galeriaSiguiente();
+    }
+    
+    inicioX = 0;
+    movimientoX = 0;
+  });
+  
+  // Eventos de teclado
+  document.addEventListener('keydown', (e) => {
+    if (document.getElementById('gallery-modal').style.display === 'flex') {
+      if (e.key === 'ArrowLeft') {
+        galeriaAnterior();
+      } else if (e.key === 'ArrowRight') {
+        galeriaSiguiente();
+      } else if (e.key === 'Escape') {
+        cerrarGaleriaModerno();
+      }
+    }
+  });
 }
 
-// ---------- NUEVO: ACTUALIZAR RESUMEN DE SERVICIOS SELECCIONADOS ----------
-function actualizarResumenServicios() {
-    const checkboxes = document.querySelectorAll('input[name="servicios"]:checked');
-    const listaServicios = document.getElementById('lista-servicios-seleccionados');
-    const resumenDiv = document.getElementById('resumen-servicios');
-    const totalDuracion = document.getElementById('total-duracion');
-    const totalPrecio = document.getElementById('total-precio');
-    const serviciosSeleccionadosInput = document.getElementById('servicios-seleccionados');
-    const duracionTotalInput = document.getElementById('duracion-total');
-    const precioTotalInput = document.getElementById('precio-total');
+function abrirGaleriaModerno(imagenes, indiceInicial) {
+  galeriaActual = imagenes;
+  indiceImagenActual = indiceInicial;
+  
+  const modal = document.getElementById('gallery-modal');
+  const slides = document.getElementById('gallery-slides');
+  const thumbnails = document.getElementById('gallery-thumbnails');
+  
+  // Limpiar contenido anterior
+  slides.innerHTML = '';
+  thumbnails.innerHTML = '';
+  
+  // Crear diapositivas
+  imagenes.forEach((imagen, index) => {
+    const slide = document.createElement('div');
+    slide.className = 'gallery-slide';
     
-    let duracionTotal = 0;
-    let precioTotal = 0;
-    let serviciosNombres = [];
+    const img = document.createElement('img');
+    img.src = imagen.src;
+    img.alt = imagen.alt;
     
-    listaServicios.innerHTML = '';
+    slide.appendChild(img);
+    slides.appendChild(slide);
     
-    checkboxes.forEach(checkbox => {
-        const servicioId = checkbox.value;
-        const servicio = serviciosCompletos.find(s => s.id === servicioId);
-        
-        if (servicio) {
-            duracionTotal += servicio.duracion;
-            precioTotal += servicio.precio;
-            serviciosNombres.push(servicio.nombre);
-            
-            const li = document.createElement('li');
-            li.innerHTML = `
-                <span>${servicio.nombre}</span>
-                <span>⏱️${servicio.duracion}min - 💰$${servicio.precio}</span>
-            `;
-            listaServicios.appendChild(li);
-        }
+    // Crear miniaturas
+    const thumb = document.createElement('div');
+    thumb.className = 'gallery-thumb';
+    if (index === indiceInicial) {
+      thumb.classList.add('active');
+    }
+    
+    const thumbImg = document.createElement('img');
+    thumbImg.src = imagen.src;
+    thumbImg.alt = imagen.alt;
+    
+    thumb.appendChild(thumbImg);
+    thumb.addEventListener('click', () => {
+      cambiarImagenGaleria(index);
     });
     
-    if (checkboxes.length > 0) {
-        resumenDiv.style.display = 'block';
-        totalDuracion.textContent = `Duración total: ${duracionTotal} minutos`;
-        totalPrecio.textContent = `Precio total: $${precioTotal}`;
-        
-        // Actualizar campos ocultos
-        serviciosSeleccionadosInput.value = JSON.stringify(serviciosNombres);
-        duracionTotalInput.value = duracionTotal;
-        precioTotalInput.value = precioTotal;
-        
-        // Recalcular horarios disponibles si hay fecha seleccionada
-        const fecha = document.getElementById('fecha').value;
-        if (fecha) {
-            calcularHorariosDisponibles();
-        }
+    thumbnails.appendChild(thumb);
+  });
+  
+  // Mostrar modal
+  modal.style.display = 'flex';
+  
+  // Actualizar contador
+  actualizarContadorGaleria();
+  
+  // Posicionar en la imagen correcta
+  slides.style.transform = `translateX(-${indiceImagenActual * 100}%)`;
+}
+
+function cerrarGaleriaModerno() {
+  document.getElementById('gallery-modal').style.display = 'none';
+  galeriaActual = [];
+}
+
+function galeriaAnterior() {
+  if (indiceImagenActual > 0) {
+    cambiarImagenGaleria(indiceImagenActual - 1);
+  } else {
+    // Si estamos en la primera imagen, ir a la última
+    cambiarImagenGaleria(galeriaActual.length - 1);
+  }
+}
+
+function galeriaSiguiente() {
+  if (indiceImagenActual < galeriaActual.length - 1) {
+    cambiarImagenGaleria(indiceImagenActual + 1);
+  } else {
+    // Si estamos en la última imagen, ir a la primera
+    cambiarImagenGaleria(0);
+  }
+}
+
+function cambiarImagenGaleria(nuevoIndice) {
+  indiceImagenActual = nuevoIndice;
+  
+  const slides = document.getElementById('gallery-slides');
+  const thumbnails = document.getElementById('gallery-thumbnails').children;
+  
+  // Mover diapositivas
+  slides.style.transform = `translateX(-${indiceImagenActual * 100}%)`;
+  
+  // Actualizar miniaturas activas
+  for (let i = 0; i < thumbnails.length; i++) {
+    if (i === indiceImagenActual) {
+      thumbnails[i].classList.add('active');
     } else {
-        resumenDiv.style.display = 'none';
-        serviciosSeleccionadosInput.value = '';
-        duracionTotalInput.value = '';
-        precioTotalInput.value = '';
-        
-        // Ocultar horarios disponibles
-        document.getElementById('horarios-disponibles').style.display = 'none';
-        document.getElementById('btn-reservar').disabled = true;
+      thumbnails[i].classList.remove('active');
     }
+  }
+  
+  // Actualizar contador
+  actualizarContadorGaleria();
 }
 
-// ---------- ACTUALIZAR ESTADO BOTÓN CITAS MEJORADO ----------
-function actualizarEstadoBotonCitas() {
-    const btnCitas = document.getElementById('btn-citas');
-    if (!btnCitas) return;
-    
-    if (!sistemaCitasAbierto) {
-        btnCitas.textContent = '❌ Citas Cerradas';
-        btnCitas.classList.add('citas-cerradas');
-        btnCitas.onclick = function() {
-            abrirPortal('portal-citas');
-            setTimeout(() => {
-                mostrarMensajeCitasCerradas();
-            }, 100);
-        };
-    } else {
-        btnCitas.textContent = 'Citas';
-        btnCitas.classList.remove('citas-cerradas');
-        btnCitas.onclick = function() {
-            abrirPortal('portal-citas');
-        };
-    }
-    
-    console.log('🔘 Botón citas actualizado:', sistemaCitasAbierto);
+function actualizarContadorGaleria() {
+  const counter = document.getElementById('gallery-counter');
+  counter.textContent = `${indiceImagenActual + 1} / ${galeriaActual.length}`;
 }
 
-// ---------- MOSTRAR MENSAJE CITAS CERRADAS ----------
-function mostrarMensajeCitasCerradas() {
-    const mensajeCitasCerradas = document.getElementById('mensaje-citas-cerradas');
-    const mensajeInfo = document.getElementById('mensaje-info');
-    const formCita = document.getElementById('form-cita');
-    const estadoCitasTexto = document.getElementById('estado-citas-texto');
-    
-    if (mensajeCitasCerradas && mensajeInfo && formCita) {
-        mensajeCitasCerradas.style.display = 'block';
-        mensajeInfo.style.display = 'none';
-        formCita.style.display = 'none';
-        
-        // Actualizar texto del estado
-        if (estadoCitasTexto) {
-            estadoCitasTexto.textContent = 'Cerrado hasta nuevo aviso';
-        }
+/* ------------------- PANEL ADMIN MEJORADO ------------------- */
+function inicializarPanelAdmin() {
+  // Configurar botones del panel admin
+  document.getElementById('btn-abrir-sistema').addEventListener('click', () => {
+    abrirCerrarSistema(true);
+  });
+  
+  document.getElementById('btn-cerrar-sistema').addEventListener('click', () => {
+    abrirCerrarSistema(false);
+  });
+  
+  document.getElementById('btn-actualizar').addEventListener('click', () => {
+    renderAdminList();
+    actualizarEstadoSistema();
+  });
+  
+  // Configurar modal de contraseña
+  document.getElementById('btn-admin').addEventListener('click', mostrarModalPassword);
+  document.getElementById('btn-verificar-password').addEventListener('click', verificarPassword);
+  document.getElementById('btn-cancelar-password').addEventListener('click', cerrarModalPassword);
+  document.getElementById('admin-password').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      verificarPassword();
     }
+  });
+  
+  // Actualizar estado inicial del sistema
+  actualizarEstadoSistema();
+  renderAdminList();
 }
 
-// ---------- TOGGLE SISTEMA CITAS MEJORADO CON SINCRONIZACIÓN ----------
-function toggleSistemaCitas() {
-    // Cambiar estado
-    sistemaCitasAbierto = !sistemaCitasAbierto;
-    
-    // Guardar estado MEJORADO - se sincroniza automáticamente
-    guardarEstadoGlobal();
-    
-    // Mostrar mensaje de confirmación MEJORADO
-    const estado = sistemaCitasAbierto ? 'ABIERTO' : 'CERRADO';
-    const mensaje = sistemaCitasAbierto 
-        ? '✅ Sistema de citas ABIERTO\n\nLos clientes pueden agendar citas desde cualquier dispositivo.'
-        : '❌ Sistema de citas CERRADO\n\nLos clientes NO pueden agendar citas desde ningún dispositivo.';
-    
-    alert(mensaje);
-    
-    console.log('🔄 Estado cambiado:', sistemaCitasAbierto);
-    
-    // Forzar actualización visual inmediata en TODOS los elementos
-    actualizarEstadoBotonCitas();
-    
-    // Si estamos en el portal de citas, actualizar la vista
-    if (document.getElementById('portal-citas').style.display === 'block') {
-        if (!sistemaCitasAbierto) {
-            mostrarMensajeCitasCerradas();
-        } else {
-            // Restaurar vista normal de citas
-            const mensajeCitasCerradas = document.getElementById('mensaje-citas-cerradas');
-            const mensajeInfo = document.getElementById('mensaje-info');
-            const formCita = document.getElementById('form-cita');
-            
-            if (mensajeCitasCerradas) {
-                mensajeCitasCerradas.style.display = 'none';
-                mensajeInfo.style.display = 'block';
-                formCita.style.display = 'block';
-            }
-        }
-    }
+function mostrarModalPassword() {
+  document.getElementById('password-modal').style.display = 'flex';
+  document.getElementById('admin-password').focus();
+  document.getElementById('mensaje-error').style.display = 'none';
 }
 
-// ---------- VARIABLES GLOBALES ----------
-let citas = JSON.parse(localStorage.getItem('citasYenny')) || [];
-let horarioLaboral = {
-    inicio: '09:00',
-    fin: '18:00',
-    totalMinutos: 540
-};
-
-// ---------- SISTEMA INTELIGENTE DE CITAS MEJORADO ----------
-function calcularHorariosDisponibles() {
-    if (!sistemaCitasAbierto) return;
-    
-    const fechaInput = document.getElementById('fecha');
-    const horariosDiv = document.getElementById('horarios-disponibles');
-    const horariosGrid = document.getElementById('horarios-grid');
-    const infoHorarios = document.getElementById('info-horarios');
-    const duracionTotalInput = document.getElementById('duracion-total');
-    
-    const fecha = fechaInput.value;
-    const duracionTotal = parseInt(duracionTotalInput.value) || 0;
-    
-    if (!fecha || duracionTotal === 0) {
-        if (horariosDiv) horariosDiv.style.display = 'none';
-        document.getElementById('btn-reservar').disabled = true;
-        return;
-    }
-    
-    const citasDelDia = citas.filter(cita => cita.fecha === fecha);
-    
-    // Generar horarios disponibles
-    const horariosDisponibles = generarHorariosDisponibles(citasDelDia, duracionTotal, fecha);
-    
-    if (horariosDisponibles.length === 0) {
-        infoHorarios.innerHTML = '❌ No hay horarios disponibles para esta fecha. Por favor selecciona otra fecha.';
-        horariosGrid.innerHTML = '';
-        horariosDiv.style.display = 'block';
-        document.getElementById('btn-reservar').disabled = true;
-        return;
-    }
-    
-    infoHorarios.innerHTML = `✅ <strong>${horariosDisponibles.length} horarios disponibles</strong> para ${duracionTotal} minutos de servicios`;
-    
-    // Mostrar horarios en grid
-    horariosGrid.innerHTML = '';
-    horariosDisponibles.forEach(horario => {
-        const botonHorario = document.createElement('button');
-        botonHorario.type = 'button';
-        botonHorario.className = 'horario-btn';
-        botonHorario.textContent = horario.hora;
-        botonHorario.onclick = () => seleccionarHorario(horario.hora, botonHorario);
-        
-        // Marcar horarios pasados como no disponibles
-        if (horario.esPasado) {
-            botonHorario.classList.add('pasado');
-            botonHorario.disabled = true;
-            botonHorario.title = 'Este horario ya pasó';
-        }
-        
-        horariosGrid.appendChild(botonHorario);
-    });
-    
-    horariosDiv.style.display = 'block';
+function cerrarModalPassword() {
+  document.getElementById('password-modal').style.display = 'none';
+  document.getElementById('admin-password').value = '';
 }
 
-function generarHorariosDisponibles(citasDelDia, duracionTotal, fechaSeleccionada) {
-    const horariosDisponibles = [];
-    const intervalo = 30; // Intervalo de 30 minutos
-    
-    // Convertir horario laboral a minutos
-    const inicioMinutos = tiempoAMinutos(horarioLaboral.inicio);
-    const finMinutos = tiempoAMinutos(horarioLaboral.fin);
-    
-    // Verificar si la fecha seleccionada es hoy
-    const hoy = new Date().toISOString().split('T')[0];
-    const esHoy = fechaSeleccionada === hoy;
-    const ahora = new Date();
-    const minutosActuales = esHoy ? (ahora.getHours() * 60 + ahora.getMinutes()) : 0;
-    
-    // Crear array de bloques ocupados
-    const bloquesOcupados = [];
-    citasDelDia.forEach(cita => {
-        const inicioCita = tiempoAMinutos(cita.hora);
-        const finCita = inicioCita + cita.duracionTotal;
-        for (let minuto = inicioCita; minuto < finCita; minuto += intervalo) {
-            bloquesOcupados.push(minuto);
-        }
-    });
-    
-    // Generar horarios disponibles
-    for (let minuto = inicioMinutos; minuto <= finMinutos - duracionTotal; minuto += intervalo) {
-        // Verificar si el horario ya pasó (solo para hoy)
-        const esPasado = esHoy && minuto < minutosActuales;
-        
-        let disponible = true;
-        
-        // Verificar si el horario está disponible (solo si no es pasado)
-        if (!esPasado) {
-            for (let i = minuto; i < minuto + duracionTotal; i += intervalo) {
-                if (bloquesOcupados.includes(i)) {
-                    disponible = false;
-                    break;
-                }
-            }
-        }
-        
-        if (disponible && !esPasado) {
-            horariosDisponibles.push({
-                hora: minutosATiempo(minuto),
-                esPasado: false
-            });
-        } else if (disponible && esPasado) {
-            // Incluir horarios pasados pero marcarlos
-            horariosDisponibles.push({
-                hora: minutosATiempo(minuto),
-                esPasado: true
-            });
-        }
-    }
-    
-    return horariosDisponibles;
+function verificarPassword() {
+  const password = document.getElementById('admin-password').value;
+  if (password === CONTRASENA_ADMIN) {
+    cerrarModalPassword();
+    abrirPortal('portal-admin');
+    // Actualizar el estado activo del menú
+    document.querySelectorAll('.menu-flotante button').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-admin').classList.add('active');
+  } else {
+    document.getElementById('mensaje-error').style.display = 'block';
+    document.getElementById('admin-password').value = '';
+    document.getElementById('admin-password').focus();
+  }
 }
 
-function tiempoAMinutos(tiempo) {
-    const [horas, minutos] = tiempo.split(':').map(Number);
-    return horas * 60 + minutos;
+function abrirCerrarSistema(abrir) {
+  sistemaCitasAbierto = abrir;
+  localStorage.setItem('sistemaCitasAbierto', JSON.stringify(sistemaCitasAbierto));
+  actualizarEstadoSistema();
+  actualizarEstadoBotonCitas();
+  actualizarVistaCitas();
+  
+  // Mostrar mensaje de confirmación
+  const mensaje = abrir ? 
+    '✅ Sistema de citas ABIERTO. Los clientes pueden reservar citas.' :
+    '❌ Sistema de citas CERRADO. Los clientes NO pueden reservar citas.';
+  alert(mensaje);
 }
 
-function minutosATiempo(minutos) {
-    const horas = Math.floor(minutos / 60);
-    const mins = minutos % 60;
-    return `${horas.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+function actualizarEstadoSistema() {
+  const textoEstado = document.getElementById('texto-estado');
+  const estadoSistema = document.getElementById('estado-sistema');
+  
+  if (sistemaCitasAbierto) {
+    textoEstado.textContent = 'ABIERTO ✅';
+    textoEstado.style.color = '#66ff66';
+    estadoSistema.style.background = 'rgba(0,255,0,0.05)';
+    estadoSistema.style.border = '1px solid rgba(0,255,0,0.2)';
+  } else {
+    textoEstado.textContent = 'CERRADO ❌';
+    textoEstado.style.color = '#ff6666';
+    estadoSistema.style.background = 'rgba(255,0,0,0.05)';
+    estadoSistema.style.border = '1px solid rgba(255,0,0,0.2)';
+  }
+  
+  // Actualizar fecha y hora de última actualización
+  const ahora = new Date();
+  document.getElementById('ultima-actualizacion').textContent = 
+    `Última actualización: ${ahora.toLocaleDateString()} ${ahora.toLocaleTimeString()}`;
 }
 
-function seleccionarHorario(horario, elemento) {
-    // Quitar selección anterior
-    document.querySelectorAll('.horario-btn').forEach(btn => {
-        btn.classList.remove('seleccionado');
-    });
-    
-    // Seleccionar nuevo horario
-    elemento.classList.add('seleccionado');
-    document.getElementById('hora-seleccionada').value = horario;
-    document.getElementById('btn-reservar').disabled = false;
+function iniciarActualizacionAutomatica() {
+  // Actualizar cada 3 segundos
+  intervaloActualizacion = setInterval(() => {
+    // Verificar si el panel admin está abierto
+    if (document.getElementById('portal-admin').style.display === 'block') {
+      actualizarEstadoSistema();
+      renderAdminList();
+    }
+  }, 3000);
 }
 
-// ---------- VALIDACIÓN MEJORADA DEL TELÉFONO ----------
-function validarTelefono(telefono) {
-    // Eliminar espacios, guiones, paréntesis y otros caracteres no numéricos
-    const telefonoLimpio = telefono.replace(/\D/g, '');
-    
-    // Validar que tenga entre 7 y 15 dígitos (rango internacional)
-    if (telefonoLimpio.length < 7 || telefonoLimpio.length > 15) {
-        return false;
-    }
-    
-    // Validar que sean solo números
-    if (!/^\d+$/.test(telefonoLimpio)) {
-        return false;
-    }
-    
-    return telefonoLimpio;
-}
-
-// ---------- FORMULARIO DE CITAS CORREGIDO ----------
-document.getElementById('form-cita').addEventListener('submit', function(e) {
-    e.preventDefault();
-    console.log('Iniciando proceso de reserva...');
-    
-    if (!sistemaCitasAbierto) {
-        mostrarMensaje('El sistema de citas está temporalmente cerrado. Por favor intenta más tarde.', 'error');
-        return;
-    }
-    
-    const serviciosSeleccionados = JSON.parse(document.getElementById('servicios-seleccionados').value || '[]');
-    const duracionTotal = document.getElementById('duracion-total').value;
-    const precioTotal = document.getElementById('precio-total').value;
-    const horaSeleccionada = document.getElementById('hora-seleccionada').value;
-    
-    console.log('Servicios:', serviciosSeleccionados, 'Hora:', horaSeleccionada);
-    
-    if (!horaSeleccionada) {
-        mostrarMensaje('Por favor selecciona un horario disponible.', 'error');
-        return;
-    }
-    
-    if (serviciosSeleccionados.length === 0) {
-        mostrarMensaje('Por favor selecciona al menos un servicio.', 'error');
-        return;
-    }
-    
-    // Validar teléfono
-    const telefonoInput = document.getElementById('telefono').value.trim();
-    const telefonoValidado = validarTelefono(telefonoInput);
-    
-    if (!telefonoValidado) {
-        mostrarMensaje('Por favor, ingresa un número de teléfono válido (7-15 dígitos). Puedes usar cualquier formato.', 'error');
-        return;
-    }
-    
-    const cita = {
-        id: Date.now(),
-        nombre: document.getElementById('nombre').value.trim(),
-        telefono: telefonoValidado,
-        servicios: serviciosSeleccionados,
-        fecha: document.getElementById('fecha').value,
-        hora: horaSeleccionada,
-        duracionTotal: parseInt(duracionTotal),
-        precioTotal: parseInt(precioTotal),
-        mensaje: document.getElementById('mensaje').value.trim(),
-        timestamp: new Date().toISOString()
-    };
-    
-    // Validaciones adicionales
-    if (!cita.nombre || !cita.fecha) {
-        mostrarMensaje('Por favor, completa todos los campos requeridos.', 'error');
-        return;
-    }
-    
-    console.log('Guardando cita:', cita);
-    
-    // Agregar cita al sistema
-    citas.push(cita);
+function cancelarCita(idCita) {
+  if (confirm('¿Estás seguro de que deseas cancelar esta cita?')) {
+    citas = citas.filter(cita => cita.id !== idCita);
     localStorage.setItem('citasYenny', JSON.stringify(citas));
-    
-    // Mostrar mensaje de éxito
-    mostrarMensaje(`¡Cita reservada con éxito!<br><strong>${serviciosSeleccionados.join(', ')}</strong><br>${cita.fecha} a las ${cita.hora}<br>Duración: ${duracionTotal}min - Total: $${precioTotal}`, 'exito');
-    
-    // Cambiar el botón de citas a "Cita Realizada" en verde
-    const btnCitas = document.getElementById('btn-citas');
-    btnCitas.textContent = '✓ Cita Realizada';
-    btnCitas.classList.add('cita-realizada');
-    
-    // Cambiar el botón de enviar a estado de éxito
-    const btnReservar = document.getElementById('btn-reservar');
-    btnReservar.textContent = '✓ Cita Realizada';
-    btnReservar.classList.add('exito');
-    btnReservar.disabled = true;
-    
-    // Restaurar después de 5 segundos
-    setTimeout(() => {
-        document.getElementById('form-cita').reset();
-        document.getElementById('horarios-disponibles').style.display = 'none';
-        document.getElementById('resumen-servicios').style.display = 'none';
-        document.getElementById('mensaje-exito').style.display = 'none';
-        
-        // Restaurar botón de reservar
-        btnReservar.textContent = 'Reservar Cita';
-        btnReservar.classList.remove('exito');
-        btnReservar.disabled = true;
-        
-        // Restaurar botón de citas después de 10 segundos
-        setTimeout(() => {
-            btnCitas.textContent = 'Citas';
-            btnCitas.classList.remove('cita-realizada');
-        }, 10000);
-        
-    }, 5000);
-});
+    renderAdminList();
+    alert('✅ Cita cancelada exitosamente');
+  }
+}
 
-function mostrarMensaje(mensaje, tipo) {
-    const divExito = document.getElementById('mensaje-exito');
-    const divError = document.getElementById('mensaje-error');
+/* ------------------- ADMIN (mostrar citas locales) ------------------- */
+function renderAdminList(){
+  const cont = document.getElementById('admin-list');
+  cont.innerHTML = '';
+  
+  if(!citas.length){ 
+    cont.innerHTML = '<p style="color:#bbb; text-align:center; padding:20px;">No hay citas registradas.</p>'; 
+    return; 
+  }
+  
+  // Ordenar citas por fecha y hora (más recientes primero)
+  const citasOrdenadas = [...citas].sort((a, b) => {
+    const fechaA = new Date(a.fecha + 'T' + a.hora);
+    const fechaB = new Date(b.fecha + 'T' + b.hora);
+    return fechaB - fechaA;
+  });
+  
+  citasOrdenadas.forEach(c=>{
+    const citaItem = document.createElement('div');
+    citaItem.className = 'cita-item';
     
-    if (tipo === 'exito') {
-        divExito.innerHTML = mensaje;
-        divExito.style.display = 'block';
-        divError.style.display = 'none';
+    const fechaCita = new Date(c.fecha);
+    const fechaFormateada = fechaCita.toLocaleDateString('es-ES', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    
+    citaItem.innerHTML = `
+      <div class="cita-info">
+        <h4 style="color:var(--primary-glow); margin-bottom:8px;">${c.nombre}</h4>
+        <p style="margin-bottom:5px;"><strong>📞 Teléfono:</strong> ${c.telefono}</p>
+        <p style="margin-bottom:5px;"><strong>📅 Fecha:</strong> ${fechaFormateada}</p>
+        <p style="margin-bottom:5px;"><strong>🕒 Hora:</strong> ${c.hora}</p>
+        <p style="margin-bottom:5px;"><strong>⏱ Duración:</strong> ${c.duracionTotal} minutos</p>
+        <p style="margin-bottom:5px;"><strong>💰 Total:</strong> $${c.precioTotal}</p>
+        <p style="margin-bottom:5px;"><strong>🎯 Servicios:</strong> ${c.servicios.join(', ')}</p>
+        <p style="color:#aaa; font-size:0.9em;"><strong>🆔 ID:</strong> ${c.id}</p>
+      </div>
+      <div class="cita-acciones">
+        <button class="btn-cancelar" onclick="cancelarCita(${c.id})">❌ Cancelar</button>
+      </div>
+    `;
+    cont.appendChild(citaItem);
+  });
+}
+
+/* ------------------- MENU Y NAVEGACION ------------------- */
+function configurarMenu(){
+  const ids = ['home','galeria','precios','productos','citas','admin'];
+  ids.forEach(id => {
+    const btn = document.getElementById('btn-' + id);
+    if(!btn) return;
+    btn.addEventListener('click', ()=> {
+      document.querySelectorAll('.pantalla-interna').forEach(p=> p.style.display='none');
+      // toggle active
+      document.querySelectorAll('.menu-flotante button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      if(id === 'home'){ document.getElementById('home-viewport').scrollIntoView({behavior:'smooth'}); document.getElementById('portada').style.display='block'; return; }
+      const portalId = 'portal-' + id;
+      abrirPortal(portalId);
+    });
+  });
+}
+
+/* Abrir Portal */
+function abrirPortal(id){
+  document.getElementById('portada').style.display='none';
+  document.querySelectorAll('.pantalla-interna').forEach(p=>p.style.display='none');
+  const portal = document.getElementById(id);
+  if(portal){
+    portal.style.display = 'block';
+    portal.setAttribute('aria-hidden', 'false');
+  }
+}
+
+/* Cerrar portales */
+function inicializarPortalesCerrar(){
+  document.querySelectorAll('.cerrar').forEach(btn=>{
+    const target = btn.getAttribute('data-close');
+    btn.addEventListener('click', ()=>{
+      if(target) cerrarPortal(target);
+      else btn.parentElement.parentElement.style.display='none';
+      document.getElementById('portada').style.display='block';
+      // reset menu active to home
+      document.querySelectorAll('.menu-flotante button').forEach(b=>b.classList.remove('active'));
+      document.getElementById('btn-home').classList.add('active');
+    });
+  });
+}
+function cerrarPortal(id){
+  const p = document.getElementById(id);
+  if(p){ p.style.display='none'; p.setAttribute('aria-hidden','true'); }
+}
+
+/* ------------------- FALLBACKS DE IMAGENES ------------------- */
+function cargarPortadasFallback(){
+  const portada = document.getElementById('portada');
+  const fallback = document.getElementById('portada-fallback');
+  portada.addEventListener('error', ()=> { portada.style.display='none'; fallback.style.display='block'; });
+}
+
+/* ------------------- GALERIA / PREVISUALIZACION IMAGEN ------------------- */
+function inicializarGaleriaClicks(){
+  // Para galería (imágenes 1-8)
+  const galeriaGrid = document.getElementById('galeria-grid');
+  if (galeriaGrid) {
+    const galeriaImagenes = Array.from(galeriaGrid.querySelectorAll('img'));
+    galeriaImagenes.forEach((img, index) => {
+      img.addEventListener('click', (e) => {
+        const imagenes = galeriaImagenes.map(img => ({
+          src: img.getAttribute('data-full') || img.src,
+          alt: img.alt
+        }));
+        abrirGaleriaModerno(imagenes, index);
+      });
+      
+      // si imagen no carga se atenúa
+      img.addEventListener('error', ()=> { 
+        img.style.opacity = 0.35; 
+        img.title = 'Imagen no encontrada: ' + img.getAttribute('src'); 
+      });
+    });
+  }
+  
+  // Para productos (imágenes 9-14)
+  const productosGrid = document.getElementById('productos-grid');
+  if (productosGrid) {
+    const productosImagenes = Array.from(productosGrid.querySelectorAll('img'));
+    productosImagenes.forEach((img, index) => {
+      img.addEventListener('click', (e) => {
+        const imagenes = productosImagenes.map(img => ({
+          src: img.getAttribute('data-full') || img.src,
+          alt: img.alt
+        }));
+        abrirGaleriaModerno(imagenes, index);
+      });
+      
+      // si imagen no carga se atenúa
+      img.addEventListener('error', ()=> { 
+        img.style.opacity = 0.35; 
+        img.title = 'Imagen no encontrada: ' + img.getAttribute('src'); 
+      });
+    });
+  }
+  
+  // Para las imágenes en precios
+  document.querySelectorAll('.imagen-con-titulo img').forEach((img, index, array) => {
+    img.addEventListener('click', (e) => {
+      const imagenes = array.map(img => ({
+        src: img.getAttribute('data-full') || img.src,
+        alt: img.alt
+      }));
+      abrirGaleriaModerno(imagenes, index);
+    });
+    
+    // si imagen no carga se atenúa
+    img.addEventListener('error', ()=> { 
+      img.style.opacity = 0.35; 
+      img.title = 'Imagen no encontrada: ' + img.getAttribute('src'); 
+    });
+  });
+}
+
+/* ------------------- SERVICIOS (checkboxes dinámicos) ------------------- */
+function inicializarServicios(){
+  const serviciosGrid = document.getElementById('servicios-grid');
+  serviciosGrid.innerHTML = '';
+  
+  serviciosCompletos.forEach(s => {
+    const servicioItem = document.createElement('div');
+    servicioItem.className = 'servicio-item';
+    servicioItem.innerHTML = `
+      <label style="display:flex; align-items:center; cursor:pointer; width:100%;">
+        <input type="checkbox" name="servicios" value="${s.id}" data-duracion="${s.duracion}" data-precio="${s.precio}" style="margin-right:10px;">
+        <div style="flex:1">
+          <div style="font-weight:700">${s.nombre}</div>
+          <div class="servicio-info">
+            <span>⏱ ${s.duracion}min</span>
+            <span>$${s.precio}</span>
+          </div>
+        </div>
+      </label>
+    `;
+    serviciosGrid.appendChild(servicioItem);
+  });
+
+  // escuchar cambios
+  document.querySelectorAll('input[name="servicios"]').forEach(ch => {
+    ch.addEventListener('change', function() {
+      // Actualizar estilo visual del item
+      const item = this.closest('.servicio-item');
+      if(this.checked) {
+        item.classList.add('seleccionado');
+      } else {
+        item.classList.remove('seleccionado');
+      }
+      actualizarResumenServicios();
+    });
+  });
+  actualizarResumenServicios();
+}
+
+/* Actualizar resumen */
+function actualizarResumenServicios(){
+  const checked = Array.from(document.querySelectorAll('input[name="servicios"]:checked'));
+  const lista = document.getElementById('lista-servicios-seleccionados');
+  const resumen = document.getElementById('resumen-servicios');
+  const totalDur = document.getElementById('total-duracion');
+  const totalPrec = document.getElementById('total-precio');
+  const serviciosSelInput = document.getElementById('servicios-seleccionados');
+  const durInput = document.getElementById('duracion-total');
+  const precInput = document.getElementById('precio-total');
+
+  let dur=0, prec=0, nombres=[];
+  lista.innerHTML = '';
+  checked.forEach(ch => {
+    const id = ch.value;
+    const srv = serviciosCompletos.find(s=>s.id===id);
+    if(!srv) return;
+    dur += srv.duracion; prec += srv.precio; nombres.push(srv.nombre);
+    const li = document.createElement('li');
+    li.style.color = '#ddd';
+    li.style.marginBottom = '6px';
+    li.innerHTML = `${srv.nombre} — ⏱ ${srv.duracion}min — $${srv.precio}`;
+    lista.appendChild(li);
+  });
+
+  if(checked.length>0){
+    resumen.style.display='block';
+    totalDur.textContent = `⏱️ Duración total: ${dur} minutos`;
+    totalPrec.textContent = `💰 Precio total: $${prec}`;
+    serviciosSelInput.value = JSON.stringify(nombres);
+    durInput.value = dur;
+    precInput.value = prec;
+    // recalcular horarios si hay fecha
+    const f = document.getElementById('fecha').value;
+    if(f) calcularHorariosDisponibles();
+  } else {
+    resumen.style.display='none';
+    serviciosSelInput.value = '';
+    durInput.value = '';
+    precInput.value = '';
+    document.getElementById('horarios-disponibles').style.display='none';
+    document.getElementById('btn-reservar').disabled = true;
+  }
+}
+
+/* ------------------- LISTA DE PRECIOS ------------------- */
+function cargarListaPrecios() {
+  const listaPrecios = document.getElementById('lista-precios');
+  if (!listaPrecios) return;
+  
+  listaPrecios.innerHTML = '';
+  
+  serviciosCompletos.forEach(servicio => {
+    const precioItem = document.createElement('div');
+    precioItem.className = 'precio-item';
+    precioItem.innerHTML = `
+      <div class="precio-nombre">${servicio.nombre}</div>
+      <div class="precio-valor">$${servicio.precio}</div>
+    `;
+    listaPrecios.appendChild(precioItem);
+  });
+}
+
+/* ------------------- HORARIOS DISPONIBLES - MEJORADO ------------------- */
+function inicializarFechaMin(){
+  const fechaInput = document.getElementById('fecha');
+  const hoy = new Date();
+  fechaInput.min = hoy.toISOString().split('T')[0];
+}
+
+function tiempoAMinutos(t){ 
+  const [h,m]=t.split(':').map(Number); 
+  return h*60 + m; 
+}
+
+function minutosATiempo(min){ 
+  const h=Math.floor(min/60); 
+  const m=min%60; 
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`; 
+}
+
+function calcularHorariosDisponibles(){
+  if(!sistemaCitasAbierto) return;
+  
+  const fecha = document.getElementById('fecha').value;
+  const duracion = parseInt(document.getElementById('duracion-total').value) || 0;
+  const divHorarios = document.getElementById('horarios-disponibles');
+  const grid = document.getElementById('horarios-grid');
+  const info = document.getElementById('info-horarios');
+
+  if(!fecha || duracion===0){ 
+    divHorarios.style.display='none'; 
+    document.getElementById('btn-reservar').disabled = true; 
+    return; 
+  }
+
+  const citasDelDia = citas.filter(c=>c.fecha === fecha);
+  const horarios = generarHorariosDisponibles(citasDelDia, duracion, fecha);
+
+  if(horarios.length===0){
+    info.textContent = '❌ No hay horarios disponibles para esta fecha y duración';
+    info.style.color = '#ff8888';
+    grid.innerHTML = '';
+    divHorarios.style.display='block';
+    document.getElementById('btn-reservar').disabled = true;
+    return;
+  }
+
+  info.textContent = `✅ ${horarios.length} horarios disponibles para ${duracion} minutos`;
+  info.style.color = '#aaffcc';
+  grid.innerHTML = '';
+  
+  horarios.forEach(h=>{
+    const b = document.createElement('button');
+    b.type='button';
+    b.className='horario-btn';
+    b.textContent = h.hora;
+    
+    if(h.ocupado){ 
+      b.classList.add('ocupado'); 
+      b.disabled = true; 
+      b.title = 'Horario ocupado';
+    } else if(h.esPasado){ 
+      b.classList.add('pasado'); 
+      b.disabled = true; 
+      b.title = 'Horario pasado';
     } else {
-        divError.innerHTML = mensaje;
-        divError.style.display = 'block';
-        divExito.style.display = 'none';
+      b.addEventListener('click', ()=> seleccionarHorario(h.hora, b));
     }
+    
+    grid.appendChild(b);
+  });
+  
+  divHorarios.style.display = 'block';
 }
 
-// ---------- ADMINISTRACIÓN MEJORADA ----------
-function verificarAdmin() {
-    const password = document.getElementById('admin-password').value;
+function generarHorariosDisponibles(citasDelDia, duracionTotal, fechaSeleccionada){
+  const disponibles = [];
+  const intervalo = horarioLaboral.intervalo;
+  const inicioMin = tiempoAMinutos(horarioLaboral.inicio);
+  const finMin = tiempoAMinutos(horarioLaboral.fin);
+  const hoy = new Date().toISOString().split('T')[0];
+  const esHoy = fechaSeleccionada === hoy;
+  const ahora = new Date();
+  const minutosActuales = esHoy ? (ahora.getHours()*60 + ahora.getMinutes()) : 0;
+
+  // Crear bloques ocupados en minutos
+  const bloquesOcupados = new Set();
+  
+  // Marcar como ocupados los horarios de las citas existentes
+  citasDelDia.forEach(c => {
+    const inicioCita = tiempoAMinutos(c.hora);
+    const finCita = inicioCita + (parseInt(c.duracionTotal) || 0);
     
-    if (password === 'yenny2024') {
-        document.getElementById('admin-login').style.display = 'none';
-        document.getElementById('admin-panel').style.display = 'block';
-        actualizarPanelAdmin();
+    // Marcar todos los intervalos de esta cita como ocupados
+    for(let m = inicioCita; m < finCita; m += intervalo) {
+      bloquesOcupados.add(m);
+    }
+  });
+
+  // Generar horarios disponibles
+  for(let m = inicioMin; m <= finMin - duracionTotal; m += intervalo){
+    const esPasado = esHoy && m < minutosActuales;
+    let disponible = true;
+    
+    // Verificar si el horario está disponible
+    if(!esPasado){
+      for(let i = m; i < m + duracionTotal; i += intervalo){
+        if(bloquesOcupados.has(i)) { 
+          disponible = false; 
+          break; 
+        }
+      }
     } else {
-        alert('Contraseña incorrecta');
+      disponible = false;
     }
-}
 
-function actualizarPanelAdmin() {
-    // Obtener fechas de la semana
-    const hoy = new Date();
-    const semana = [];
-    for (let i = 0; i < 7; i++) {
-        const fecha = new Date(hoy);
-        fecha.setDate(hoy.getDate() + i);
-        semana.push(fecha.toISOString().split('T')[0]);
-    }
-    
-    // Filtrar citas de la semana
-    const citasSemana = citas.filter(cita => semana.includes(cita.fecha));
-    
-    // Estadísticas
-    const totalCitasSemana = citasSemana.length;
-    const ingresosTotales = citasSemana.reduce((total, cita) => total + (cita.precioTotal || 0), 0);
-    
-    // Calcular servicio más popular
-    const serviciosCount = {};
-    citasSemana.forEach(cita => {
-        if (cita.servicios && Array.isArray(cita.servicios)) {
-            cita.servicios.forEach(servicio => {
-                serviciosCount[servicio] = (serviciosCount[servicio] || 0) + 1;
-            });
-        }
+    disponibles.push({
+      hora: minutosATiempo(m), 
+      esPasado: esPasado,
+      ocupado: !disponible && !esPasado
     });
-    
-    let servicioPopular = '-';
-    let maxCount = 0;
-    Object.keys(serviciosCount).forEach(servicio => {
-        if (serviciosCount[servicio] > maxCount) {
-            maxCount = serviciosCount[servicio];
-            servicioPopular = servicio;
-        }
-    });
-    
-    // Clientes nuevos (primeras citas)
-    const clientesUnicos = [...new Set(citasSemana.map(cita => cita.telefono))];
-    const clientesNuevos = clientesUnicos.length;
-    
-    // Actualizar estadísticas
-    document.getElementById('total-citas-semana').textContent = totalCitasSemana;
-    document.getElementById('servicio-popular').textContent = servicioPopular;
-    document.getElementById('ingresos-totales').textContent = '$' + ingresosTotales;
-    document.getElementById('clientes-nuevos').textContent = clientesNuevos;
-    
-    // Actualizar gráfico de servicios
-    actualizarGraficoServicios(serviciosCount);
-    
-    // Actualizar lista de citas de la semana
-    actualizarListaCitasSemana(semana, citasSemana);
-    
-    // Actualizar estado del sistema
-    const estadoSistema = document.getElementById('estado-sistema');
-    const toggleBtn = document.getElementById('toggle-citas');
-    
-    if (sistemaCitasAbierto) {
-        estadoSistema.innerHTML = 'El sistema de citas está actualmente <strong style="color: #28a745;">ABIERTO GLOBALMENTE</strong> - Los clientes pueden agendar citas desde cualquier dispositivo';
-        toggleBtn.textContent = '❌ Cerrar Sistema de Citas Globalmente';
-        toggleBtn.className = 'btn-admin abierto';
-    } else {
-        estadoSistema.innerHTML = 'El sistema de citas está actualmente <strong style="color: #dc3545;">CERRADO GLOBALMENTE</strong> - Los clientes NO pueden agendar citas desde ningún dispositivo';
-        toggleBtn.textContent = '✅ Abrir Sistema de Citas Globalmente';
-        toggleBtn.className = 'btn-admin cerrado';
-    }
+  }
+  
+  return disponibles;
 }
 
-function actualizarGraficoServicios(serviciosCount) {
-    const graficoBarras = document.getElementById('grafico-barras');
-    graficoBarras.innerHTML = '';
-    
-    const totalCitas = Object.values(serviciosCount).reduce((a, b) => a + b, 0);
-    
-    Object.keys(serviciosCount).forEach(servicio => {
-        const cantidad = serviciosCount[servicio];
-        const porcentaje = totalCitas > 0 ? (cantidad / totalCitas) * 100 : 0;
-        
-        const barraDiv = document.createElement('div');
-        barraDiv.className = 'barra-servicio';
-        barraDiv.innerHTML = `
-            <span>${servicio}</span>
-            <div class="barra-progreso">
-                <div class="barra-progreso-fill" style="width: ${porcentaje}%"></div>
-            </div>
-            <span class="cantidad">${cantidad}</span>
-        `;
-        graficoBarras.appendChild(barraDiv);
-    });
+function seleccionarHorario(horario, boton){
+  document.querySelectorAll('.horario-btn').forEach(b=>{
+    b.classList.remove('seleccionado');
+    b.disabled = false;
+  });
+  
+  boton.classList.add('seleccionado');
+  document.getElementById('hora-seleccionada').value = horario;
+  document.getElementById('btn-reservar').disabled = false;
 }
 
-function actualizarListaCitasSemana(semana, citasSemana) {
-    const listaCitasSemana = document.getElementById('lista-citas-semana');
-    listaCitasSemana.innerHTML = '';
-    
-    if (citasSemana.length === 0) {
-        listaCitasSemana.innerHTML = '<div class="mensaje-info">No hay citas programadas para esta semana</div>';
-        return;
-    }
-    
-    // Agrupar citas por día
-    const citasPorDia = {};
-    semana.forEach(fecha => {
-        citasPorDia[fecha] = citasSemana.filter(cita => cita.fecha === fecha);
-    });
-    
-    // Mostrar citas por día
-    semana.forEach(fecha => {
-        const citasDelDia = citasPorDia[fecha];
-        if (citasDelDia.length > 0) {
-            const diaDiv = document.createElement('div');
-            diaDiv.className = 'dia-citas';
-            
-            const fechaFormateada = new Date(fecha).toLocaleDateString('es-ES', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-            
-            diaDiv.innerHTML = `
-                <h4>
-                    ${fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1)}
-                    <span class="contador-dia">${citasDelDia.length} cita${citasDelDia.length !== 1 ? 's' : ''}</span>
-                </h4>
-            `;
-            
-            citasDelDia.forEach(cita => {
-                const citaDiv = document.createElement('div');
-                citaDiv.className = 'cita-item';
-                citaDiv.innerHTML = `
-                    <div class="cita-info">
-                        <div class="cita-cliente">👤 ${cita.nombre}</div>
-                        <div class="cita-servicio">${Array.isArray(cita.servicios) ? cita.servicios.join(', ') : cita.servicios}</div>
-                        <div class="cita-horario">🕒 ${cita.hora} (${cita.duracionTotal} min)</div>
-                        <div class="cita-telefono">📞 ${formatearTelefono(cita.telefono)}</div>
-                        <div class="cita-precio">💰 $${cita.precioTotal || 0}</div>
-                    </div>
-                    ${cita.mensaje ? `<div><strong>Mensaje:</strong> ${cita.mensaje}</div>` : ''}
-                    <button onclick="cancelarCita(${cita.id})" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; margin-top: 5px; cursor: pointer;">Cancelar Cita</button>
-                `;
-                diaDiv.appendChild(citaDiv);
-            });
-            
-            listaCitasSemana.appendChild(diaDiv);
-        }
-    });
-}
+/* ------------------- ENVIO FORMULARIO ------------------- */
+document.getElementById('form-cita').addEventListener('submit', function(e){
+  e.preventDefault();
+  if(!sistemaCitasAbierto){ alert('❌ El sistema de citas está temporalmente cerrado'); return; }
 
-// Función para formatear el teléfono para mostrar
-function formatearTelefono(telefono) {
-    if (telefono.length === 10) {
-        return `(${telefono.substring(0, 3)}) ${telefono.substring(3, 6)}-${telefono.substring(6)}`;
-    }
-    return telefono;
-}
+  const serviciosSeleccionados = JSON.parse(document.getElementById('servicios-seleccionados').value || '[]');
+  const duracionTotal = document.getElementById('duracion-total').value;
+  const precioTotal = document.getElementById('precio-total').value;
+  const horaSeleccionada = document.getElementById('hora-seleccionada').value;
 
-function exportarDatos() {
-    const citasSemana = citas.filter(cita => {
-        const fechaCita = new Date(cita.fecha);
-        const hoy = new Date();
-        const unaSemanaDespues = new Date(hoy);
-        unaSemanaDespues.setDate(hoy.getDate() + 7);
-        return fechaCita >= hoy && fechaCita <= unaSemanaDespues;
-    });
-    
-    if (citasSemana.length === 0) {
-        alert('No hay citas para exportar esta semana');
-        return;
-    }
-    
-    let csv = 'Nombre,Telefono,Servicios,Fecha,Hora,Duracion Total,Precio Total,Mensaje\n';
-    citasSemana.forEach(cita => {
-        const servicios = Array.isArray(cita.servicios) ? cita.servicios.join('; ') : cita.servicios;
-        csv += `"${cita.nombre}","${cita.telefono}","${servicios}","${cita.fecha}","${cita.hora}","${cita.duracionTotal}","${cita.precioTotal || 0}","${cita.mensaje || ''}"\n`;
-    });
-    
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.setAttribute('hidden', '');
-    a.setAttribute('href', url);
-    a.setAttribute('download', `citas_yenny_${new Date().toISOString().split('T')[0]}.csv`);
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-}
+  if(!horaSeleccionada){ alert('Por favor selecciona un horario'); return; }
+  if(serviciosSeleccionados.length===0){ alert('Selecciona al menos un servicio'); return; }
 
-function cancelarCita(id) {
-    if (confirm('¿Estás seguro de que quieres cancelar esta cita?')) {
-        citas = citas.filter(cita => cita.id !== id);
-        localStorage.setItem('citasYenny', JSON.stringify(citas));
-        actualizarPanelAdmin();
-    }
-}
+  const cita = {
+    id: Date.now(),
+    nombre: document.getElementById('nombre').value.trim(),
+    telefono: document.getElementById('telefono').value.trim(),
+    servicios: serviciosSeleccionados,
+    fecha: document.getElementById('fecha').value,
+    hora: horaSeleccionada,
+    duracionTotal: parseInt(duracionTotal),
+    precioTotal: parseInt(precioTotal),
+    timestamp: new Date().toISOString(),
+    estado: 'confirmada'
+  };
 
-// ---------- LIGHTBOX ----------
-let currentImages = [], currentIndex = 0;
+  if(!cita.nombre || !cita.telefono || !cita.fecha){ alert('Completa todos los campos'); return; }
 
-const lightbox = document.getElementById('lightbox');
-const lightboxImg = document.getElementById('lightbox-img');
-const lightboxCaption = document.getElementById('lightbox-caption');
-const closeLB = document.getElementById('close-lightbox');
-const prevLB = document.getElementById('prev');
-const nextLB = document.getElementById('next');
+  citas.push(cita);
+  localStorage.setItem('citasYenny', JSON.stringify(citas));
+  alert(`✅ Cita reservada exitosamente!\n\n📅 Fecha: ${cita.fecha}\n🕒 Hora: ${cita.hora}\n⏱ Duración: ${cita.duracionTotal} minutos\n💰 Total: $${cita.precioTotal}\n\n¡Te esperamos!`);
 
-const imgsGaleria = Array.from(document.querySelectorAll('.galeria-item img'));
-const imgsProductos = Array.from(document.querySelectorAll('.producto-item img'));
-
-function showImage(index, imagesArray) {
-    currentImages = imagesArray;
-    currentIndex = index;
-    lightboxImg.src = currentImages[currentIndex].src;
-    lightboxCaption.textContent = currentImages[currentIndex].alt;
-    lightbox.style.display = 'flex';
-}
-
-imgsGaleria.forEach((img, index) => {
-    img.addEventListener('click', () => showImage(index, imgsGaleria));
+  // reset form
+  document.getElementById('form-cita').reset();
+  document.querySelectorAll('.servicio-item').forEach(item => {
+    item.classList.remove('seleccionado');
+  });
+  document.getElementById('resumen-servicios').style.display='none';
+  document.getElementById('horarios-disponibles').style.display='none';
+  document.getElementById('btn-reservar').disabled = true;
+  renderAdminList();
 });
 
-imgsProductos.forEach((img, index) => {
-    img.addEventListener('click', () => showImage(index, imgsProductos));
-});
-
-function navegarImagen(direccion) {
-    if (direccion === 'next') {
-        currentIndex = (currentIndex + 1) % currentImages.length;
-    } else {
-        currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
-    }
-    lightboxImg.src = currentImages[currentIndex].src;
-    lightboxCaption.textContent = currentImages[currentIndex].alt;
+/* ------------------- BOTON CITAS ABIERTO/CERRADO ------------------- */
+function actualizarEstadoBotonCitas(){
+  const btn = document.getElementById('btn-citas');
+  if(!btn) return;
+  if(!sistemaCitasAbierto){ 
+    btn.textContent = '🚫 Citas Cerradas'; 
+    btn.classList.add('citas-cerradas'); 
+  } else { 
+    btn.textContent = '📅 Citas'; 
+    btn.classList.remove('citas-cerradas'); 
+  }
+}
+function actualizarVistaCitas(){
+  const msg = document.getElementById('mensaje-citas-cerradas');
+  const form = document.getElementById('form-cita');
+  if(!sistemaCitasAbierto){ 
+    msg.style.display='block'; 
+    form.style.display='none'; 
+  } else { 
+    msg.style.display='none'; 
+    form.style.display='block'; 
+  }
 }
 
-nextLB.addEventListener('click', (e) => {
-    e.stopPropagation();
-    navegarImagen('next');
-});
+/* ------------------- INICIALIZAR CLICKS PARA IMAGENES YA CREADAS EN DOM (por si cargan después) ------------------- */
+setTimeout(()=>{ inicializarGaleriaClicks(); }, 500);
 
-prevLB.addEventListener('click', (e) => {
-    e.stopPropagation();
-    navegarImagen('prev');
-});
-
-closeLB.addEventListener('click', () => lightbox.style.display = 'none');
-
-lightbox.addEventListener('click', (e) => {
-    if (e.target === lightbox) lightbox.style.display = 'none';
-});
-
-// Navegación con teclado
-document.addEventListener('keydown', (e) => {
-    if (lightbox.style.display === 'flex') {
-        if (e.key === 'Escape') lightbox.style.display = 'none';
-        if (e.key === 'ArrowRight') navegarImagen('next');
-        if (e.key === 'ArrowLeft') navegarImagen('prev');
-    }
-});
-
-// ---------- PORTALES ----------
-function abrirPortal(id) {
-    cerrarTodosLosPortales();
-    document.getElementById('portada').style.display = 'none';
-    document.getElementById(id).style.display = 'block';
-    actualizarBotonActivo(id);
-    
-    if (id === 'portal-admin') {
-        document.getElementById('admin-panel').style.display = 'none';
-        document.getElementById('admin-login').style.display = 'block';
-        document.getElementById('admin-password').value = '';
-    }
-    
-    if (id === 'portal-citas' && !sistemaCitasAbierto) {
-        setTimeout(() => {
-            mostrarMensajeCitasCerradas();
-        }, 100);
-    } else if (id === 'portal-citas') {
-        // Restaurar vista normal de citas
-        const mensajeCitasCerradas = document.getElementById('mensaje-citas-cerradas');
-        const mensajeInfo = document.getElementById('mensaje-info');
-        const formCita = document.getElementById('form-cita');
-        
-        if (mensajeCitasCerradas) {
-            mensajeCitasCerradas.style.display = 'none';
-            mensajeInfo.style.display = 'block';
-            formCita.style.display = 'block';
-        }
-    }
-}
-
-function cerrarPortal(id) {
-    document.getElementById(id).style.display = 'none';
-    document.getElementById('portada').style.display = 'block';
-    actualizarBotonActivo('home');
-}
-
-function cerrarTodosLosPortales() {
-    const portales = document.querySelectorAll('.pantalla-interna');
-    portales.forEach(portal => {
-        portal.style.display = 'none';
-    });
-}
-
-function actualizarBotonActivo(idSeccion) {
-    const botones = document.querySelectorAll('.menu-flotante button');
-    botones.forEach(boton => {
-        boton.classList.remove('active');
-    });
-    
-    let botonId = '';
-    switch(idSeccion) {
-        case 'portal-galeria': botonId = 'btn-galeria'; break;
-        case 'portal-precios': botonId = 'btn-precios'; break;
-        case 'portal-productos': botonId = 'btn-productos'; break;
-        case 'portal-citas': botonId = 'btn-citas'; break;
-        case 'portal-admin': botonId = 'btn-admin'; break;
-        default: botonId = 'btn-home'; break;
-    }
-    
-    document.getElementById(botonId).classList.add('active');
-}
-
-// ---------- BOTONES ----------
-document.getElementById('btn-home').addEventListener('click', () => {
-    cerrarTodosLosPortales();
-    document.getElementById('portada').style.display = 'block';
-    actualizarBotonActivo('home');
-});
-
-document.getElementById('btn-galeria').addEventListener('click', () => abrirPortal('portal-galeria'));
-document.getElementById('btn-precios').addEventListener('click', () => abrirPortal('portal-precios'));
-document.getElementById('btn-productos').addEventListener('click', () => abrirPortal('portal-productos'));
-document.getElementById('btn-admin').addEventListener('click', () => abrirPortal('portal-admin'));
-
-// El botón de citas se maneja dinámicamente en actualizarEstadoBotonCitas()
 </script>
-
 </body>
 </html>
