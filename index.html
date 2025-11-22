@@ -596,6 +596,7 @@ body{
 <div class="menu-flotante" role="navigation" aria-label="Menú principal">
   <button id="btn-home" class="active">🏠 Home</button>
   <button id="btn-galeria">🖼️ Galería</button>
+  <button id="btn-servicios">💇 Servicios</button>
   <button id="btn-precios">💰 Precios</button>
   <button id="btn-productos">🛍️ Productos</button>
   <button id="btn-citas">📅 Citas</button>
@@ -630,6 +631,27 @@ body{
       <img src="imagen/imagen6.jpg" alt="Galería 6" data-full="imagen/imagen6.jpg">
       <img src="imagen/imagen7.jpg" alt="Galería 7" data-full="imagen/imagen7.jpg">
       <img src="imagen/imagen8.jpg" alt="Galería 8" data-full="imagen/imagen8.jpg">
+    </div>
+  </div>
+</div>
+
+<!-- PORTAL: SERVICIOS - NUEVO PORTAL -->
+<div class="pantalla-interna" id="portal-servicios" aria-hidden="true">
+  <span class="cerrar" data-close="portal-servicios">×</span>
+  <div class="portal-content">
+    <h2>💇 Nuestros Servicios</h2>
+    <p style="color:#bbb">Conoce todos nuestros servicios profesionales</p>
+    
+    <div class="grid-imagenes" id="servicios-grid">
+      <!-- Imágenes de servicios -->
+      <img src="imagen/botox capilar.png" alt="Botox Capilar" data-full="imagen/botox capilar.png">
+      <img src="imagen/color.png" alt="Color" data-full="imagen/color.png">
+      <img src="imagen/extenciones completas.png" alt="Extensiones Completas" data-full="imagen/extenciones completas.png">
+      <img src="imagen/extenciones por linea.png" alt="Extensiones por Línea" data-full="imagen/extenciones por linea.png">
+      <img src="imagen/keratina.png" alt="Keratina" data-full="imagen/keratina.png">
+      <img src="imagen/labado con linea.png" alt="Lavado con Línea" data-full="imagen/labado con linea.png">
+      <img src="imagen/labado solo.png" alt="Lavado Solo" data-full="imagen/labado solo.png">
+      <img src="imagen/lavado con rolos.png" alt="Lavado con Rolos" data-full="imagen/lavado con rolos.png">
     </div>
   </div>
 </div>
@@ -1289,7 +1311,7 @@ function renderAdminList(){
 
 /* ------------------- MENU Y NAVEGACION ------------------- */
 function configurarMenu(){
-  const ids = ['home','galeria','precios','productos','citas','admin'];
+  const ids = ['home','galeria','servicios','precios','productos','citas','admin']; // Añadido 'servicios'
   ids.forEach(id => {
     const btn = document.getElementById('btn-' + id);
     if(!btn) return;
@@ -1379,6 +1401,27 @@ function inicializarGaleriaClicks(){
     productosImagenes.forEach((img, index) => {
       img.addEventListener('click', (e) => {
         const imagenes = productosImagenes.map(img => ({
+          src: img.getAttribute('data-full') || img.src,
+          alt: img.alt
+        }));
+        abrirGaleriaModerno(imagenes, index);
+      });
+      
+      // si imagen no carga se atenúa
+      img.addEventListener('error', ()=> { 
+        img.style.opacity = 0.35; 
+        img.title = 'Imagen no encontrada: ' + img.getAttribute('src'); 
+      });
+    });
+  }
+  
+  // Para servicios (nuevo portal)
+  const serviciosGrid = document.getElementById('servicios-grid');
+  if (serviciosGrid) {
+    const serviciosImagenes = Array.from(serviciosGrid.querySelectorAll('img'));
+    serviciosImagenes.forEach((img, index) => {
+      img.addEventListener('click', (e) => {
+        const imagenes = serviciosImagenes.map(img => ({
           src: img.getAttribute('data-full') || img.src,
           alt: img.alt
         }));
@@ -1740,7 +1783,6 @@ function actualizarVistaCitas(){
 
 /* ------------------- INICIALIZAR CLICKS PARA IMAGENES YA CREADAS EN DOM (por si cargan después) ------------------- */
 setTimeout(()=>{ inicializarGaleriaClicks(); }, 500);
-
 </script>
 </body>
 </html>
