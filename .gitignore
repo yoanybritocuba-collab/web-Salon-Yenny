@@ -1,0 +1,12 @@
+# Archivos temporales
+*.log
+*.tmp
+
+# Editor/IDE
+.vscode/
+
+# Node (si es un proyecto Node)
+node_modules/
+
+# Otros
+.DS_Store
