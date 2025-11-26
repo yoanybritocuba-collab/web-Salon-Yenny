@@ -21,9 +21,9 @@
                 <ul>
                     <li><a href="#inicio">Inicio</a></li>
                     <li><a href="#servicios">Servicios</a></li>
-                    <li><a href="#precios">Precios</a></li>
                     <li><a href="#productos">Productos</a></li>
                     <li><a href="#galeria">Galería</a></li>
+                    <li><a href="#contacto">Contacto</a></li>
                 </ul>
             </nav>
             <div class="header-buttons">
@@ -54,15 +54,19 @@
             <div class="services-grid" id="servicesContainer">
                 <!-- Los servicios se cargarán dinámicamente aquí -->
             </div>
-        </div>
-    </section>
-
-    <!-- Prices Section -->
-    <section id="precios" class="prices">
-        <div class="container">
-            <h2 class="section-title">Lista de Precios</h2>
-            <div class="prices-grid" id="pricesContainer">
-                <!-- Los precios se cargan dinámicamente -->
+            <div class="selected-services-summary" id="selectedServicesSummary" style="display: none;">
+                <h3>Servicios Seleccionados</h3>
+                <div id="selectedServicesList"></div>
+                <div class="summary-total">
+                    <span class="total-label">Tiempo Total:</span>
+                    <span id="totalTime">0 min</span>
+                    <span class="total-label">Precio Total:</span>
+                    <span id="totalPrice">$0</span>
+                </div>
+                <button class="btn btn-primary btn-book-selected" id="bookSelectedBtn">
+                    <span class="btn-icon">📅</span>
+                    Reservar Servicios Seleccionados
+                </button>
             </div>
         </div>
     </section>
@@ -95,19 +99,19 @@
                 <div class="contact-info">
                     <div class="contact-item">
                         <span class="contact-icon">📍</span>
-                        <p>Calle Principal #123, Ciudad</p>
+                        <p>Tellstrase 32 8400 Wintheryhur</p>
                     </div>
                     <div class="contact-item">
                         <span class="contact-icon">📞</span>
-                        <p>(123) 456-7890</p>
+                        <p>(+41) 793923464</p>
                     </div>
                     <div class="contact-item">
                         <span class="contact-icon">✉️</span>
-                        <p>info@yennyhairsalon.com</p>
+                        <p>yennyarisleidy@outlook.es</p>
                     </div>
                     <div class="contact-item">
                         <span class="contact-icon">🕒</span>
-                        <p>Lun-Vie: 9:00-19:00 | Sáb: 9:00-16:00</p>
+                        <p>Lun-Sáb 9:00 - 18:00</p>
                     </div>
                 </div>
             </div>
@@ -120,16 +124,14 @@
             <span class="close">&times;</span>
             <div class="modal-header">
                 <h2>Reservar Cita</h2>
-                <p>Selecciona tu servicio preferido</p>
+                <p>Confirma los servicios seleccionados</p>
             </div>
             <form id="bookingForm" class="booking-form">
+                <div class="selected-services-modal" id="selectedServicesModal">
+                    <!-- Servicios seleccionados aparecen aquí -->
+                </div>
+                
                 <div class="form-row">
-                    <div class="form-group">
-                        <label for="service">Servicio:</label>
-                        <select id="service" name="service" required>
-                            <option value="">Selecciona un servicio</option>
-                        </select>
-                    </div>
                     <div class="form-group">
                         <label for="date">Fecha:</label>
                         <input type="date" id="date" name="date" required>
@@ -151,6 +153,17 @@
                     <div class="form-group">
                         <label for="phone">Teléfono:</label>
                         <input type="tel" id="phone" name="phone" required>
+                    </div>
+                </div>
+
+                <div class="booking-summary">
+                    <div class="summary-item">
+                        <span>Tiempo Total:</span>
+                        <span id="modalTotalTime">0 min</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Precio Total:</span>
+                        <span id="modalTotalPrice">$0</span>
                     </div>
                 </div>
 
@@ -184,6 +197,7 @@
                 <img id="viewerImage" src="" alt="Imagen ampliada">
                 <div class="image-viewer-controls">
                     <button class="btn btn-outline" id="prevImage">‹ Anterior</button>
+                    <span class="image-counter" id="imageCounter">1 / 1</span>
                     <button class="btn btn-outline" id="nextImage">Siguiente ›</button>
                 </div>
             </div>
@@ -201,15 +215,18 @@
                 <div class="footer-section">
                     <h3>Enlaces Rápidos</h3>
                     <a href="#servicios">Servicios</a>
-                    <a href="#precios">Precios</a>
                     <a href="#productos">Productos</a>
                     <a href="#galeria">Galería</a>
+                    <a href="#contacto">Contacto</a>
                 </div>
                 <div class="footer-section">
                     <h3>Horario</h3>
                     <p>Lunes a Viernes: 9:00 - 19:00</p>
                     <p>Sábados: 9:00 - 16:00</p>
                     <p>Domingos: Cerrado</p>
+                </div>
+                <div class="footer-section footer-logo-section">
+                    <img src="imagenes/FL/fondo19.png" alt="YennyHair-Salón" class="footer-logo">
                 </div>
             </div>
             <div class="footer-bottom">
