@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .prices {
     padding: var(--spacing-2xl) 0;
     background: rgba(255, 255, 255, 0.95);
@@ -84,4 +85,92 @@
     .price-amount {
         font-size: var(--font-size-2xl);
     }
+=======
+.prices {
+    padding: var(--spacing-2xl) 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+}
+
+.prices-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-xl);
+}
+
+.price-card {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    border: 2px solid transparent;
+}
+
+.price-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+}
+
+.price-header {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--light-color);
+    padding-bottom: var(--spacing-sm);
+}
+
+.price-header h3 {
+    color: var(--primary-color);
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    flex: 1;
+}
+
+.price-duration {
+    background: var(--secondary-color);
+    color: white;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+}
+
+.price-content {
+    text-align: center;
+}
+
+.price-amount {
+    font-size: var(--font-size-3xl);
+    font-weight: 800;
+    color: var(--secondary-color);
+    display: block;
+    margin-bottom: var(--spacing-sm);
+}
+
+.price-description {
+    color: var(--gray-color);
+    font-size: var(--font-size-sm);
+    line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+    .prices-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .price-header {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        text-align: center;
+    }
+    
+    .price-amount {
+        font-size: var(--font-size-2xl);
+    }
+>>>>>>> 16bea41df7823b6febede32db9f73f258bb39282
 }
