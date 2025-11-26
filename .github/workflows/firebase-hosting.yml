@@ -8,13 +8,22 @@ on:
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
+
     steps:
+      # 1️⃣ Obtener el código del repositorio
       - uses: actions/checkout@v3
 
+      # 2️⃣ Instalar Node.js
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
 
+      # 3️⃣ Instalar Firebase CLI
       - run: npm install -g firebase-tools
 
-      - run: firebase deploy --token ${{ secrets.FIREBASE_TOKEN }} --only hosting
+      # 4️⃣ (Opcional) Instalar dependencias si tu proyecto tiene package.json
+      - run: npm ci || echo "No hay dependencias para instalar"
+
+      # 5️⃣ Deploy a Firebase Hosting
+      - name: Deploy to Firebase Hosting
+        run: firebase deploy --only hosting --token ${{ secrets.FIREBASE_TOKEN }}
