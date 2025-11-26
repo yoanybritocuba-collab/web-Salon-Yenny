@@ -19,6 +19,7 @@
     transition: var(--transition);
     border: 2px solid transparent;
     cursor: pointer;
+    position: relative;
 }
 
 .service-card:hover {
@@ -27,9 +28,26 @@
 }
 
 .service-card.selected {
-    border-color: var(--success-color);
-    background: rgba(39, 174, 96, 0.05);
+    border-color: #e91e63;
+    background: rgba(233, 30, 99, 0.1);
     transform: scale(1.02);
+}
+
+.service-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #e91e63;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    z-index: 2;
 }
 
 .service-image-container {
@@ -84,7 +102,7 @@
 }
 
 .service-content h3 {
-    color: var(--primary-color);
+    color: #e91e63;
     font-size: var(--font-size-lg);
     margin-bottom: var(--spacing-sm);
     font-weight: 600;
@@ -97,9 +115,62 @@
     margin-bottom: var(--spacing-lg);
 }
 
-.service-card .btn {
+.services-footer {
+    margin-top: var(--spacing-2xl);
+    padding: var(--spacing-xl);
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border-top: 4px solid #e91e63;
+}
+
+.selected-services-summary h3 {
+    color: #e91e63;
+    margin-bottom: var(--spacing-md);
+}
+
+#selectedServicesList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.selected-service-item {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--spacing-sm);
+    background: #f8f9fa;
+    border-radius: var(--border-radius);
+    border-left: 4px solid #e91e63;
+}
+
+.total-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--spacing-md);
+    border-top: 2px solid #eee;
+}
+
+.total-duration {
+    color: var(--gray-color);
+    font-size: var(--font-size-sm);
+}
+
+.btn-large {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    font-size: var(--font-size-lg);
     width: 100%;
     justify-content: center;
+    margin-top: var(--spacing-lg);
+    background: linear-gradient(135deg, #e91e63, #9c27b0);
+    border: none;
+}
+
+.btn-large:hover {
+    background: linear-gradient(135deg, #d81b60, #8e24aa);
+    transform: translateY(-2px);
 }
 
 @media (max-width: 768px) {
@@ -114,5 +185,15 @@
     
     .service-content {
         padding: var(--spacing-md);
+    }
+    
+    .services-footer {
+        padding: var(--spacing-lg);
+    }
+    
+    .total-section {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        align-items: flex-start;
     }
 }

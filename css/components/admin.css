@@ -1,27 +1,27 @@
 .admin-panel {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(15px);
+    background: linear-gradient(135deg, #e91e63, #9c27b0);
     border-radius: var(--border-radius-lg);
     padding: var(--spacing-xl);
     margin-top: var(--spacing-lg);
-    border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: var(--shadow-lg);
+    color: white;
 }
 
 .admin-header {
     text-align: center;
     margin-bottom: var(--spacing-2xl);
-    border-bottom: 2px solid var(--primary-color);
+    border-bottom: 2px solid rgba(255,255,255,0.3);
     padding-bottom: var(--spacing-lg);
 }
 
 .admin-header h3 {
-    color: var(--primary-color);
+    color: white;
     margin-bottom: var(--spacing-sm);
+    font-size: var(--font-size-2xl);
 }
 
 .admin-header p {
-    color: var(--gray-color);
+    opacity: 0.9;
 }
 
 .admin-stats {
@@ -32,19 +32,20 @@
 }
 
 .stat-card {
-    background: white;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
     padding: var(--spacing-lg);
     border-radius: var(--border-radius);
-    box-shadow: var(--shadow-sm);
     display: flex;
     align-items: center;
     gap: var(--spacing-md);
     transition: var(--transition);
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
 .stat-card:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .stat-icon {
@@ -54,7 +55,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--primary-color);
+    background: rgba(255,255,255,0.2);
     color: white;
     border-radius: 50%;
 }
@@ -67,11 +68,11 @@
 .stat-number {
     font-size: var(--font-size-2xl);
     font-weight: 800;
-    color: var(--dark-color);
+    color: white;
 }
 
 .stat-label {
-    color: var(--gray-color);
+    opacity: 0.9;
     font-size: var(--font-size-sm);
 }
 
@@ -84,17 +85,17 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--spacing-lg);
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
     padding-bottom: var(--spacing-md);
 }
 
 .section-header h4 {
-    color: var(--primary-color);
+    color: white;
     margin: 0;
+    font-size: var(--font-size-lg);
 }
 
-.appointments-grid,
-.cancelled-grid {
+.appointments-grid {
     display: grid;
     gap: var(--spacing-md);
     max-height: 400px;
@@ -102,32 +103,31 @@
     padding: var(--spacing-sm);
 }
 
-.appointment-card,
-.cancelled-card {
-    background: white;
+.appointment-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
     border-radius: var(--border-radius);
     padding: var(--spacing-lg);
-    box-shadow: var(--shadow-sm);
-    border-left: 4px solid var(--primary-color);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: var(--transition);
 }
 
-.cancelled-card {
-    border-left-color: var(--danger-color);
-    opacity: 0.8;
+.appointment-card:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
 }
 
-.appointment-header,
-.cancelled-header {
+.appointment-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--spacing-md);
     padding-bottom: var(--spacing-sm);
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
 }
 
 .appointment-number {
-    background: var(--primary-color);
+    background: rgba(255,255,255,0.2);
     color: white;
     padding: var(--spacing-xs) var(--spacing-sm);
     border-radius: var(--border-radius);
@@ -135,9 +135,8 @@
     font-size: var(--font-size-sm);
 }
 
-.appointment-date,
-.cancelled-date {
-    color: var(--gray-color);
+.appointment-date {
+    opacity: 0.9;
     font-size: var(--font-size-sm);
 }
 
@@ -153,7 +152,7 @@
 }
 
 .appointment-phone {
-    color: var(--gray-color);
+    opacity: 0.9;
     font-size: var(--font-size-sm);
 }
 
@@ -166,12 +165,12 @@
 }
 
 .appointment-price {
-    color: var(--success-color);
+    color: #4caf50;
     font-weight: 700;
 }
 
 .appointment-duration {
-    color: var(--gray-color);
+    opacity: 0.9;
     font-size: var(--font-size-sm);
 }
 
@@ -179,19 +178,6 @@
     display: flex;
     gap: var(--spacing-sm);
     justify-content: flex-end;
-}
-
-.cancelled-body {
-    color: var(--gray-color);
-}
-
-.cancelled-service {
-    font-weight: 600;
-    margin-bottom: var(--spacing-xs);
-}
-
-.cancelled-original {
-    font-size: var(--font-size-sm);
 }
 
 .system-controls {
@@ -236,15 +222,18 @@
 .error-state {
     text-align: center;
     padding: var(--spacing-2xl);
-    color: var(--gray-color);
-    background: white;
+    background: rgba(255,255,255,0.1);
     border-radius: var(--border-radius);
-    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.empty-state {
+    opacity: 0.8;
 }
 
 .error-state {
-    color: var(--danger-color);
-    background: rgba(231, 76, 60, 0.1);
+    background: rgba(231, 76, 60, 0.2);
+    border-color: rgba(231, 76, 60, 0.3);
 }
 
 .btn-sm {

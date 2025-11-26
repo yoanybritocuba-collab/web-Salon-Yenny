@@ -36,7 +36,7 @@
 }
 
 .booking-modal .modal-header {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: linear-gradient(135deg, #e91e63, #9c27b0);
     color: white;
     padding: var(--spacing-xl);
     text-align: center;
@@ -77,9 +77,47 @@
     padding: var(--spacing-xl);
 }
 
+.selected-services-modal {
+    background: #f8f9fa;
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-lg);
+    border-left: 4px solid #e91e63;
+}
+
+.selected-services-modal h3 {
+    margin-bottom: var(--spacing-md);
+    color: #e91e63;
+}
+
+#modalServicesList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.modal-service-item {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--spacing-sm);
+    background: white;
+    border-radius: var(--border-radius);
+    border-left: 3px solid #e91e63;
+}
+
+.modal-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--spacing-md);
+    border-top: 2px solid #dee2e6;
+    font-weight: 600;
+}
+
 .form-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: var(--spacing-lg);
     margin-bottom: var(--spacing-lg);
 }
@@ -110,7 +148,7 @@
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
-    border-color: var(--primary-color);
+    border-color: #e91e63;
     box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
 }
 
@@ -132,14 +170,14 @@
 }
 
 .time-slot:hover {
-    border-color: var(--primary-color);
+    border-color: #e91e63;
     transform: translateY(-2px);
 }
 
 .time-slot.selected {
-    background: var(--primary-color);
+    background: #e91e63;
     color: white;
-    border-color: var(--primary-color);
+    border-color: #e91e63;
 }
 
 .time-slot-text {
@@ -174,6 +212,13 @@
     padding: var(--spacing-lg);
     font-size: var(--font-size-lg);
     margin-top: var(--spacing-lg);
+    background: linear-gradient(135deg, #e91e63, #9c27b0);
+    border: none;
+}
+
+.btn-submit:hover {
+    background: linear-gradient(135deg, #d81b60, #8e24aa);
+    transform: translateY(-2px);
 }
 
 @media (max-width: 768px) {
@@ -188,5 +233,15 @@
     .modal-content {
         margin: 5% auto;
         width: 95%;
+    }
+    
+    .selected-services-modal {
+        padding: var(--spacing-md);
+    }
+    
+    .modal-total {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        align-items: flex-start;
     }
 }

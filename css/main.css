@@ -8,7 +8,6 @@
 @import url('components/products.css');
 @import url('components/gallery.css');
 @import url('components/admin.css');
-@import url('components/prices.css');
 @import url('components/image-viewer.css');
 
 /* Estilos generales */
@@ -126,6 +125,13 @@ body::before {
     font-size: var(--font-size-lg);
     border-radius: 50px;
     animation: fadeInUp 1s ease-out 0.4s both;
+    background: linear-gradient(135deg, #e91e63, #9c27b0);
+    border: none;
+}
+
+.btn-hero:hover {
+    background: linear-gradient(135deg, #d81b60, #8e24aa);
+    transform: translateY(-2px);
 }
 
 .btn-icon {
@@ -167,6 +173,7 @@ body::before {
 .contact-item:hover {
     transform: translateX(10px);
     box-shadow: var(--shadow-md);
+    border-left: 4px solid #e91e63;
 }
 
 .contact-icon {
@@ -176,7 +183,7 @@ body::before {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--primary-color);
+    background: linear-gradient(135deg, #e91e63, #9c27b0);
     color: white;
     border-radius: 50%;
 }
