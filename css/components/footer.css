@@ -1,0 +1,119 @@
+.footer {
+    background: var(--dark-color);
+    color: white;
+    padding: var(--spacing-2xl) 0 var(--spacing-xl);
+    position: relative;
+}
+
+.footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+.footer-section h3 {
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-lg);
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+}
+
+.footer-section p {
+    margin-bottom: var(--spacing-sm);
+    color: #ccc;
+    line-height: 1.6;
+}
+
+.footer-section a {
+    display: block;
+    color: #ccc;
+    margin-bottom: var(--spacing-sm);
+    transition: var(--transition);
+    text-decoration: none;
+    font-size: var(--font-size-base);
+}
+
+.footer-section a:hover {
+    color: var(--primary-color);
+    transform: translateX(5px);
+}
+
+/* Footer Logo Section - Posicionado a la derecha */
+.footer-logo-section {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+}
+
+.footer-logo {
+    width: 60px; /* Mitad del tamaño anterior (120px) */
+    height: 60px;
+    object-fit: contain;
+    border-radius: 50%;
+    background: white;
+    padding: var(--spacing-xs);
+    box-shadow: var(--shadow-lg);
+    transition: var(--transition);
+}
+
+.footer-logo:hover {
+    transform: scale(1.05) rotate(5deg);
+    box-shadow: 0 10px 30px rgba(233, 30, 99, 0.3);
+}
+
+.footer-bottom {
+    border-top: 1px solid #444;
+    padding-top: var(--spacing-lg);
+    text-align: center;
+    color: #999;
+    font-size: var(--font-size-sm);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+        text-align: center;
+    }
+    
+    .footer-logo-section {
+        justify-content: center;
+        order: -1;
+    }
+    
+    .footer-logo {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .footer-section a:hover {
+        transform: translateY(-2px);
+    }
+}
+
+@media (max-width: 480px) {
+    .footer {
+        padding: var(--spacing-xl) 0 var(--spacing-lg);
+    }
+    
+    .footer-content {
+        gap: var(--spacing-lg);
+    }
+    
+    .footer-logo {
+        width: 40px;
+        height: 40px;
+    }
+}
