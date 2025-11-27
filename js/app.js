@@ -12,14 +12,14 @@ import {
     orderBy
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-// Servicios actualizados con nombres CORREGIDOS de imágenes
+// Servicios con NOMBRES EXACTOS de imágenes según tu listado
 const services = [
     {
         id: 1,
         name: "Lavado normal",
         price: 55,
         duration: 10,
-        image: "lavado solo.png",
+        image: "imagenes/servicios/imagen7.png", // NOMBRE EXACTO
         description: "Lavado y secado profesional"
     },
     {
@@ -27,7 +27,7 @@ const services = [
         name: "Lavado con línea",
         price: 70,
         duration: 60,
-        image: "lavado con linea.png",
+        image: "imagenes/servicios/imagen6.png", // NOMBRE EXACTO
         description: "Lavado con corte de puntas"
     },
     {
@@ -35,7 +35,7 @@ const services = [
         name: "Lavado con rolos",
         price: 75,
         duration: 90,
-        image: "lavado con rolos.png", 
+        image: "imagenes/servicios/imagen8.png", // NOMBRE EXACTO
         description: "Lavado con peinado con rolos"
     },
     {
@@ -43,7 +43,7 @@ const services = [
         name: "Color",
         price: 120,
         duration: 120,
-        image: "color.png",
+        image: "imagenes/servicios/imagen9.png", // NOMBRE EXACTO
         description: "Coloración profesional"
     },
     {
@@ -51,7 +51,7 @@ const services = [
         name: "Botox capilar",
         price: 150,
         duration: 120,
-        image: "botox capilar.png",
+        image: "imagenes/servicios/imagen1.png", // NOMBRE EXACTO
         description: "Tratamiento botox capilar"
     },
     {
@@ -59,7 +59,7 @@ const services = [
         name: "Keratina",
         price: 200,
         duration: 120,
-        image: "keratina.png",
+        image: "imagenes/servicios/imagen2.png", // NOMBRE EXACTO
         description: "Tratamiento de keratina"
     },
     {
@@ -67,7 +67,7 @@ const services = [
         name: "Microsring",
         price: 200,
         duration: 120,
-        image: "microsring.png",
+        image: "imagenes/servicios/imagen3.png", // NOMBRE EXACTO
         description: "Extensiones microsring"
     },
     {
@@ -75,7 +75,7 @@ const services = [
         name: "Extensiones x línea",
         price: 20,
         duration: 40,
-        image: "extenciones por lineas.png",
+        image: "imagenes/servicios/imagen4.png", // NOMBRE EXACTO
         description: "Extensiones por línea"
     },
     {
@@ -83,10 +83,12 @@ const services = [
         name: "Extensiones completas",
         price: 200,
         duration: 120,
-        image: "extenciones completas.png",
+        image: "imagenes/servicios/imagen5.png", // NOMBRE EXACTO
         description: "Extensiones completas"
     }
 ];
+
+// ... (el resto del código se mantiene IGUAL desde aquí) ...
 
 // Elementos del DOM
 const servicesContainer = document.getElementById('servicesContainer');
@@ -156,7 +158,7 @@ function isBusinessDay(dateString) {
     return dayOfWeek >= 1 && dayOfWeek <= 6; // 1=Lunes, 6=Sábado
 }
 
-// Cargar servicios CORREGIDO
+// Cargar servicios - CORREGIDO con nombres exactos
 function loadServices() {
     servicesContainer.innerHTML = '';
     
@@ -165,7 +167,7 @@ function loadServices() {
         serviceCard.className = 'service-card';
         serviceCard.innerHTML = `
             <div class="service-image-container">
-                <img src="imagenes/servicios/${service.image}" alt="${service.name}" class="service-image" 
+                <img src="${service.image}" alt="${service.name}" class="service-image" 
                      onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPiR7c2VydmljZS5uYW1lfTwvdGV4dD48L3N2Zz4='">
                 <div class="service-overlay">
                     <span class="service-price">$${service.price}</span>
@@ -185,6 +187,8 @@ function loadServices() {
         });
     });
 }
+
+// ... (el resto del código se mantiene EXACTAMENTE IGUAL) ...
 
 // Alternar selección de servicio
 function toggleServiceSelection(service, card) {
@@ -558,7 +562,7 @@ function loadAdminPanel() {
                     <label for="password">Contraseña:</label>
                     <input type="password" id="password" placeholder="Ingresa la contraseña" required>
                 </div>
-                <button type="submit" class="btn btn-primary btn-login">
+                <button type="submit" class="btn btn-fuchsia btn-login">
                     <span class="btn-icon">🔑</span>
                     Acceder al Panel
                 </button>
