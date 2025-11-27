@@ -184,14 +184,14 @@ body::before {
     transform: translateY(-2px);
 }
 
-/* Hero Section - CONTENEDOR MÁS ANCHO */
+/* Hero Section - CONTENEDOR MÁS ANCHO CON PADDING AJUSTADO */
 .hero {
     min-height: 100vh;
     display: flex;
     align-items: center;
     position: relative;
-    padding: 120px 0 var(--spacing-2xl) 0;
-    margin-top: 70px;
+    padding: 140px 0 var(--spacing-2xl) 0; /* CAMBIADO: de 120px a 140px */
+    margin-top: 0; /* CAMBIADO: de 70px a 0 */
 }
 
 .hero-content {
@@ -332,8 +332,8 @@ body::before {
     .hero {
         min-height: 80vh;
         text-align: center;
-        padding: 100px 0 var(--spacing-xl) 0;
-        margin-top: 60px;
+        padding: 100px 0 var(--spacing-xl) 0; /* AJUSTADO para móvil */
+        margin-top: 0;
     }
     
     .hero-content {
@@ -372,8 +372,8 @@ body::before {
     .hero {
         min-height: 80vh;
         text-align: center;
-        padding: 100px 0 var(--spacing-xl) 0;
-        margin-top: 60px;
+        padding: 100px 0 var(--spacing-xl) 0; /* AJUSTADO para tablet */
+        margin-top: 0;
     }
     
     .hero-content {

@@ -19,7 +19,7 @@ const services = [
         name: "Lavado normal",
         price: 55,
         duration: 10,
-        image: "imagenes/servicios/imagen7.png", // NOMBRE EXACTO
+        image: "imagenes/servicios/imagen7.png",
         description: "Lavado y secado profesional"
     },
     {
@@ -27,7 +27,7 @@ const services = [
         name: "Lavado con línea",
         price: 70,
         duration: 60,
-        image: "imagenes/servicios/imagen6.png", // NOMBRE EXACTO
+        image: "imagenes/servicios/imagen6.png",
         description: "Lavado con corte de puntas"
     },
     {
@@ -35,7 +35,7 @@ const services = [
         name: "Lavado con rolos",
         price: 75,
         duration: 90,
-        image: "imagenes/servicios/imagen8.png", // NOMBRE EXACTO
+        image: "imagenes/servicios/imagen8.png",
         description: "Lavado con peinado con rolos"
     },
     {
@@ -43,7 +43,7 @@ const services = [
         name: "Color",
         price: 120,
         duration: 120,
-        image: "imagenes/servicios/imagen9.png", // NOMBRE EXACTO
+        image: "imagenes/servicios/imagen9.png",
         description: "Coloración profesional"
     },
     {
@@ -51,7 +51,7 @@ const services = [
         name: "Botox capilar",
         price: 150,
         duration: 120,
-        image: "imagenes/servicios/imagen1.png", // NOMBRE EXACTO
+        image: "imagenes/servicios/imagen1.png",
         description: "Tratamiento botox capilar"
     },
     {
@@ -59,7 +59,7 @@ const services = [
         name: "Keratina",
         price: 200,
         duration: 120,
-        image: "imagenes/servicios/imagen2.png", // NOMBRE EXACTO
+        image: "imagenes/servicios/imagen2.png",
         description: "Tratamiento de keratina"
     },
     {
@@ -67,7 +67,7 @@ const services = [
         name: "Microsring",
         price: 200,
         duration: 120,
-        image: "imagenes/servicios/imagen3.png", // NOMBRE EXACTO
+        image: "imagenes/servicios/imagen3.png",
         description: "Extensiones microsring"
     },
     {
@@ -75,7 +75,7 @@ const services = [
         name: "Extensiones x línea",
         price: 20,
         duration: 40,
-        image: "imagenes/servicios/imagen4.png", // NOMBRE EXACTO
+        image: "imagenes/servicios/imagen4.png",
         description: "Extensiones por línea"
     },
     {
@@ -83,12 +83,10 @@ const services = [
         name: "Extensiones completas",
         price: 200,
         duration: 120,
-        image: "imagenes/servicios/imagen5.png", // NOMBRE EXACTO
+        image: "imagenes/servicios/imagen5.png",
         description: "Extensiones completas"
     }
 ];
-
-// ... (el resto del código se mantiene IGUAL desde aquí) ...
 
 // Elementos del DOM
 const servicesContainer = document.getElementById('servicesContainer');
@@ -116,6 +114,7 @@ const bookSelectedServicesBtn = document.getElementById('bookSelectedServices');
 const modalServicesList = document.getElementById('modalServicesList');
 const modalTotalPriceElement = document.getElementById('modalTotalPrice');
 const modalTotalDurationElement = document.getElementById('modalTotalDuration');
+const servicesIndicator = document.getElementById('servicesIndicator');
 
 // Estado global
 let currentAppointments = [];
@@ -125,6 +124,51 @@ let currentImages = [];
 let currentImageIndex = 0;
 let selectedServices = [];
 let isBookingPaused = false;
+
+// Variables para el control del scroll
+let lastScrollTop = 0;
+const header = document.querySelector('.header');
+const scrollThreshold = 100;
+
+// Sistema de navegación ocultable al hacer scroll
+function initScrollNavigation() {
+    window.addEventListener('scroll', function() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // Solo aplicar en móviles o cuando el scroll sea significativo
+        if (window.innerWidth <= 768 || scrollTop > scrollThreshold) {
+            if (scrollTop > lastScrollTop && scrollTop > scrollThreshold) {
+                // Scroll hacia abajo - ocultar
+                header.classList.add('hidden');
+            } else {
+                // Scroll hacia arriba - mostrar
+                header.classList.remove('hidden');
+            }
+        } else {
+            // En la parte superior, siempre mostrar
+            header.classList.remove('hidden');
+        }
+        
+        lastScrollTop = scrollTop;
+    }, { passive: true });
+}
+
+// Mostrar indicador de selección de citas
+function showServicesIndicator() {
+    servicesIndicator.style.display = 'block';
+    
+    // Scroll suave a la sección de servicios
+    const servicesSection = document.getElementById('servicios');
+    servicesSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+    });
+    
+    // Ocultar el indicador después de 5 segundos
+    setTimeout(() => {
+        servicesIndicator.style.display = 'none';
+    }, 5000);
+}
 
 // Configurar fecha mínima (hoy) y restricciones
 function initializeDateInput() {
@@ -187,8 +231,6 @@ function loadServices() {
         });
     });
 }
-
-// ... (el resto del código se mantiene EXACTAMENTE IGUAL) ...
 
 // Alternar selección de servicio
 function toggleServiceSelection(service, card) {
@@ -468,7 +510,7 @@ function listenToAppointments() {
 // Abrir modal de reserva
 function openBookingModal() {
     if (selectedServices.length === 0) {
-        showNotification('Selecciona al menos un servicio', 'warning');
+        showServicesIndicator();
         return;
     }
 
@@ -779,6 +821,9 @@ async function loadAdminAppointments() {
 
 // Inicializar aplicación
 document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar sistema de scroll
+    initScrollNavigation();
+    
     initializeDateInput();
     loadServices();
     loadProducts();
@@ -802,8 +847,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Event listeners para modales
-    bookingBtn.addEventListener('click', openBookingModal);
-    heroBookingBtn.addEventListener('click', openBookingModal);
+    bookingBtn.addEventListener('click', showServicesIndicator);
+    heroBookingBtn.addEventListener('click', showServicesIndicator);
     bookSelectedServicesBtn.addEventListener('click', openBookingModal);
     
     adminBtn.addEventListener('click', () => {

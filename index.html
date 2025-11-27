@@ -10,6 +10,18 @@
     <!-- Header -->
     <header class="header">
         <div class="container">
+            <!-- CONTENEDOR DEL LOGO CON NOMBRE E IMAGEN JUNTOS -->
+            <div class="brand-container">
+                <div class="logo">
+                    <div class="logo-text">
+                        <h1>YennyHair-Salón</h1>
+                        <p>Belleza y Estética Profesional</p>
+                    </div>
+                    <img src="imagenes/FL/fondo19.png" alt="YennyHair-Salón" class="logo-img">
+                </div>
+            </div>
+
+            <!-- NAVEGACIÓN CENTRADA -->
             <nav class="nav">
                 <ul>
                     <li><a href="#inicio">Inicio</a></li>
@@ -18,22 +30,11 @@
                     <li><a href="#galeria">Galería</a></li>
                 </ul>
             </nav>
-            <!-- LOGO CENTRADO ENTRE GALERÍA Y BOTONES -->
-            <div class="logo-center">
-                <div class="logo-content">
-                    <img src="imagenes/FL/fondo19.png" alt="YennyHair-Salón" class="logo-img">
-                    <div class="logo-text">
-                        <h1>YennyHair-Salón</h1>
-                        <p>Belleza y Estética Profesional</p>
-                    </div>
-                </div>
-            </div>
-            <!-- CONTENEDOR SEPARADO PARA LOS BOTONES -->
-            <div class="header-buttons-container">
-                <div class="header-buttons">
-                    <button id="bookingBtn" class="btn btn-fuchsia">Citas</button>
-                    <button id="adminBtn" class="btn btn-fuchsia">Admin</button>
-                </div>
+
+            <!-- BOTONES A LA DERECHA -->
+            <div class="header-buttons">
+                <button id="bookingBtn" class="btn btn-fuchsia">Citas</button>
+                <button id="adminBtn" class="btn btn-fuchsia">Admin</button>
             </div>
         </div>
     </header>
@@ -56,6 +57,13 @@
     <section id="servicios" class="services">
         <div class="container">
             <h2 class="section-title">Nuestros Servicios</h2>
+            <div class="services-indicator" id="servicesIndicator" style="display: none;">
+                <div class="indicator-content">
+                    <span class="indicator-icon">✨</span>
+                    <h3>¡Escoge tu cita!</h3>
+                    <p>Selecciona los servicios que deseas reservar</p>
+                </div>
+            </div>
             <div class="services-grid" id="servicesContainer">
                 <!-- Los servicios se cargarán dinámicamente aquí -->
             </div>
