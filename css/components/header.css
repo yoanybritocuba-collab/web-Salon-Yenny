@@ -1,16 +1,19 @@
 .header {
-    background-color: rgba(255, 255, 255, 0.95);
-    box-shadow: var(--shadow-sm);
-    position: sticky;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 1000;
-    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-sm);
 }
 
 .header .container {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     padding: var(--spacing-md) var(--spacing-lg);
 }
 
@@ -20,27 +23,20 @@
     gap: var(--spacing-md);
 }
 
-.logo-img {
-    height: 60px;
-    width: auto;
-    transition: var(--transition);
-}
-
-.logo-img:hover {
-    transform: scale(1.05);
-}
-
 .logo-text h1 {
     color: var(--primary-color);
-    font-size: var(--font-size-2xl);
-    font-weight: 800;
-    margin: 0;
+    font-size: var(--font-size-xl);
+    margin-bottom: 2px;
 }
 
 .logo-text p {
     color: var(--gray-color);
     font-size: var(--font-size-sm);
-    margin: 0;
+}
+
+.logo-img {
+    height: 50px;
+    width: auto;
 }
 
 .nav ul {
@@ -50,32 +46,15 @@
 
 .nav a {
     color: var(--dark-color);
-    font-weight: 500;
+    font-weight: 600;
     transition: var(--transition);
     padding: var(--spacing-sm) var(--spacing-md);
     border-radius: var(--border-radius);
-    position: relative;
 }
 
 .nav a:hover {
     color: var(--primary-color);
-    background-color: rgba(233, 30, 99, 0.1);
-}
-
-.nav a::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background: var(--primary-color);
-    transition: var(--transition);
-    transform: translateX(-50%);
-}
-
-.nav a:hover::after {
-    width: 80%;
+    background: rgba(233, 30, 99, 0.1);
 }
 
 .header-buttons {
@@ -83,60 +62,18 @@
     gap: var(--spacing-md);
 }
 
-.btn {
-    padding: var(--spacing-sm) var(--spacing-lg);
-    border-radius: var(--border-radius);
+/* Botón Admin DORADO - CORREGIDO */
+.btn-gold {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #2c3e50;
+    border: none;
     font-weight: 600;
-    transition: var(--transition);
-    font-size: var(--font-size-base);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--spacing-sm);
 }
 
-.btn-primary {
-    background-color: var(--primary-color);
-    color: white;
-}
-
-.btn-secondary {
-    background-color: var(--secondary-color);
-    color: white;
-}
-
-.btn:hover {
+.btn-gold:hover {
+    background: linear-gradient(135deg, #FFA500, #FF8C00);
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
-}
-
-.btn-primary:hover {
-    background-color: var(--accent-color);
-}
-
-.btn-secondary:hover {
-    background-color: #7b1fa2;
-}
-
-.btn-outline {
-    background: transparent;
-    border: 2px solid var(--primary-color);
-    color: var(--primary-color);
-}
-
-.btn-outline:hover {
-    background: var(--primary-color);
-    color: white;
-}
-
-@media (max-width: 1024px) {
-    .nav ul {
-        gap: var(--spacing-md);
-    }
-    
-    .logo-img {
-        height: 50px;
-    }
 }
 
 @media (max-width: 768px) {
@@ -145,45 +82,18 @@
         gap: var(--spacing-md);
         padding: var(--spacing-md);
     }
-    
+
     .nav ul {
-        gap: var(--spacing-sm);
-        flex-wrap: wrap;
-        justify-content: center;
+        gap: var(--spacing-md);
     }
-    
-    .logo {
-        flex-direction: column;
-        text-align: center;
-        gap: var(--spacing-sm);
-    }
-    
-    .logo-img {
-        height: 45px;
-    }
-    
+
     .header-buttons {
         width: 100%;
         justify-content: center;
     }
-}
 
-@media (max-width: 480px) {
-    .nav ul {
-        gap: var(--spacing-xs);
-    }
-    
-    .nav a {
-        padding: var(--spacing-xs) var(--spacing-sm);
-        font-size: var(--font-size-sm);
-    }
-    
-    .btn {
-        padding: var(--spacing-xs) var(--spacing-md);
-        font-size: var(--font-size-sm);
-    }
-    
-    .logo-text h1 {
-        font-size: var(--font-size-xl);
+    .header-buttons .btn {
+        flex: 1;
+        justify-content: center;
     }
 }

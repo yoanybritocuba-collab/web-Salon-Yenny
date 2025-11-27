@@ -2,7 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-// Your web app's Firebase configuration
+// Your web app's Firebase configuration - ✅ USA TU CONFIGURACIÓN
 const firebaseConfig = {
   apiKey: "AIzaSyCBCJn0JDvKPNRb-5TkSZyaWZtTpF1-3Wg",
   authDomain: "web-salon-yenny.firebaseapp.com",
@@ -14,6 +14,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 
-export { db };
+// Initialize Cloud Firestore
+export const db = getFirestore(app);

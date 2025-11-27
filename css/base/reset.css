@@ -1,7 +1,11 @@
+/* Modern CSS Reset */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
 html {
@@ -9,12 +13,21 @@ html {
 }
 
 body {
-    line-height: 1.6;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
 }
 
-ul {
-    list-style: none;
+img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+}
+
+input, button, textarea, select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
 }
 
 a {
@@ -22,18 +35,6 @@ a {
     color: inherit;
 }
 
-button {
-    border: none;
-    background: none;
-    cursor: pointer;
-    font-family: inherit;
-}
-
-img {
-    max-width: 100%;
-    height: auto;
-}
-
-input, select, textarea {
-    font-family: inherit;
+ul, ol {
+    list-style: none;
 }

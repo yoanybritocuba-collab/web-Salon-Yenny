@@ -12,7 +12,7 @@ import {
     orderBy
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-// Servicios actualizados con nombres de imágenes corregidos
+// Servicios actualizados con nombres CORREGIDOS de imágenes
 const services = [
     {
         id: 1,
@@ -48,7 +48,7 @@ const services = [
     },
     {
         id: 5,
-        name: "Botox",
+        name: "Botox capilar",
         price: 150,
         duration: 120,
         image: "botox capilar.png",
@@ -122,11 +122,41 @@ let unsubscribeAppointments = null;
 let currentImages = [];
 let currentImageIndex = 0;
 let selectedServices = [];
+let isBookingPaused = false;
 
-// Configurar fecha mínima (hoy)
-dateInput.min = new Date().toISOString().split('T')[0];
+// Configurar fecha mínima (hoy) y restricciones
+function initializeDateInput() {
+    const today = new Date();
+    dateInput.min = today.toISOString().split('T')[0];
+    
+    // Establecer fecha máxima (3 meses desde hoy)
+    const maxDate = new Date();
+    maxDate.setMonth(maxDate.getMonth() + 3);
+    dateInput.max = maxDate.toISOString().split('T')[0];
+    
+    // Deshabilitar domingos
+    dateInput.addEventListener('change', function() {
+        const selectedDate = new Date(this.value);
+        const dayOfWeek = selectedDate.getDay();
+        
+        if (dayOfWeek === 0) { // Domingo
+            showNotification('❌ Los domingos estamos cerrados. Por favor selecciona otro día.', 'error');
+            this.value = '';
+            timeSlotsContainer.innerHTML = '<div class="time-slots-message error">Selecciona un día de lunes a sábado</div>';
+        } else {
+            updateAvailableTimes();
+        }
+    });
+}
 
-// Cargar servicios
+// Verificar si es día laboral (lunes a sábado)
+function isBusinessDay(dateString) {
+    const date = new Date(dateString);
+    const dayOfWeek = date.getDay();
+    return dayOfWeek >= 1 && dayOfWeek <= 6; // 1=Lunes, 6=Sábado
+}
+
+// Cargar servicios CORREGIDO
 function loadServices() {
     servicesContainer.innerHTML = '';
     
@@ -135,7 +165,8 @@ function loadServices() {
         serviceCard.className = 'service-card';
         serviceCard.innerHTML = `
             <div class="service-image-container">
-                <img src="imagenes/servicios/${service.image}" alt="${service.name}" class="service-image" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPiR7c2VydmljZS5uYW1lfTwvdGV4dD48L3N2Zz4='">
+                <img src="imagenes/servicios/${service.image}" alt="${service.name}" class="service-image" 
+                     onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPiR7c2VydmljZS5uYW1lfTwvdGV4dD48L3N2Zz4='">
                 <div class="service-overlay">
                     <span class="service-price">$${service.price}</span>
                     <span class="service-duration">${service.duration}min</span>
@@ -195,7 +226,7 @@ function updateSelectedServicesUI() {
     }
 }
 
-// Cargar productos con mejor visualización
+// Cargar productos
 function loadProducts() {
     productsContainer.innerHTML = '';
     
@@ -204,7 +235,8 @@ function loadProducts() {
         productCard.className = 'product-card';
         productCard.innerHTML = `
             <div class="product-image-container">
-                <img src="imagenes/productos/imagen${i}.jpg" alt="Producto ${i}" class="product-image" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlByb2R1Y3RvICR7aX08L3RleHQ+PC9zdmc+='">
+                <img src="imagenes/productos/imagen${i}.jpg" alt="Producto ${i}" class="product-image" 
+                     onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlByb2R1Y3RvICR7aX08L3RleHQ+PC9zdmc+='">
                 <div class="product-overlay">
                     <div class="product-overlay-text">Ver Producto</div>
                 </div>
@@ -223,7 +255,7 @@ function loadProducts() {
     }
 }
 
-// Cargar galería con mejor visualización
+// Cargar galería
 function loadGallery() {
     galleryContainer.innerHTML = '';
     
@@ -231,7 +263,8 @@ function loadGallery() {
         const galleryItem = document.createElement('div');
         galleryItem.className = 'gallery-item';
         galleryItem.innerHTML = `
-            <img src="imagenes/imagen${i}.jpg" alt="Trabajo ${i}" class="gallery-image" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkdhbGVyw61hICR7aX08L3RleHQ+PC9zdmc+='">
+            <img src="imagenes/imagen${i}.jpg" alt="Trabajo ${i}" class="gallery-image" 
+                 onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkdhbGVyw61hICR7aX08L3RleHQ+PC9zdmc+='">
             <div class="gallery-overlay">
                 <span class="gallery-text">Trabajo ${i}</span>
             </div>
@@ -271,12 +304,10 @@ function openImageViewer(index) {
     imageViewerModal.style.display = 'block';
     document.body.style.overflow = 'hidden';
     
-    // Actualizar controles
     updateImageControls();
 }
 
 function updateImageControls() {
-    // Ocultar/mostrar botones según la posición
     prevImageBtn.style.display = currentImageIndex > 0 ? 'block' : 'none';
     nextImageBtn.style.display = currentImageIndex < currentImages.length - 1 ? 'block' : 'none';
 }
@@ -288,14 +319,24 @@ function closeImageViewer() {
     currentImageIndex = 0;
 }
 
-// Sistema IA para calcular disponibilidad
+// Sistema IA para calcular disponibilidad - Horario 9:00 a 18:00 (Lunes a Sábado)
 function calculateAvailableTimes(selectedDate, totalDuration) {
+    // Verificar si es día laboral
+    if (!isBusinessDay(selectedDate)) {
+        return [];
+    }
+
     const workStart = 9 * 60; // 9:00 en minutos
-    const workEnd = 19 * 60; // 19:00 en minutos
+    const workEnd = 18 * 60; // 18:00 en minutos (6:00 PM)
     const slotDuration = 30; // Intervalos de 30 minutos
     const bufferTime = 15; // Tiempo entre citas
     
     const availableSlots = [];
+    
+    // Si el sistema está pausado, no hay horarios disponibles
+    if (isBookingPaused) {
+        return availableSlots;
+    }
     
     // Generar todos los slots posibles
     for (let time = workStart; time <= workEnd - totalDuration; time += slotDuration) {
@@ -355,13 +396,25 @@ function updateAvailableTimes() {
         return;
     }
     
+    // Verificar si es día laboral
+    if (!isBusinessDay(selectedDate)) {
+        timeSlotsContainer.innerHTML = '<div class="time-slots-message error">❌ Solo abrimos de lunes a sábado</div>';
+        return;
+    }
+    
+    // Verificar si el sistema está pausado
+    if (isBookingPaused) {
+        timeSlotsContainer.innerHTML = '<div class="time-slots-message error">⚠️ El sistema de citas está temporalmente pausado</div>';
+        return;
+    }
+    
     const totalDuration = selectedServices.reduce((total, service) => total + service.duration, 0);
     const availableSlots = calculateAvailableTimes(selectedDate, totalDuration);
     
     timeSlotsContainer.innerHTML = '';
     
     if (availableSlots.length === 0) {
-        timeSlotsContainer.innerHTML = '<div class="time-slots-message error">No hay horarios disponibles</div>';
+        timeSlotsContainer.innerHTML = '<div class="time-slots-message error">No hay horarios disponibles para esta fecha</div>';
         return;
     }
     
@@ -411,7 +464,12 @@ function listenToAppointments() {
 // Abrir modal de reserva
 function openBookingModal() {
     if (selectedServices.length === 0) {
-        alert('Selecciona al menos un servicio');
+        showNotification('Selecciona al menos un servicio', 'warning');
+        return;
+    }
+
+    if (isBookingPaused) {
+        showNotification('El sistema de citas está temporalmente pausado', 'error');
         return;
     }
 
@@ -442,6 +500,38 @@ function openBookingModal() {
     updateAvailableTimes();
 }
 
+// Mostrar notificación
+function showNotification(message, type = 'info') {
+    // Remover notificaciones existentes
+    document.querySelectorAll('.notification').forEach(notif => notif.remove());
+    
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <span>${message}</span>
+        <button class="notification-close">&times;</button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animación de entrada
+    setTimeout(() => notification.classList.add('show'), 100);
+    
+    // Cerrar notificación
+    notification.querySelector('.notification-close').addEventListener('click', () => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    });
+    
+    // Auto cerrar después de 5 segundos
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+        }
+    }, 5000);
+}
+
 // Cerrar modales
 function closeModals() {
     bookingModal.style.display = 'none';
@@ -455,7 +545,7 @@ function closeModals() {
     }
 }
 
-// Cargar panel admin
+// Cargar panel admin mejorado
 function loadAdminPanel() {
     adminContent.innerHTML = `
         <div class="admin-login" id="adminLogin">
@@ -476,8 +566,8 @@ function loadAdminPanel() {
         </div>
         <div class="admin-panel" id="adminPanel" style="display: none;">
             <div class="admin-header">
-                <h3>📊 Panel de Control</h3>
-                <p>Gestión de citas y sistema</p>
+                <h3>📊 Panel de Control - YennyHair Salón</h3>
+                <p>Tellstrase 32, 8400 Winterthur</p>
             </div>
             
             <div class="admin-stats">
@@ -493,6 +583,13 @@ function loadAdminPanel() {
                     <div class="stat-info">
                         <span class="stat-number" id="dailyRevenue">$0</span>
                         <span class="stat-label">Ingresos Hoy</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚙️</div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="systemStatus">Activo</span>
+                        <span class="stat-label">Estado Sistema</span>
                     </div>
                 </div>
             </div>
@@ -515,13 +612,17 @@ function loadAdminPanel() {
                     <h4>⚙️ Control del Sistema</h4>
                 </div>
                 <div class="system-controls">
-                    <button class="btn btn-warning" id="stopBookingBtn">
+                    <button class="btn btn-warning" id="stopBookingBtn" ${isBookingPaused ? 'style="display:none"' : ''}>
                         <span class="btn-icon">⏸️</span>
                         Pausar Sistema
                     </button>
-                    <button class="btn btn-success" id="enableBookingBtn" style="display: none;">
+                    <button class="btn btn-success" id="enableBookingBtn" ${isBookingPaused ? '' : 'style="display:none"'}>
                         <span class="btn-icon">▶️</span>
                         Reanudar Sistema
+                    </button>
+                    <button class="btn btn-info" id="clearSelectionsBtn">
+                        <span class="btn-icon">🧹</span>
+                        Limpiar Selecciones
                     </button>
                 </div>
             </div>
@@ -538,22 +639,39 @@ function loadAdminPanel() {
             loadAdminAppointments();
             listenToAppointments();
         } else {
-            alert('❌ Contraseña incorrecta');
+            showNotification('❌ Contraseña incorrecta', 'error');
         }
     });
 
     document.getElementById('refreshAppointments').addEventListener('click', loadAdminAppointments);
     
     document.getElementById('stopBookingBtn').addEventListener('click', function() {
-        if (confirm('¿Pausar el sistema de citas?')) {
+        if (confirm('¿Pausar el sistema de citas? Los clientes no podrán agendar nuevas citas.')) {
+            isBookingPaused = true;
             this.style.display = 'none';
             document.getElementById('enableBookingBtn').style.display = 'inline-flex';
+            document.getElementById('systemStatus').textContent = 'Pausado';
+            document.getElementById('systemStatus').style.color = '#f39c12';
+            showNotification('⏸️ Sistema de citas pausado', 'warning');
         }
     });
 
     document.getElementById('enableBookingBtn').addEventListener('click', function() {
+        isBookingPaused = false;
         this.style.display = 'none';
         document.getElementById('stopBookingBtn').style.display = 'inline-flex';
+        document.getElementById('systemStatus').textContent = 'Activo';
+        document.getElementById('systemStatus').style.color = '#27ae60';
+        showNotification('✅ Sistema de citas activado', 'success');
+    });
+
+    document.getElementById('clearSelectionsBtn').addEventListener('click', function() {
+        selectedServices = [];
+        document.querySelectorAll('.service-card.selected').forEach(card => {
+            card.classList.remove('selected');
+        });
+        updateSelectedServicesUI();
+        showNotification('🧹 Selecciones limpiadas', 'info');
     });
 }
 
@@ -608,6 +726,9 @@ async function loadAdminAppointments() {
                             </div>
                         </div>
                         <div class="appointment-actions">
+                            <button class="btn btn-success complete-btn" data-id="${appointment.id}">
+                                ✅ Completar
+                            </button>
                             <button class="btn btn-danger cancel-btn" data-id="${appointment.id}">
                                 ❌ Cancelar
                             </button>
@@ -627,6 +748,20 @@ async function loadAdminAppointments() {
                         status: 'cancelled',
                         cancelledAt: new Date()
                     });
+                    showNotification('❌ Cita cancelada', 'error');
+                }
+            });
+        });
+
+        document.querySelectorAll('.complete-btn').forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const id = this.getAttribute('data-id');
+                if (confirm('¿Marcar esta cita como completada?')) {
+                    await updateDoc(doc(db, "appointments", id), {
+                        status: 'completed',
+                        completedAt: new Date()
+                    });
+                    showNotification('✅ Cita completada', 'success');
                 }
             });
         });
@@ -640,6 +775,7 @@ async function loadAdminAppointments() {
 
 // Inicializar aplicación
 document.addEventListener('DOMContentLoaded', function() {
+    initializeDateInput();
     loadServices();
     loadProducts();
     loadGallery();
@@ -682,14 +818,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    dateInput.addEventListener('change', updateAvailableTimes);
-    
     // Formulario de citas
     bookingForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         if (!selectedTime) {
-            alert('❌ Selecciona una hora disponible');
+            showNotification('❌ Selecciona una hora disponible', 'error');
             return;
         }
         
@@ -698,6 +832,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const time = selectedTime;
         const name = formData.get('name');
         const phone = formData.get('phone');
+        
+        // Validar que sea día laboral
+        if (!isBusinessDay(date)) {
+            showNotification('❌ Solo atendemos de lunes a sábado', 'error');
+            return;
+        }
         
         const serviceNames = selectedServices.map(s => s.name).join(', ');
         const totalPrice = selectedServices.reduce((sum, s) => sum + s.price, 0);
@@ -716,21 +856,106 @@ document.addEventListener('DOMContentLoaded', function() {
                 timestamp: new Date()
             });
             
-            alert(`🎉 ¡Cita reservada exitosamente!\n\nServicios: ${serviceNames}\nTotal: $${totalPrice}\nFecha: ${date}\nHora: ${time}`);
+            // Mostrar indicador verde de cita concertada
+            showNotification('✅ ¡Cita concertada exitosamente! Te esperamos en Tellstrase 32', 'success');
             
+            // Resetear formulario
             bookingForm.reset();
             selectedTime = null;
             selectedServices = [];
             updateSelectedServicesUI();
-            closeModals();
+            
+            // Cerrar modal después de 2 segundos
+            setTimeout(() => {
+                closeModals();
+            }, 2000);
             
         } catch (error) {
             console.error("Error al reservar cita: ", error);
-            alert("❌ Error al reservar la cita");
+            showNotification('❌ Error al reservar la cita', 'error');
         }
     });
     
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeModals();
     });
+
+    // Touch events para móviles
+    document.addEventListener('touchstart', function() {}, {passive: true});
 });
+
+// Estilos para notificaciones
+const notificationStyles = document.createElement('style');
+notificationStyles.textContent = `
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: var(--spacing-md) var(--spacing-lg);
+        border-radius: var(--border-radius);
+        color: white;
+        font-weight: 600;
+        z-index: 10000;
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+        max-width: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--spacing-md);
+        box-shadow: var(--shadow-lg);
+    }
+    
+    .notification.show {
+        transform: translateX(0);
+    }
+    
+    .notification-success {
+        background: #27ae60;
+        border-left: 4px solid #219653;
+    }
+    
+    .notification-error {
+        background: #e74c3c;
+        border-left: 4px solid #c0392b;
+    }
+    
+    .notification-warning {
+        background: #f39c12;
+        border-left: 4px solid #e67e22;
+    }
+    
+    .notification-info {
+        background: #3498db;
+        border-left: 4px solid #2980b9;
+    }
+    
+    .notification-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    @media (max-width: 768px) {
+        .notification {
+            top: 10px;
+            right: 10px;
+            left: 10px;
+            max-width: none;
+            transform: translateY(-100px);
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+        }
+    }
+`;
+document.head.appendChild(notificationStyles);
