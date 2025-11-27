@@ -118,13 +118,14 @@ body::before {
     gap: var(--spacing-sm);
 }
 
-.btn-primary {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+.btn-fuchsia {
+    background: linear-gradient(135deg, #E91E63, #9C27B0);
     color: white;
+    border: none;
 }
 
-.btn-primary:hover {
-    background: linear-gradient(135deg, #d81b60, #8e24aa);
+.btn-fuchsia:hover {
+    background: linear-gradient(135deg, #D81B60, #8E24AA);
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
 }
@@ -182,13 +183,14 @@ body::before {
     transform: translateY(-2px);
 }
 
-/* Hero Section */
+/* Hero Section - POSICIÓN MÁS ABAJO */
 .hero {
     min-height: 100vh;
     display: flex;
     align-items: center;
     position: relative;
-    padding: var(--spacing-2xl) 0;
+    padding: 120px 0 var(--spacing-2xl) 0; /* Padding superior aumentado */
+    margin-top: 70px; /* Compensa la altura del header fijo */
 }
 
 .hero-content {
@@ -221,12 +223,12 @@ body::before {
     font-size: var(--font-size-lg);
     border-radius: 50px;
     animation: fadeInUp 1s ease-out 0.4s both;
-    background: linear-gradient(135deg, #e91e63, #9c27b0);
+    background: linear-gradient(135deg, #E91E63, #9C27B0);
     border: none;
 }
 
 .btn-hero:hover {
-    background: linear-gradient(135deg, #d81b60, #8e24aa);
+    background: linear-gradient(135deg, #D81B60, #8E24AA);
     transform: translateY(-2px);
 }
 
@@ -327,7 +329,8 @@ body::before {
     .hero {
         min-height: 80vh;
         text-align: center;
-        padding: var(--spacing-xl) 0;
+        padding: 100px 0 var(--spacing-xl) 0; /* Ajustado para móvil */
+        margin-top: 60px; /* Compensa header móvil */
     }
     
     .contact-content {
@@ -361,6 +364,8 @@ body::before {
     .hero {
         min-height: 80vh;
         text-align: center;
+        padding: 100px 0 var(--spacing-xl) 0;
+        margin-top: 60px;
     }
     
     .contact-content {

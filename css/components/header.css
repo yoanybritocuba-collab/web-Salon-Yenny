@@ -8,13 +8,15 @@
     right: 0;
     z-index: 1000;
     box-shadow: var(--shadow-sm);
+    height: 70px; /* Franja más fina */
 }
 
 .header .container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--spacing-md) var(--spacing-lg);
+    padding: var(--spacing-sm) var(--spacing-lg); /* Padding reducido */
+    height: 100%;
 }
 
 .logo {
@@ -25,17 +27,19 @@
 
 .logo-text h1 {
     color: var(--primary-color);
-    font-size: var(--font-size-xl);
+    font-size: var(--font-size-lg); /* Tamaño reducido */
     margin-bottom: 2px;
+    line-height: 1.2;
 }
 
 .logo-text p {
     color: var(--gray-color);
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-xs); /* Tamaño reducido */
+    line-height: 1.2;
 }
 
 .logo-img {
-    height: 50px;
+    height: 40px; /* Logo más pequeño */
     width: auto;
 }
 
@@ -48,8 +52,9 @@
     color: var(--dark-color);
     font-weight: 600;
     transition: var(--transition);
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: var(--spacing-xs) var(--spacing-md);
     border-radius: var(--border-radius);
+    font-size: var(--font-size-sm);
 }
 
 .nav a:hover {
@@ -62,29 +67,53 @@
     gap: var(--spacing-md);
 }
 
-/* Botón Admin DORADO - CORREGIDO */
-.btn-gold {
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    color: #2c3e50;
+/* Botón FUCSIA-MALVA para Admin y Citas */
+.btn-fuchsia {
+    background: linear-gradient(135deg, #E91E63, #9C27B0);
+    color: white;
     border: none;
     font-weight: 600;
+    padding: var(--spacing-sm) var(--spacing-lg);
 }
 
-.btn-gold:hover {
-    background: linear-gradient(135deg, #FFA500, #FF8C00);
+.btn-fuchsia:hover {
+    background: linear-gradient(135deg, #D81B60, #8E24AA);
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
 }
 
 @media (max-width: 768px) {
+    .header {
+        height: 60px; /* Aún más fina en móvil */
+    }
+    
     .header .container {
         flex-direction: column;
-        gap: var(--spacing-md);
-        padding: var(--spacing-md);
+        gap: var(--spacing-sm);
+        padding: var(--spacing-xs) var(--spacing-md);
+        height: auto;
+        min-height: 60px;
+    }
+
+    .logo-text h1 {
+        font-size: var(--font-size-base);
+    }
+    
+    .logo-text p {
+        font-size: var(--font-size-xs);
+    }
+    
+    .logo-img {
+        height: 30px;
     }
 
     .nav ul {
         gap: var(--spacing-md);
+    }
+
+    .nav a {
+        font-size: var(--font-size-xs);
+        padding: var(--spacing-xs) var(--spacing-sm);
     }
 
     .header-buttons {
@@ -95,5 +124,7 @@
     .header-buttons .btn {
         flex: 1;
         justify-content: center;
+        font-size: var(--font-size-sm);
+        padding: var(--spacing-xs) var(--spacing-sm);
     }
 }
