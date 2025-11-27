@@ -8,15 +8,18 @@
     right: 0;
     z-index: 1000;
     box-shadow: var(--shadow-sm);
-    height: 70px; /* Franja más fina */
+    height: 70px;
 }
 
+/* CONTENEDOR DEL HEADER MÁS ANCHO */
 .header .container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--spacing-sm) var(--spacing-lg); /* Padding reducido */
+    padding: var(--spacing-sm) var(--spacing-lg);
     height: 100%;
+    max-width: 1400px; /* AUMENTADO para coincidir con main.css */
+    margin: 0 auto;
 }
 
 .logo {
@@ -27,19 +30,19 @@
 
 .logo-text h1 {
     color: var(--primary-color);
-    font-size: var(--font-size-lg); /* Tamaño reducido */
+    font-size: var(--font-size-lg);
     margin-bottom: 2px;
     line-height: 1.2;
 }
 
 .logo-text p {
     color: var(--gray-color);
-    font-size: var(--font-size-xs); /* Tamaño reducido */
+    font-size: var(--font-size-xs);
     line-height: 1.2;
 }
 
 .logo-img {
-    height: 40px; /* Logo más pequeño */
+    height: 40px;
     width: auto;
 }
 
@@ -74,6 +77,7 @@
     border: none;
     font-weight: 600;
     padding: var(--spacing-sm) var(--spacing-lg);
+    white-space: nowrap; /* Evita que el texto se parta */
 }
 
 .btn-fuchsia:hover {
@@ -84,7 +88,7 @@
 
 @media (max-width: 768px) {
     .header {
-        height: 60px; /* Aún más fina en móvil */
+        height: 60px;
     }
     
     .header .container {

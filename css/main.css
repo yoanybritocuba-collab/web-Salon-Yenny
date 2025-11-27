@@ -81,8 +81,9 @@ body::before {
     z-index: -1;
 }
 
+/* CONTENEDOR PRINCIPAL MÁS ANCHO */
 .container {
-    max-width: 1200px;
+    max-width: 1400px; /* AUMENTADO de 1200px a 1400px */
     margin: 0 auto;
     padding: 0 var(--spacing-lg);
 }
@@ -183,22 +184,23 @@ body::before {
     transform: translateY(-2px);
 }
 
-/* Hero Section - POSICIÓN MÁS ABAJO */
+/* Hero Section - CONTENEDOR MÁS ANCHO */
 .hero {
     min-height: 100vh;
     display: flex;
     align-items: center;
     position: relative;
-    padding: 120px 0 var(--spacing-2xl) 0; /* Padding superior aumentado */
-    margin-top: 70px; /* Compensa la altura del header fijo */
+    padding: 120px 0 var(--spacing-2xl) 0;
+    margin-top: 70px;
 }
 
 .hero-content {
     text-align: center;
-    max-width: 800px;
+    max-width: 1000px; /* AUMENTADO de 800px a 1000px */
     margin: 0 auto;
     position: relative;
     z-index: 2;
+    width: 100%; /* Aseguramos que ocupe todo el ancho disponible */
 }
 
 .hero-title {
@@ -225,6 +227,7 @@ body::before {
     animation: fadeInUp 1s ease-out 0.4s both;
     background: linear-gradient(135deg, #E91E63, #9C27B0);
     border: none;
+    min-width: 250px; /* Ancho mínimo para el botón */
 }
 
 .btn-hero:hover {
@@ -329,8 +332,12 @@ body::before {
     .hero {
         min-height: 80vh;
         text-align: center;
-        padding: 100px 0 var(--spacing-xl) 0; /* Ajustado para móvil */
-        margin-top: 60px; /* Compensa header móvil */
+        padding: 100px 0 var(--spacing-xl) 0;
+        margin-top: 60px;
+    }
+    
+    .hero-content {
+        max-width: 95%; /* Más ancho en móviles */
     }
     
     .contact-content {
@@ -359,6 +366,7 @@ body::before {
 @media (max-width: 768px) {
     .container {
         padding: 0 var(--spacing-md);
+        max-width: 100%; /* Contenedor completo en móviles */
     }
     
     .hero {
@@ -366,6 +374,10 @@ body::before {
         text-align: center;
         padding: 100px 0 var(--spacing-xl) 0;
         margin-top: 60px;
+    }
+    
+    .hero-content {
+        max-width: 95%; /* Más ancho en tablets */
     }
     
     .contact-content {
@@ -386,6 +398,11 @@ body::before {
 @media (min-width: 769px) and (max-width: 1024px) {
     .container {
         padding: 0 var(--spacing-xl);
+        max-width: 1300px; /* Intermedio para tablet */
+    }
+    
+    .hero-content {
+        max-width: 900px; /* Intermedio para tablet */
     }
 }
 
