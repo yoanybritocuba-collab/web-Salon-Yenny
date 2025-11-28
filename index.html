@@ -66,11 +66,14 @@
     <!-- Services Section -->
     <section id="servicios" class="services">
         <div class="container">
+            <!-- Indicador con flecha -->
             <div class="services-indicator" id="servicesIndicator" style="display: none;">
                 <div class="indicator-content">
-                    <span class="indicator-icon">✨</span>
-                    <h3>¡Marca tu cita aquí!</h3>
-                    <p>Selecciona los servicios que deseas reservar</p>
+                    <span class="indicator-icon">👇</span>
+                    <div class="indicator-text">
+                        <h3>¡Escoge los servicios que deseas!</h3>
+                        <p>Selecciona los servicios que quieres reservar</p>
+                    </div>
                 </div>
             </div>
             
@@ -89,15 +92,15 @@
                 <div class="booking-panel" id="bookingPanel">
                     <div class="booking-panel-content">
                         <div class="panel-header">
-                            <h3>📅 Insertar Cita</h3>
-                            <p>Selecciona tus servicios primero</p>
+                            <h3>📅 Tu Cita</h3>
+                            <p>Servicios seleccionados</p>
                         </div>
                         
                         <div class="selected-services-panel">
-                            <h4>Servicios Seleccionados:</h4>
+                            <h4>Servicios Elegidos:</h4>
                             <div id="selectedServicesPanel" class="services-panel-list">
                                 <div class="empty-selection">
-                                    <span>👆 Selecciona servicios de la izquierda</span>
+                                    <span>👆 Selecciona servicios</span>
                                 </div>
                             </div>
                             
@@ -115,7 +118,7 @@
 
                         <button class="btn btn-fuchsia btn-large btn-panel" id="insertarCitaBtn" disabled>
                             <span class="btn-icon">✅</span>
-                            Insertar Cita
+                            Confirmar Cita
                         </button>
                     </div>
                 </div>
@@ -348,4 +351,4 @@
     <!-- JavaScript -->
     <script type="module" src="js/app.js"></script>
 </body>
-</html>
+</html>     

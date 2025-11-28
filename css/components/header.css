@@ -1,4 +1,4 @@
-/* Header Styles - Black Navigation Bar - CORREGIDO */
+/* Header Styles - Black Navigation Bar - EXTRA ANCHA */
 .header {
     background: #000000;
     backdrop-filter: blur(10px);
@@ -9,10 +9,11 @@
     right: 0;
     z-index: 1000;
     transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    height: 120px; /* MUCHO MÁS ANCHA para evitar texto pegado */
+    height: 140px; /* MUCHO MÁS ANCHA para que el nombre quede completo */
     display: flex;
     align-items: center;
     width: 100%;
+    padding: 10px 0; /* Padding adicional */
 }
 
 .header.hidden {
@@ -34,20 +35,23 @@
     display: flex;
     align-items: center;
     flex-shrink: 0;
+    height: 100%; /* Asegurar que use toda la altura */
 }
 
 .logo-container {
     display: flex;
     align-items: center;
     gap: 1.5rem; /* Más espacio entre logo y texto */
+    height: 100%; /* Usar toda la altura disponible */
+    padding: 15px 0; /* Padding interno extra */
 }
 
 /* LOGO AHORA A LA IZQUIERDA */
 .logo-image-small {
-    width: 65px; /* Más grande para mejor visibilidad */
-    height: 65px; /* Más grande para mejor visibilidad */
+    width: 70px; /* Más grande para mejor visibilidad */
+    height: 70px; /* Más grande para mejor visibilidad */
     object-fit: contain;
-    border-radius: 10px;
+    border-radius: 12px;
     display: block !important; /* Forzar visualización */
     flex-shrink: 0; /* Evitar que se reduzca */
     border: 2px solid rgba(231, 84, 128, 0.3); /* Borde sutil */
@@ -58,32 +62,36 @@
     flex-direction: column;
     line-height: 1.4; /* Mejor espaciado entre líneas */
     justify-content: center; /* Centrar verticalmente */
-    padding: 10px 0; /* Padding interno para más espacio */
+    padding: 15px 0; /* Más padding interno para más espacio */
+    height: 100%; /* Usar toda la altura */
 }
 
 .logo-title {
-    font-size: 2.2rem; /* Más grande */
+    font-size: 2.4rem; /* MÁS GRANDE para mejor visibilidad */
     font-weight: 700;
     color: #E75480; /* Color fucsia/malva */
     margin: 0;
     font-family: 'Dancing Script', cursive, 'Playfair Display', serif;
-    text-shadow: 0 2px 8px rgba(231, 84, 128, 0.4);
+    text-shadow: 0 2px 10px rgba(231, 84, 128, 0.5);
     background: linear-gradient(135deg, #E75480, #D147A3);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    line-height: 1.2; /* Mejor para móviles */
-    padding: 5px 0; /* Espacio interno */
+    line-height: 1.1; /* Mejor para móviles */
+    padding: 8px 0; /* Más espacio interno */
+    white-space: nowrap; /* Evitar que se parta el texto */
+    overflow: visible; /* Permitir que se vea completo */
+    text-overflow: unset; /* No recortar texto */
 }
 
 .logo-subtitle {
-    font-size: 0.85rem; /* Más grande */
+    font-size: 0.9rem; /* Más grande */
     color: rgba(255, 255, 255, 0.9);
-    margin: 5px 0 0 0; /* Más espacio arriba */
-    letter-spacing: 1.5px;
-    font-weight: 500;
+    margin: 8px 0 0 0; /* Más espacio arriba */
+    letter-spacing: 1.8px;
+    font-weight: 600;
     text-transform: uppercase;
-    padding: 3px 0; /* Espacio interno */
+    padding: 5px 0; /* Espacio interno */
 }
 
 /* Navegación compacta */
@@ -99,8 +107,8 @@
     text-decoration: none;
     color: rgba(255, 255, 255, 0.9);
     font-weight: 500;
-    font-size: 1rem;
-    padding: 0.8rem 0; /* Más padding vertical */
+    font-size: 1.1rem; /* Más grande */
+    padding: 1rem 0; /* Más padding vertical */
     transition: all 0.3s ease;
     position: relative;
     text-transform: uppercase;
@@ -135,9 +143,9 @@
 }
 
 .btn-compact {
-    padding: 0.8rem 1.5rem; /* Más padding */
-    font-size: 1rem;
-    border-radius: 10px;
+    padding: 1rem 1.8rem; /* Más padding */
+    font-size: 1.1rem; /* Más grande */
+    border-radius: 12px;
     font-weight: 600;
     transition: all 0.3s ease;
 }
@@ -168,71 +176,76 @@
 .header.scrolled {
     background: rgba(0, 0, 0, 0.95);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-    height: 100px; /* Más alto cuando hace scroll */
+    height: 110px; /* Más alto cuando hace scroll */
+    padding: 8px 0;
 }
 
 .header.scrolled .logo-image-small {
-    width: 55px;
-    height: 55px;
+    width: 60px;
+    height: 60px;
 }
 
 .header.scrolled .logo-title {
-    font-size: 1.9rem;
+    font-size: 2rem;
 }
 
 .header.scrolled .logo-subtitle {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
 }
 
 .header.scrolled .nav-compact a {
-    font-size: 0.9rem;
+    font-size: 1rem;
 }
 
 .header.scrolled .btn-compact {
-    padding: 0.7rem 1.2rem;
-    font-size: 0.9rem;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
 }
 
-/* Mobile Responsive - CORREGIDO Y MÁS ANCHO */
+/* Mobile Responsive - CORREGIDO Y MUCHO MÁS ANCHO */
 @media (max-width: 768px) {
     .header {
-        height: 110px; /* Más alto en tablets para evitar texto pegado */
+        height: 120px; /* Más alto en tablets para que el nombre quede completo */
+        padding: 8px 0;
     }
     
     .header-content {
         flex-wrap: wrap;
         gap: 1rem;
-        padding: 1rem 0; /* Más padding vertical */
+        padding: 1.2rem 0; /* Más padding vertical */
     }
     
     .brand-section {
         flex: 1;
-        min-width: 250px; /* Más espacio mínimo */
+        min-width: 280px; /* Más espacio mínimo */
+        height: auto;
     }
     
     .logo-container {
-        gap: 1rem;
+        gap: 1.2rem;
+        padding: 10px 0;
+        height: auto;
     }
     
     .logo-image-small {
-        width: 55px; /* Tamaño visible en tablets */
-        height: 55px;
+        width: 60px; /* Tamaño visible en tablets */
+        height: 60px;
     }
     
     .logo-title {
-        font-size: 1.9rem; /* Tamaño legible */
+        font-size: 2.1rem; /* Tamaño legible */
         line-height: 1.1; /* Mejor espaciado */
         white-space: nowrap; /* Evitar salto de línea */
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 200px; /* Ancho máximo para el nombre más largo */
-        padding: 8px 0; /* Más espacio interno */
+        overflow: visible; /* Permitir que se vea completo */
+        text-overflow: unset; /* No recortar texto */
+        max-width: none; /* Sin límite de ancho */
+        padding: 6px 0; /* Más espacio interno */
     }
     
     .logo-subtitle {
-        font-size: 0.75rem;
-        margin-top: 4px; /* Más espacio arriba */
-        padding: 2px 0; /* Espacio interno */
+        font-size: 0.8rem;
+        margin-top: 6px; /* Más espacio arriba */
+        padding: 3px 0; /* Espacio interno */
     }
     
     .nav-compact {
@@ -254,10 +267,10 @@
     
     .nav-compact ul {
         flex-direction: column;
-        gap: 0.8rem; /* Más espacio entre items */
+        gap: 1rem; /* Más espacio entre items */
         background: rgba(255, 255, 255, 0.05);
         padding: 1.5rem; /* Más padding */
-        border-radius: 10px;
+        border-radius: 12px;
         backdrop-filter: blur(10px);
     }
     
@@ -267,92 +280,106 @@
     
     .mobile-menu-toggle {
         display: block;
-        font-size: 1.8rem; /* Más grande */
-        padding: 0.5rem; /* Más padding */
+        font-size: 2rem; /* Más grande */
+        padding: 0.8rem; /* Más padding */
+    }
+    
+    .btn-compact {
+        padding: 0.9rem 1.4rem; /* Más padding en móviles */
+        font-size: 1rem;
     }
 }
 
 @media (max-width: 480px) {
     .header {
-        height: 100px; /* Más alto en móviles pequeños */
+        height: 110px; /* Más alto en móviles pequeños */
+        padding: 6px 0;
     }
     
     .header-content {
-        padding: 0.8rem 0; /* Más padding vertical */
+        padding: 1rem 0; /* Más padding vertical */
         gap: 1rem;
     }
     
     .logo-container {
-        gap: 0.8rem;
-        min-width: 220px; /* Espacio mínimo para nombre y logo */
+        gap: 1rem;
+        min-width: 250px; /* Espacio mínimo para nombre y logo */
+        padding: 8px 0;
     }
     
     .logo-image-small {
-        width: 50px; /* Tamaño visible en móviles */
-        height: 50px;
+        width: 55px; /* Tamaño visible en móviles */
+        height: 55px;
     }
     
     .logo-title {
-        font-size: 1.7rem; /* Tamaño legible para "YennyHair-Salón" */
-        max-width: 180px; /* Ancho máximo ajustado */
+        font-size: 1.9rem; /* Tamaño legible para "YennyHair-Salón" */
         line-height: 1.1; /* Mejor para texto más largo */
-        padding: 6px 0; /* Espacio interno */
+        padding: 5px 0; /* Espacio interno */
+        white-space: nowrap; /* Mantener en una línea */
+        overflow: visible; /* Mostrar texto completo */
+        text-overflow: unset; /* Sin puntos suspensivos */
     }
     
     .logo-subtitle {
-        font-size: 0.7rem;
-        margin-top: 3px;
+        font-size: 0.75rem;
+        margin-top: 4px;
         padding: 2px 0; /* Espacio interno */
     }
     
     .btn-compact {
-        padding: 0.7rem 1rem; /* Más padding */
-        font-size: 0.9rem;
+        padding: 0.8rem 1.2rem; /* Más padding */
+        font-size: 0.95rem;
     }
     
     .header-actions {
-        gap: 0.6rem;
+        gap: 0.7rem;
         flex-shrink: 0;
     }
     
     /* Asegurar que el contenedor del logo tenga suficiente espacio */
     .brand-section {
-        min-width: 200px;
+        min-width: 230px;
         flex-shrink: 0;
     }
     
     .nav-compact {
-        padding: 1rem;
+        padding: 1.2rem;
     }
     
     .nav-compact ul {
-        padding: 1rem;
+        padding: 1.2rem;
     }
 }
 
 /* Estilos para móviles muy pequeños */
 @media (max-width: 360px) {
     .header {
-        height: 95px; /* Aún más alto para pantallas muy pequeñas */
-    }
-    
-    .logo-title {
-        font-size: 1.6rem;
-        max-width: 160px;
+        height: 105px; /* Aún más alto para pantallas muy pequeñas */
         padding: 5px 0;
     }
     
+    .logo-title {
+        font-size: 1.8rem;
+        padding: 4px 0;
+    }
+    
     .logo-image-small {
-        width: 45px;
-        height: 45px;
+        width: 50px;
+        height: 50px;
     }
     
     .brand-section {
-        min-width: 180px;
+        min-width: 210px;
     }
     
     .header-content {
-        padding: 0.7rem 0;
+        padding: 0.8rem 0;
+    }
+    
+    .logo-container {
+        min-width: 200px;
+        gap: 0.8rem;
     }
 }
 
@@ -361,10 +388,10 @@
     display: none;
     background: none;
     border: none;
-    font-size: 1.8rem; /* Más grande */
+    font-size: 2rem; /* Más grande */
     color: white;
     cursor: pointer;
-    padding: 0.5rem; /* Más padding */
+    padding: 0.8rem; /* Más padding */
     transition: color 0.3s ease;
     flex-shrink: 0;
 }
@@ -381,7 +408,7 @@
 
 /* Smooth scroll padding - Aumentado para barra más alta */
 html {
-    scroll-padding-top: 130px; /* MUCHO más espacio para la barra más alta */
+    scroll-padding-top: 150px; /* MUCHO más espacio para la barra más alta */
 }
 
 /* Animation for header */
@@ -419,7 +446,7 @@ html {
 
 .logo-image-small:before {
     content: "💇";
-    font-size: 2rem;
+    font-size: 2.2rem;
     display: none; /* Solo mostrar si la imagen falla */
 }
 
@@ -445,4 +472,33 @@ html {
 .logo-image-small:hover {
     transform: scale(1.05);
     border-color: rgba(231, 84, 128, 0.6);
+}
+
+/* Asegurar que el contenedor principal tenga suficiente altura */
+.container {
+    min-height: auto;
+}
+
+/* Prevenir que el texto se corte en ningún dispositivo */
+.logo-text {
+    min-height: 80px; /* Altura mínima para el texto */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Garantizar que el nombre completo sea visible */
+.brand-section {
+    overflow: visible !important;
+}
+
+.logo-container {
+    overflow: visible !important;
+}
+
+.logo-title {
+    /* Forzar que el texto completo sea visible */
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
 }
