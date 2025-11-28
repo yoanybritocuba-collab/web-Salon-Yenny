@@ -3,38 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YennyHair-Salón - Belleza Profesional</title>
+    <title>YennyHair - Salón de Belleza Profesional</title>
     <link rel="stylesheet" href="css/main.css">
+    <!-- Fuente Dancing Script para el nombre -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Header -->
+
+    <!-- Header Mejorado - Negro con ocultamiento -->
     <header class="header">
         <div class="container">
-            <!-- CONTENEDOR DEL LOGO CON NOMBRE E IMAGEN JUNTOS -->
-            <div class="brand-container">
-                <div class="logo">
-                    <div class="logo-text">
-                        <h1>YennyHair-Salón</h1>
-                        <p>Belleza y Estética Profesional</p>
+            <div class="header-content">
+                <!-- Logo y nombre con nueva estructura -->
+                <div class="brand-section">
+                    <div class="logo-container">
+                        <div class="logo-text">
+                            <h1 class="logo-title">YennyHair</h1>
+                            <p class="logo-subtitle">BELLEZA PROFESIONAL</p>
+                        </div>
+                        <img src="imagenes/fl/logo.png" alt="YennyHair Logo" class="logo-image-small">
                     </div>
-                    <img src="imagenes/FL/fondo19.png" alt="YennyHair-Salón" class="logo-img">
                 </div>
-            </div>
 
-            <!-- NAVEGACIÓN CENTRADA -->
-            <nav class="nav">
-                <ul>
-                    <li><a href="#inicio">Inicio</a></li>
-                    <li><a href="#servicios">Servicios</a></li>
-                    <li><a href="#productos">Productos</a></li>
-                    <li><a href="#galeria">Galería</a></li>
-                </ul>
-            </nav>
+                <!-- Navegación compacta -->
+                <nav class="nav-compact">
+                    <ul>
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#servicios">Servicios</a></li>
+                        <li><a href="#productos">Productos</a></li>
+                        <li><a href="#galeria">Galería</a></li>
+                    </ul>
+                </nav>
 
-            <!-- BOTONES A LA DERECHA -->
-            <div class="header-buttons">
-                <button id="bookingBtn" class="btn btn-fuchsia">Citas</button>
-                <button id="adminBtn" class="btn btn-fuchsia">Admin</button>
+                <!-- Botón menú móvil -->
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    ☰
+                </button>
+
+                <!-- Botones reorganizados -->
+                <div class="header-actions">
+                    <button id="bookingBtn" class="btn btn-fuchsia btn-compact">Citas</button>
+                    <button id="adminBtn" class="btn btn-outline btn-compact">Admin</button>
+                </div>
             </div>
         </div>
     </header>
@@ -56,30 +66,59 @@
     <!-- Services Section -->
     <section id="servicios" class="services">
         <div class="container">
-            <h2 class="section-title">Nuestros Servicios</h2>
             <div class="services-indicator" id="servicesIndicator" style="display: none;">
                 <div class="indicator-content">
                     <span class="indicator-icon">✨</span>
-                    <h3>¡Escoge tu cita!</h3>
+                    <h3>¡Marca tu cita aquí!</h3>
                     <p>Selecciona los servicios que deseas reservar</p>
                 </div>
             </div>
-            <div class="services-grid" id="servicesContainer">
-                <!-- Los servicios se cargarán dinámicamente aquí -->
-            </div>
-            <div class="services-footer" id="servicesFooter" style="display: none;">
-                <div class="selected-services-summary">
-                    <h3>Servicios Seleccionados:</h3>
-                    <div id="selectedServicesList"></div>
-                    <div class="total-section">
-                        <strong>Total: $<span id="totalPrice">0</span></strong>
-                        <span class="total-duration">Tiempo total: <span id="totalDuration">0</span>min</span>
+            
+            <div class="services-layout">
+                <!-- Columna izquierda: Servicios con scroll -->
+                <div class="services-column">
+                    <h2 class="section-title">Nuestros Servicios</h2>
+                    <div class="services-scroll-container">
+                        <div class="services-grid" id="servicesContainer">
+                            <!-- Los servicios se cargarán dinámicamente aquí -->
+                        </div>
                     </div>
                 </div>
-                <button class="btn btn-fuchsia btn-large" id="bookSelectedServices">
-                    <span class="btn-icon">📅</span>
-                    Reservar Cita con Servicios Seleccionados
-                </button>
+
+                <!-- Columna derecha: Panel de cita compacto -->
+                <div class="booking-panel" id="bookingPanel">
+                    <div class="booking-panel-content">
+                        <div class="panel-header">
+                            <h3>📅 Insertar Cita</h3>
+                            <p>Selecciona tus servicios primero</p>
+                        </div>
+                        
+                        <div class="selected-services-panel">
+                            <h4>Servicios Seleccionados:</h4>
+                            <div id="selectedServicesPanel" class="services-panel-list">
+                                <div class="empty-selection">
+                                    <span>👆 Selecciona servicios de la izquierda</span>
+                                </div>
+                            </div>
+                            
+                            <div class="panel-total">
+                                <div class="total-item">
+                                    <span>Total:</span>
+                                    <strong>$<span id="panelTotalPrice">0</span></strong>
+                                </div>
+                                <div class="total-item">
+                                    <span>Tiempo:</span>
+                                    <span><span id="panelTotalDuration">0</span>min</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-fuchsia btn-large btn-panel" id="insertarCitaBtn" disabled>
+                            <span class="btn-icon">✅</span>
+                            Insertar Cita
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -131,54 +170,122 @@
         </div>
     </section>
 
-    <!-- Booking Modal -->
+    <!-- Booking Modal - MODERNO -->
     <div id="bookingModal" class="modal">
-        <div class="modal-content booking-modal">
-            <span class="close">&times;</span>
-            <div class="modal-header">
-                <h2>Reservar Cita</h2>
-                <p>Confirma tu selección de servicios</p>
+        <div class="modal-content modern-booking-modal">
+            <div class="modern-modal-header">
+                <div class="modal-icon">📅</div>
+                <h2>Confirmar Cita</h2>
+                <span class="close">&times;</span>
             </div>
-            <form id="bookingForm" class="booking-form">
-                <div class="selected-services-modal">
-                    <h3>Servicios a Reservar:</h3>
-                    <div id="modalServicesList"></div>
-                    <div class="modal-total">
-                        <strong>Total: $<span id="modalTotalPrice">0</span></strong>
-                        <span class="total-duration">Duración total: <span id="modalTotalDuration">0</span>min</span>
+            
+            <div class="modern-modal-body">
+                <!-- Resumen de servicios -->
+                <div class="booking-summary">
+                    <div class="summary-header">
+                        <h3>Tu Selección</h3>
+                        <div class="services-count" id="servicesCount">0 servicios</div>
                     </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="date">Fecha:</label>
-                        <input type="date" id="date" name="date" required>
+                    <div class="services-preview" id="servicesPreview">
+                        <!-- Servicios se cargan aquí -->
                     </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="time">Horas Disponibles:</label>
-                    <div class="time-slots" id="timeSlots">
-                        <!-- Las horas disponibles se cargan aquí -->
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="name">Nombre Completo:</label>
-                        <input type="text" id="name" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Teléfono:</label>
-                        <input type="tel" id="phone" name="phone" required>
+                    <div class="summary-total">
+                        <div class="total-line">
+                            <span>Total:</span>
+                            <strong>$<span id="previewTotalPrice">0</span></strong>
+                        </div>
+                        <div class="total-line">
+                            <span>Duración:</span>
+                            <span class="duration"><span id="previewTotalDuration">0</span> min</span>
+                        </div>
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-fuchsia btn-submit">
-                    <span class="btn-icon">✅</span>
-                    Confirmar Reserva
-                </button>
-            </form>
+                <!-- Formulario compacto -->
+                <form id="bookingForm" class="modern-booking-form">
+                    <div class="form-grid">
+                        <div class="form-group modern-form-group">
+                            <label for="date" class="modern-label">
+                                <span class="label-icon">📅</span>
+                                Fecha
+                            </label>
+                            <input type="date" id="date" name="date" required class="modern-input">
+                        </div>
+                        
+                        <div class="form-group modern-form-group">
+                            <label class="modern-label">
+                                <span class="label-icon">⏰</span>
+                                Hora
+                            </label>
+                            <div class="time-slots-modern" id="timeSlots">
+                                <div class="time-slots-placeholder">
+                                    Selecciona una fecha primero
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group modern-form-group">
+                            <label for="name" class="modern-label">
+                                <span class="label-icon">👤</span>
+                                Nombre
+                            </label>
+                            <input type="text" id="name" name="name" required class="modern-input" placeholder="Tu nombre completo">
+                        </div>
+                        
+                        <div class="form-group modern-form-group">
+                            <label for="phone" class="modern-label">
+                                <span class="label-icon">📞</span>
+                                Teléfono
+                            </label>
+                            <input type="tel" id="phone" name="phone" required class="modern-input" placeholder="+41 76 123 45 67">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-modern-confirm">
+                        <span class="btn-icon">✅</span>
+                        Confirmar Cita
+                        <span class="btn-subtext">Reservar ahora</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal - MODERNO -->
+    <div id="successModal" class="modal">
+        <div class="modal-content modern-success-modal">
+            <div class="success-animation">
+                <div class="success-checkmark">
+                    <div class="check-icon">
+                        <span class="icon-line line-tip"></span>
+                        <span class="icon-line line-long"></span>
+                        <div class="icon-circle"></div>
+                        <div class="icon-fix"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="success-content-modern">
+                <h2>¡Cita Confirmada!</h2>
+                <p class="success-message-modern">Tu reserva ha sido realizada con éxito</p>
+                <div class="success-details">
+                    <div class="detail-item">
+                        <span class="detail-icon">📍</span>
+                        <span>Tellstrase 32, 8400 Winterthur</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-icon">⏰</span>
+                        <span>Llega 10 minutos antes</span>
+                    </div>
+                </div>
+                <div class="success-badge">
+                    <span class="badge-text">Cita concertada - Te esperamos</span>
+                </div>
+            </div>
+            <button class="btn-modern-close" id="closeSuccessModal">
+                Perfecto, entendido
+            </button>
         </div>
     </div>
 

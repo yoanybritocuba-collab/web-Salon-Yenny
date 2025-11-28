@@ -1,4 +1,4 @@
-/* Modern CSS Reset */
+/* Reset moderno */
 *, *::before, *::after {
     box-sizing: border-box;
 }
@@ -13,8 +13,9 @@ html {
 }
 
 body {
-    line-height: 1.5;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 img, picture, video, canvas, svg {
@@ -28,6 +29,8 @@ input, button, textarea, select {
 
 button {
     cursor: pointer;
+    border: none;
+    background: none;
 }
 
 a {
@@ -37,4 +40,25 @@ a {
 
 ul, ol {
     list-style: none;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* Focus visible para accesibilidad */
+:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Reduce motion para preferencias del usuario */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }

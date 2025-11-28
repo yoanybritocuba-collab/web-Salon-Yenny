@@ -1,5 +1,5 @@
 .admin-panel {
-    background: linear-gradient(135deg, #e91e63, #9c27b0);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: var(--border-radius-lg);
     padding: var(--spacing-xl);
     margin-top: var(--spacing-lg);
@@ -20,10 +20,12 @@
     color: white;
     margin-bottom: var(--spacing-sm);
     font-size: var(--font-size-2xl);
+    font-weight: 700;
 }
 
 .admin-header p {
     opacity: 0.9;
+    font-size: var(--font-size-md);
 }
 
 .admin-stats {
@@ -84,6 +86,10 @@
 
 .admin-section {
     margin-bottom: var(--spacing-xl);
+    background: rgba(255,255,255,0.05);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-lg);
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
 .section-header {
@@ -99,14 +105,17 @@
     color: white;
     margin: 0;
     font-size: var(--font-size-lg);
+    font-weight: 600;
 }
 
 .appointments-grid {
     display: grid;
     gap: var(--spacing-md);
-    max-height: 300px;
+    max-height: 400px;
     overflow-y: auto;
     padding: var(--spacing-sm);
+    background: rgba(255,255,255,0.02);
+    border-radius: var(--border-radius);
 }
 
 .appointment-card {
@@ -144,6 +153,7 @@
 .appointment-date {
     opacity: 0.9;
     font-size: var(--font-size-sm);
+    font-weight: 500;
 }
 
 .appointment-body {
@@ -157,6 +167,11 @@
     margin-bottom: var(--spacing-xs);
     flex-wrap: wrap;
     gap: var(--spacing-xs);
+}
+
+.appointment-client strong {
+    color: white;
+    font-size: var(--font-size-md);
 }
 
 .appointment-phone {
@@ -177,11 +192,15 @@
 .appointment-price {
     color: #4caf50;
     font-weight: 700;
+    font-size: var(--font-size-md);
 }
 
 .appointment-duration {
     opacity: 0.9;
     font-size: var(--font-size-sm);
+    background: rgba(255,255,255,0.1);
+    padding: 2px 8px;
+    border-radius: 12px;
 }
 
 .appointment-actions {
@@ -201,6 +220,7 @@
     text-align: center;
     max-width: 400px;
     margin: 0 auto;
+    padding: var(--spacing-2xl);
 }
 
 .login-header {
@@ -208,24 +228,28 @@
 }
 
 .login-header h3 {
-    color: var(--primary-color);
+    color: white;
     margin-bottom: var(--spacing-sm);
+    font-size: var(--font-size-xl);
 }
 
 .login-header p {
-    color: var(--gray-color);
+    color: rgba(255,255,255,0.8);
 }
 
 .login-form {
-    background: white;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
     padding: var(--spacing-2xl);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-md);
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
 .btn-login {
     width: 100%;
     padding: var(--spacing-md);
+    font-weight: 600;
 }
 
 .loading,
@@ -236,6 +260,7 @@
     background: rgba(255,255,255,0.1);
     border-radius: var(--border-radius);
     border: 1px solid rgba(255,255,255,0.2);
+    color: white;
 }
 
 .empty-state {
@@ -251,6 +276,110 @@
     padding: var(--spacing-xs) var(--spacing-sm);
     font-size: var(--font-size-sm);
     white-space: nowrap;
+}
+
+/* IA Stats Styles */
+.ia-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    background: rgba(255,255,255,0.05);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.ia-stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm);
+    background: rgba(255,255,255,0.05);
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+.ia-stat-item:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.ia-stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    color: white;
+}
+
+.ia-stat-value {
+    font-weight: 700;
+    color: #f39c12;
+    font-size: var(--font-size-md);
+}
+
+/* Badge Styles */
+.badge {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: 20px;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+}
+
+/* Button States for Admin */
+.btn-success {
+    background: linear-gradient(135deg, #27ae60, #219653);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.btn-info {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+/* Modern Form Styles for Admin */
+.modern-form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.modern-label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: white;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+}
+
+.label-icon {
+    font-size: 1.1rem;
+}
+
+.modern-input {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: var(--border-radius);
+    background: rgba(255,255,255,0.1);
+    color: white;
+    font-size: var(--font-size-md);
+    transition: var(--transition);
+    backdrop-filter: blur(10px);
+}
+
+.modern-input:focus {
+    outline: none;
+    border-color: rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.15);
+}
+
+.modern-input::placeholder {
+    color: rgba(255,255,255,0.6);
 }
 
 /* Mobile Responsive */
@@ -314,7 +443,15 @@
     }
     
     .appointments-grid {
-        max-height: 200px;
+        max-height: 300px;
+    }
+    
+    .ia-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-login {
+        padding: var(--spacing-lg);
     }
 }
 
@@ -336,4 +473,55 @@
         gap: var(--spacing-xs);
         align-items: flex-start;
     }
+    
+    .admin-section {
+        padding: var(--spacing-md);
+    }
+    
+    .login-form {
+        padding: var(--spacing-md);
+    }
+}
+
+/* Scrollbar Styling for Admin */
+.appointments-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.appointments-grid::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+}
+
+.appointments-grid::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 3px;
+}
+
+.appointments-grid::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.5);
+}
+
+/* Animation for Admin Panel */
+@keyframes slideInAdmin {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.admin-panel {
+    animation: slideInAdmin 0.5s ease-out;
+}
+
+.stat-card {
+    animation: slideInAdmin 0.6s ease-out;
+}
+
+.appointment-card {
+    animation: slideInAdmin 0.7s ease-out;
 }
