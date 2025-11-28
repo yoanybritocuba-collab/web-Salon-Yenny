@@ -9,7 +9,7 @@
     right: 0;
     z-index: 1000;
     transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    height: 100px; /* Más ancha para mejor visualización */
+    height: 120px; /* MUCHO MÁS ANCHA para evitar texto pegado */
     display: flex;
     align-items: center;
     width: 100%;
@@ -39,47 +39,51 @@
 .logo-container {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem; /* Más espacio entre logo y texto */
 }
 
 /* LOGO AHORA A LA IZQUIERDA */
 .logo-image-small {
-    width: 55px; /* Aumentado para mejor visibilidad */
-    height: 55px; /* Aumentado para mejor visibilidad */
+    width: 65px; /* Más grande para mejor visibilidad */
+    height: 65px; /* Más grande para mejor visibilidad */
     object-fit: contain;
-    border-radius: 8px;
+    border-radius: 10px;
     display: block !important; /* Forzar visualización */
     flex-shrink: 0; /* Evitar que se reduzca */
+    border: 2px solid rgba(231, 84, 128, 0.3); /* Borde sutil */
 }
 
 .logo-text {
     display: flex;
     flex-direction: column;
-    line-height: 1.3; /* Mejor espaciado entre líneas */
+    line-height: 1.4; /* Mejor espaciado entre líneas */
     justify-content: center; /* Centrar verticalmente */
+    padding: 10px 0; /* Padding interno para más espacio */
 }
 
 .logo-title {
-    font-size: 1.9rem; /* Ligeramente más grande */
+    font-size: 2.2rem; /* Más grande */
     font-weight: 700;
     color: #E75480; /* Color fucsia/malva */
     margin: 0;
     font-family: 'Dancing Script', cursive, 'Playfair Display', serif;
-    text-shadow: 0 2px 4px rgba(231, 84, 128, 0.3);
+    text-shadow: 0 2px 8px rgba(231, 84, 128, 0.4);
     background: linear-gradient(135deg, #E75480, #D147A3);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    line-height: 1.1; /* Mejor para móviles */
+    line-height: 1.2; /* Mejor para móviles */
+    padding: 5px 0; /* Espacio interno */
 }
 
 .logo-subtitle {
-    font-size: 0.75rem; /* Ligeramente más grande */
+    font-size: 0.85rem; /* Más grande */
     color: rgba(255, 255, 255, 0.9);
-    margin: 2px 0 0 0; /* Espacio arriba */
-    letter-spacing: 1.2px;
-    font-weight: 400;
+    margin: 5px 0 0 0; /* Más espacio arriba */
+    letter-spacing: 1.5px;
+    font-weight: 500;
     text-transform: uppercase;
+    padding: 3px 0; /* Espacio interno */
 }
 
 /* Navegación compacta */
@@ -95,8 +99,8 @@
     text-decoration: none;
     color: rgba(255, 255, 255, 0.9);
     font-weight: 500;
-    font-size: 0.95rem;
-    padding: 0.5rem 0;
+    font-size: 1rem;
+    padding: 0.8rem 0; /* Más padding vertical */
     transition: all 0.3s ease;
     position: relative;
     text-transform: uppercase;
@@ -113,7 +117,7 @@
     bottom: 0;
     left: 0;
     width: 0;
-    height: 2px;
+    height: 3px; /* Más gruesa */
     background: linear-gradient(135deg, #E75480, #D147A3);
     transition: width 0.3s ease;
 }
@@ -131,9 +135,9 @@
 }
 
 .btn-compact {
-    padding: 0.6rem 1.2rem;
-    font-size: 0.9rem;
-    border-radius: 8px;
+    padding: 0.8rem 1.5rem; /* Más padding */
+    font-size: 1rem;
+    border-radius: 10px;
     font-weight: 600;
     transition: all 0.3s ease;
 }
@@ -164,20 +168,20 @@
 .header.scrolled {
     background: rgba(0, 0, 0, 0.95);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-    height: 90px; /* Un poco más alto cuando hace scroll */
+    height: 100px; /* Más alto cuando hace scroll */
 }
 
 .header.scrolled .logo-image-small {
-    width: 50px;
-    height: 50px;
+    width: 55px;
+    height: 55px;
 }
 
 .header.scrolled .logo-title {
-    font-size: 1.7rem;
+    font-size: 1.9rem;
 }
 
 .header.scrolled .logo-subtitle {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
 }
 
 .header.scrolled .nav-compact a {
@@ -185,48 +189,50 @@
 }
 
 .header.scrolled .btn-compact {
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
 }
 
-/* Mobile Responsive - CORREGIDO Y MEJORADO */
+/* Mobile Responsive - CORREGIDO Y MÁS ANCHO */
 @media (max-width: 768px) {
     .header {
-        height: 95px; /* Más alto en tablets para evitar texto pegado */
+        height: 110px; /* Más alto en tablets para evitar texto pegado */
     }
     
     .header-content {
         flex-wrap: wrap;
         gap: 1rem;
-        padding: 0.8rem 0; /* Más padding vertical */
+        padding: 1rem 0; /* Más padding vertical */
     }
     
     .brand-section {
         flex: 1;
-        min-width: 220px; /* Más espacio mínimo */
+        min-width: 250px; /* Más espacio mínimo */
     }
     
     .logo-container {
-        gap: 0.8rem;
+        gap: 1rem;
     }
     
     .logo-image-small {
-        width: 50px; /* Tamaño visible en tablets */
-        height: 50px;
+        width: 55px; /* Tamaño visible en tablets */
+        height: 55px;
     }
     
     .logo-title {
-        font-size: 1.8rem; /* Tamaño legible */
-        line-height: 1; /* Mejor espaciado */
+        font-size: 1.9rem; /* Tamaño legible */
+        line-height: 1.1; /* Mejor espaciado */
         white-space: nowrap; /* Evitar salto de línea */
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 180px; /* Ancho máximo para el nombre más largo */
+        max-width: 200px; /* Ancho máximo para el nombre más largo */
+        padding: 8px 0; /* Más espacio interno */
     }
     
     .logo-subtitle {
-        font-size: 0.7rem;
-        margin-top: 3px; /* Más espacio arriba */
+        font-size: 0.75rem;
+        margin-top: 4px; /* Más espacio arriba */
+        padding: 2px 0; /* Espacio interno */
     }
     
     .nav-compact {
@@ -238,7 +244,7 @@
         top: 100%;
         left: 0;
         right: 0;
-        padding: 1rem;
+        padding: 1.5rem; /* Más padding */
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
     }
     
@@ -248,88 +254,105 @@
     
     .nav-compact ul {
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.8rem; /* Más espacio entre items */
         background: rgba(255, 255, 255, 0.05);
-        padding: 1rem;
-        border-radius: 8px;
+        padding: 1.5rem; /* Más padding */
+        border-radius: 10px;
         backdrop-filter: blur(10px);
     }
     
     .header-actions {
-        gap: 0.5rem;
+        gap: 0.8rem; /* Más espacio entre botones */
     }
     
     .mobile-menu-toggle {
         display: block;
+        font-size: 1.8rem; /* Más grande */
+        padding: 0.5rem; /* Más padding */
     }
 }
 
 @media (max-width: 480px) {
     .header {
-        height: 90px; /* Más alto en móviles pequeños */
+        height: 100px; /* Más alto en móviles pequeños */
     }
     
     .header-content {
-        padding: 0.7rem 0; /* Más padding vertical */
-        gap: 0.8rem;
+        padding: 0.8rem 0; /* Más padding vertical */
+        gap: 1rem;
     }
     
     .logo-container {
-        gap: 0.7rem;
-        min-width: 200px; /* Espacio mínimo para nombre y logo */
+        gap: 0.8rem;
+        min-width: 220px; /* Espacio mínimo para nombre y logo */
     }
     
     .logo-image-small {
-        width: 45px; /* Tamaño visible en móviles */
-        height: 45px;
+        width: 50px; /* Tamaño visible en móviles */
+        height: 50px;
     }
     
     .logo-title {
-        font-size: 1.6rem; /* Tamaño legible para "YennyHair-Salón" */
-        max-width: 160px; /* Ancho máximo ajustado */
-        line-height: 1.05; /* Mejor para texto más largo */
+        font-size: 1.7rem; /* Tamaño legible para "YennyHair-Salón" */
+        max-width: 180px; /* Ancho máximo ajustado */
+        line-height: 1.1; /* Mejor para texto más largo */
+        padding: 6px 0; /* Espacio interno */
     }
     
     .logo-subtitle {
-        font-size: 0.65rem;
-        margin-top: 2px;
+        font-size: 0.7rem;
+        margin-top: 3px;
+        padding: 2px 0; /* Espacio interno */
     }
     
     .btn-compact {
-        padding: 0.5rem 0.8rem;
-        font-size: 0.8rem;
+        padding: 0.7rem 1rem; /* Más padding */
+        font-size: 0.9rem;
     }
     
     .header-actions {
-        gap: 0.5rem;
+        gap: 0.6rem;
         flex-shrink: 0;
     }
     
     /* Asegurar que el contenedor del logo tenga suficiente espacio */
     .brand-section {
-        min-width: 180px;
+        min-width: 200px;
         flex-shrink: 0;
+    }
+    
+    .nav-compact {
+        padding: 1rem;
+    }
+    
+    .nav-compact ul {
+        padding: 1rem;
     }
 }
 
 /* Estilos para móviles muy pequeños */
 @media (max-width: 360px) {
     .header {
-        height: 85px; /* Aún más alto para pantallas muy pequeñas */
+        height: 95px; /* Aún más alto para pantallas muy pequeñas */
     }
     
     .logo-title {
-        font-size: 1.5rem;
-        max-width: 140px;
+        font-size: 1.6rem;
+        max-width: 160px;
+        padding: 5px 0;
     }
     
     .logo-image-small {
-        width: 40px;
-        height: 40px;
+        width: 45px;
+        height: 45px;
     }
     
     .brand-section {
-        min-width: 160px;
+        min-width: 180px;
+    }
+    
+    .header-content {
+        padding: 0.7rem 0;
     }
 }
 
@@ -338,10 +361,10 @@
     display: none;
     background: none;
     border: none;
-    font-size: 1.5rem;
+    font-size: 1.8rem; /* Más grande */
     color: white;
     cursor: pointer;
-    padding: 0.25rem;
+    padding: 0.5rem; /* Más padding */
     transition: color 0.3s ease;
     flex-shrink: 0;
 }
@@ -358,7 +381,7 @@
 
 /* Smooth scroll padding - Aumentado para barra más alta */
 html {
-    scroll-padding-top: 110px; /* Más espacio para la barra más alta */
+    scroll-padding-top: 130px; /* MUCHO más espacio para la barra más alta */
 }
 
 /* Animation for header */
@@ -388,29 +411,38 @@ html {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.logo-image-small:before {
-    content: "💇";
-    font-size: 1.8rem;
-    display: none; /* Solo mostrar si la imagen falla */
-}
-
-.logo-image-small[src=""]:before,
-.logo-image-small:not([src]):before {
-    display: flex;
-}
-
-/* Forzar carga de imagen del logo */
-.logo-image-small {
-    background-image: url('imagenes/fl/logo.png');
+    background-image: url('../../../imagenes/FL/logo.png'); /* Ruta corregida */
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
 }
 
+.logo-image-small:before {
+    content: "💇";
+    font-size: 2rem;
+    display: none; /* Solo mostrar si la imagen falla */
+}
+
+.logo-image-small[src=""]:before,
+.logo-image-small:not([src]):before,
+.logo-image-small[src*="undefined"]:before {
+    display: flex;
+}
+
+/* Forzar que la imagen se muestre */
 .logo-image-small img {
     display: block;
     width: 100%;
     height: 100%;
+    object-fit: contain;
+}
+
+/* Mejorar la carga del logo */
+.logo-image-small {
+    transition: all 0.3s ease;
+}
+
+.logo-image-small:hover {
+    transform: scale(1.05);
+    border-color: rgba(231, 84, 128, 0.6);
 }
