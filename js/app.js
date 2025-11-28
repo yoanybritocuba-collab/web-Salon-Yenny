@@ -579,23 +579,67 @@ async function loadProducts() {
     }
 }
 
-// ========== GALERÍA ==========
+// ========== GALERÍA CORREGIDA ==========
 async function loadGallery() {
     try {
-        const response = await fetch('js/galeria.json');
-        const data = await response.json();
         const galleryContainer = getElement('galleryContainer');
         
         if (!galleryContainer) return;
         
         galleryContainer.innerHTML = '';
-        currentImages = data.galeria;
         
-        data.galeria.forEach((image, index) => {
+        // Array con las imágenes de la galería de trabajos - RUTA CORREGIDA
+        const galeriaTrabajos = [
+            {
+                id: 1,
+                archivo: "imagen1.jpg",
+                descripcion: "Trabajo profesional de coloración"
+            },
+            {
+                id: 2,
+                archivo: "imagen2.jpg", 
+                descripcion: "Corte y peinado moderno"
+            },
+            {
+                id: 3,
+                archivo: "imagen3.jpg",
+                descripcion: "Extensiones de cabello"
+            },
+            {
+                id: 4,
+                archivo: "imagen4.jpg",
+                descripcion: "Tratamiento de keratina"
+            },
+            {
+                id: 5,
+                archivo: "imagen5.jpg",
+                descripcion: "Peinado para eventos"
+            },
+            {
+                id: 6,
+                archivo: "imagen6.jpg",
+                descripcion: "Coloración fantasía"
+            },
+            {
+                id: 7,
+                archivo: "imagen7.jpg",
+                descripcion: "Corte profesional"
+            },
+            {
+                id: 8,
+                archivo: "imagen8.jpg",
+                descripcion: "Maquillaje y estilismo"
+            }
+        ];
+        
+        currentImages = galeriaTrabajos;
+        
+        galeriaTrabajos.forEach((image, index) => {
             const galleryItem = document.createElement('div');
             galleryItem.className = 'gallery-item';
             galleryItem.innerHTML = `
-                <img src="imagenes/galeria/${image.archivo}" alt="${image.descripcion}" class="gallery-image">
+                <img src="imagenes/Galería-Trabajo/${image.archivo}" alt="${image.descripcion}" class="gallery-image"
+                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkdhbGVyXHUwMGVkYSBkZSBUcmFiYWpvczwvdGV4dD48L3N2Zz4='">
                 <div class="gallery-overlay">
                     <div class="gallery-text">${image.descripcion}</div>
                 </div>
@@ -605,14 +649,29 @@ async function loadGallery() {
             galleryContainer.appendChild(galleryItem);
         });
         
-        console.log('✅ Galería cargada:', data.galeria.length);
+        console.log('✅ Galería cargada:', galeriaTrabajos.length, 'imágenes');
+        console.log('📁 Ruta utilizada: imagenes/Galería-Trabajo/');
     } catch (error) {
         console.error('❌ Error cargando galería:', error);
-        showNotification('⚠️ Error cargando galería', 'error');
+        showNotification('⚠️ Error cargando galería de trabajos', 'error');
+        
+        // Mostrar mensaje de error en la galería
+        const galleryContainer = getElement('galleryContainer');
+        if (galleryContainer) {
+            galleryContainer.innerHTML = `
+                <div class="gallery-error">
+                    <div class="error-icon">📷</div>
+                    <h3>Galería no disponible</h3>
+                    <p>No se pudieron cargar las imágenes de trabajos.</p>
+                    <p class="error-detail">Ruta esperada: imagenes/Galería-Trabajo/</p>
+                    <p class="error-detail">Error: ${error.message}</p>
+                </div>
+            `;
+        }
     }
 }
 
-// ========== VISOR DE IMÁGENES ==========
+// ========== VISOR DE IMÁGENES CORREGIDO ==========
 function openImageViewer(index) {
     currentImageIndex = index;
     const viewerModal = getElement('imageViewerModal');
@@ -620,7 +679,7 @@ function openImageViewer(index) {
     
     if (!viewerModal || !viewerImage) return;
     
-    viewerImage.src = `imagenes/galeria/${currentImages[currentImageIndex].archivo}`;
+    viewerImage.src = `imagenes/Galería-Trabajo/${currentImages[currentImageIndex].archivo}`;
     viewerImage.alt = currentImages[currentImageIndex].descripcion;
     viewerModal.style.display = 'block';
 }
@@ -643,7 +702,7 @@ function navigateImage(direction) {
     
     const viewerImage = getElement('viewerImage');
     if (viewerImage) {
-        viewerImage.src = `imagenes/galeria/${currentImages[currentImageIndex].archivo}`;
+        viewerImage.src = `imagenes/Galería-Trabajo/${currentImages[currentImageIndex].archivo}`;
         viewerImage.alt = currentImages[currentImageIndex].descripcion;
     }
 }
@@ -764,7 +823,7 @@ function setupAdminModal() {
             if (password === 'y1994') {
                 adminModal.style.display = 'block';
                 loadAdminContent();
-            } else {
+            } else if (password !== null) {
                 showNotification('❌ Contraseña incorrecta', 'error');
             }
         });
@@ -996,8 +1055,6 @@ async function cancelarCita(citaId) {
         }
     }
 }
-
-// Eliminamos las funciones de updateCitaEstado ya que no las necesitamos más
 
 // ========== EVENT LISTENERS GLOBALES ==========
 function setupGlobalEventListeners() {
