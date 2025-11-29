@@ -491,6 +491,48 @@ function updateBookingPanel() {
     }
 }
 
+// ========== MEJORAS PARA EL TECLADO EN MÓVILES ==========
+function initMobileKeyboardFix() {
+    const bookingModal = getElement('bookingModal');
+    const modalContent = document.querySelector('.modern-booking-modal');
+    
+    if (!bookingModal || !modalContent) return;
+    
+    // Detectar cuando un input recibe foco
+    const inputs = bookingModal.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            // Agregar clase al body para controlar el overflow
+            document.body.classList.add('modal-open');
+            
+            // En móviles, hacer scroll al input activo
+            setTimeout(() => {
+                this.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center',
+                    inline: 'nearest'
+                });
+            }, 300);
+        });
+        
+        input.addEventListener('blur', function() {
+            // Remover clase cuando no hay inputs enfocados
+            if (!bookingModal.querySelector('input:focus, select:focus, textarea:focus')) {
+                document.body.classList.remove('modal-open');
+            }
+        });
+    });
+    
+    // Ajustar el modal cuando el teclado se muestra/oculta
+    window.addEventListener('resize', function() {
+        if (window.innerHeight < 500) { // Teclado probablemente abierto
+            modalContent.style.maxHeight = '95vh';
+        } else {
+            modalContent.style.maxHeight = '90vh';
+        }
+    });
+}
+
 // ========== MODAL DE CITAS ==========
 function openBookingModal() {
     // Verificar si las citas están pausadas
@@ -534,6 +576,9 @@ function openBookingModal() {
     setTimeout(() => {
         generateTimeSlots();
     }, 300);
+    
+    // INICIALIZAR CORRECCIONES PARA MÓVILES
+    setTimeout(initMobileKeyboardFix, 100);
 }
 
 function closeBookingModal() {
