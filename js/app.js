@@ -8,8 +8,6 @@ let isBookingPaused = false;
 let lastScrollTop = 0;
 let currentSection = 'inicio'; // Portal actual
 let zoomLevel = 1; // Nivel de zoom para imágenes
-let isDragging = false;
-let startX, startY, scrollLeft, scrollTop;
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
@@ -139,7 +137,6 @@ function initPortalNavigation() {
     
     // Obtener todos los enlaces de navegación
     const navLinks = document.querySelectorAll('.nav-link');
-    const sections = document.querySelectorAll('.section-portal');
     
     // Configurar event listeners para navegación
     navLinks.forEach(link => {
@@ -240,6 +237,27 @@ function initMobileMenu() {
     }
 }
 
+// ========== SCROLL TO SERVICES ==========
+function scrollToServices() {
+    switchSection('servicios');
+    
+    // Mostrar indicador después de un pequeño delay
+    setTimeout(showServicesIndicator, 500);
+}
+
+// ========== MOSTRAR INDICADOR DE SERVICIOS ==========
+function showServicesIndicator() {
+    const indicator = getElement('servicesIndicator');
+    if (indicator) {
+        indicator.style.display = 'block';
+        
+        // Ocultar después de 8 segundos
+        setTimeout(() => {
+            indicator.style.display = 'none';
+        }, 8000);
+    }
+}
+
 // ========== SISTEMA DE CITAS INTELIGENTE ==========
 function initSmartBooking() {
     console.log('🎯 Inicializando sistema de citas inteligente...');
@@ -266,25 +284,11 @@ function handleBookingButtonClick() {
     
     if (selectedServices.length === 0) {
         // No hay servicios seleccionados, ir a servicios y mostrar indicador
-        switchSection('servicios');
-        showServicesIndicator();
+        scrollToServices();
         showNotification('👆 Selecciona los servicios que deseas reservar', 'info');
     } else {
         // Ya hay servicios seleccionados, abrir modal directamente
         openBookingModal();
-    }
-}
-
-// ========== MOSTRAR INDICADOR DE SERVICIOS ==========
-function showServicesIndicator() {
-    const indicator = getElement('servicesIndicator');
-    if (indicator) {
-        indicator.style.display = 'block';
-        
-        // Ocultar después de 8 segundos
-        setTimeout(() => {
-            indicator.style.display = 'none';
-        }, 8000);
     }
 }
 
@@ -462,7 +466,9 @@ function openBookingModal() {
     }
     
     // Generar horarios automáticamente al abrir el modal
-    generateTimeSlots();
+    setTimeout(() => {
+        generateTimeSlots();
+    }, 100);
 }
 
 function closeBookingModal() {
@@ -506,19 +512,30 @@ function updateBookingPreview() {
     servicesCount.textContent = `${selectedServices.length} servicio${selectedServices.length !== 1 ? 's' : ''}`;
 }
 
-// ========== GENERACIÓN DE HORARIOS INTELIGENTE ==========
+// ========== GENERACIÓN DE HORARIOS INTELIGENTE - CORREGIDO ==========
 function generateTimeSlots() {
     const timeSlots = getElement('timeSlots');
     const dateInput = getElement('date');
-    if (!timeSlots || !dateInput) return;
+    if (!timeSlots || !dateInput) {
+        console.error('❌ No se encontraron elementos timeSlots o dateInput');
+        return;
+    }
 
     // Obtener fecha seleccionada
     const selectedDate = dateInput.value;
     const today = new Date().toISOString().split('T')[0];
     
+    console.log('📅 Generando horarios para:', selectedDate, 'Hoy:', today);
+    
     // Limpiar horarios anteriores
     timeSlots.innerHTML = '';
     selectedTime = null;
+
+    // Verificar si hay una fecha seleccionada
+    if (!selectedDate) {
+        timeSlots.innerHTML = '<div class="time-slots-placeholder">⚠️ Primero selecciona una fecha</div>';
+        return;
+    }
 
     // Generar horarios de 9:00 AM a 6:00 PM cada 30 minutos
     const slots = [];
@@ -531,6 +548,8 @@ function generateTimeSlots() {
         }
     }
 
+    console.log('⏰ Horarios generados:', slots);
+
     // Si es hoy, filtrar horarios pasados
     let availableSlots = slots;
     if (selectedDate === today) {
@@ -539,38 +558,45 @@ function generateTimeSlots() {
         const currentMinute = now.getMinutes();
         const currentTimeInMinutes = currentHour * 60 + currentMinute;
         
+        console.log('🕐 Hora actual:', currentHour + ':' + currentMinute, 'Minutos:', currentTimeInMinutes);
+        
         // Solo mostrar horarios que sean al menos 30 minutos en el futuro
         availableSlots = slots.filter(slot => {
             const [hours, minutes] = slot.split(':');
             const slotTimeInMinutes = parseInt(hours) * 60 + parseInt(minutes);
-            return slotTimeInMinutes > currentTimeInMinutes + 30;
+            const isAvailable = slotTimeInMinutes > currentTimeInMinutes + 30;
+            return isAvailable;
         });
     }
 
+    console.log('✅ Horarios disponibles:', availableSlots);
+
     // Crear botones para cada horario disponible
-    availableSlots.forEach(slot => {
-        const slotElement = document.createElement('button');
-        slotElement.type = 'button';
-        slotElement.className = 'time-slot';
-        slotElement.textContent = slot;
-        slotElement.addEventListener('click', function() {
-            // Remover selección anterior
-            timeSlots.querySelectorAll('.time-slot').forEach(s => {
-                s.classList.remove('selected');
+    if (availableSlots.length === 0) {
+        timeSlots.innerHTML = '<div class="time-slots-placeholder">😔 No hay horarios disponibles para esta fecha. Por favor selecciona otra fecha.</div>';
+    } else {
+        availableSlots.forEach(slot => {
+            const slotElement = document.createElement('button');
+            slotElement.type = 'button';
+            slotElement.className = 'time-slot';
+            slotElement.textContent = slot;
+            slotElement.addEventListener('click', function() {
+                // Remover selección anterior
+                timeSlots.querySelectorAll('.time-slot').forEach(s => {
+                    s.classList.remove('selected');
+                });
+                
+                // Seleccionar nuevo slot
+                this.classList.add('selected');
+                selectedTime = slot;
+                console.log('✅ Hora seleccionada:', selectedTime);
+                
+                // Mostrar confirmación visual
+                showNotification(`🕐 Hora seleccionada: ${selectedTime}`, 'success');
             });
             
-            // Seleccionar nuevo slot
-            this.classList.add('selected');
-            selectedTime = slot;
-            console.log('✅ Hora seleccionada:', selectedTime);
+            timeSlots.appendChild(slotElement);
         });
-        
-        timeSlots.appendChild(slotElement);
-    });
-    
-    // Si no hay horarios, mostrar mensaje
-    if (availableSlots.length === 0) {
-        timeSlots.innerHTML = '<div class="time-slots-placeholder">No hay horarios disponibles para hoy. Por favor selecciona otra fecha.</div>';
     }
 }
 
@@ -965,27 +991,45 @@ function navigateImage(direction) {
     }
 }
 
-// ========== INICIALIZACIÓN DE FECHA ==========
+// ========== INICIALIZACIÓN DE FECHA MEJORADA ==========
 function initializeDateInput() {
     const dateInput = getElement('date');
     if (dateInput) {
         const today = new Date().toISOString().split('T')[0];
         dateInput.min = today;
+        dateInput.value = today; // Establecer hoy como valor por defecto
+        
+        console.log('📅 Input de fecha inicializado. Hoy:', today);
         
         dateInput.addEventListener('change', function() {
             console.log('📅 Fecha seleccionada:', this.value);
+            selectedTime = null; // Resetear hora al cambiar fecha
             generateTimeSlots();
         });
+        
+        // Generar horarios iniciales
+        setTimeout(() => {
+            generateTimeSlots();
+        }, 500);
+    } else {
+        console.error('❌ No se encontró el elemento date input');
     }
 }
 
-// ========== ENVÍO DE FORMULARIO ==========
+// ========== ENVÍO DE FORMULARIO CON VALIDACIÓN MEJORADA ==========
 function setupBookingForm() {
     const bookingForm = getElement('bookingForm');
-    if (!bookingForm) return;
+    if (!bookingForm) {
+        console.error('❌ No se encontró el formulario de reservas');
+        return;
+    }
     
     bookingForm.addEventListener('submit', async function(e) {
         e.preventDefault();
+        
+        console.log('📤 Enviando formulario...');
+        console.log('✅ Servicios seleccionados:', selectedServices.length);
+        console.log('🕐 Hora seleccionada:', selectedTime);
         
         // Verificar si las citas están pausadas
         if (isBookingPaused) {
@@ -999,7 +1043,17 @@ function setupBookingForm() {
         }
         
         if (!selectedTime) {
-            showNotification('⚠️ Selecciona una hora', 'warning');
+            showNotification('⚠️ Selecciona una hora para tu cita', 'warning');
+            
+            // Resaltar la sección de horarios
+            const timeSlots = getElement('timeSlots');
+            if (timeSlots) {
+                timeSlots.style.border = '2px solid #e74c3c';
+                timeSlots.style.borderRadius = '8px';
+                setTimeout(() => {
+                    timeSlots.style.border = '';
+                }, 3000);
+            }
             return;
         }
         
@@ -1008,9 +1062,17 @@ function setupBookingForm() {
         const name = formData.get('name');
         const phone = formData.get('phone');
         
+        console.log('📝 Datos del formulario:', { date, name, phone });
+        
         // Validaciones básicas
         if (!date || !name || !phone) {
-            showNotification('⚠️ Completa todos los campos', 'warning');
+            showNotification('⚠️ Completa todos los campos requeridos', 'warning');
+            return;
+        }
+        
+        // Validar formato de teléfono
+        if (phone.length < 8) {
+            showNotification('⚠️ Ingresa un número de teléfono válido', 'warning');
             return;
         }
         
@@ -1019,7 +1081,9 @@ function setupBookingForm() {
             const total = selectedServices.reduce((sum, service) => sum + service.price, 0);
             const duration = selectedServices.reduce((sum, service) => sum + service.duration, 0);
             
-            // Crear cita en Firebase - Estado automáticamente "confirmada"
+            console.log('💾 Guardando cita en Firebase...');
+            
+            // Crear cita en Firebase
             const docRef = await addDoc(collection(db, "citas"), {
                 fecha: date,
                 hora: selectedTime,
@@ -1028,7 +1092,7 @@ function setupBookingForm() {
                 servicios: selectedServices.map(s => s.name),
                 total: total,
                 duracion: duration,
-                estado: 'confirmada', // Cambiado a confirmada automáticamente
+                estado: 'confirmada',
                 timestamp: new Date()
             });
             
@@ -1046,12 +1110,21 @@ function setupBookingForm() {
             bookingForm.reset();
             selectedTime = null;
             
+            // Resetear fecha a hoy
+            const dateInput = getElement('date');
+            if (dateInput) {
+                const today = new Date().toISOString().split('T')[0];
+                dateInput.value = today;
+            }
+            
             // Resetear horarios
             generateTimeSlots();
             
+            console.log('🔄 Formulario reseteado');
+            
         } catch (error) {
             console.error('❌ Error guardando cita:', error);
-            showNotification('❌ Error al guardar la cita', 'error');
+            showNotification('❌ Error al guardar la cita. Por favor, intenta nuevamente.', 'error');
         }
     });
 }
@@ -1404,3 +1477,4 @@ window.closeImageViewer = closeImageViewer;
 window.navigateImage = navigateImage;
 window.cancelarCita = cancelarCita;
 window.switchSection = switchSection;
+window.scrollToServices = scrollToServices;
