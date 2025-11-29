@@ -1,3 +1,37 @@
+/* ========== BOTÓN GRANDE REALIZAR CITA ========== */
+.big-booking-btn-container {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-lg);
+}
+
+.btn-big-booking {
+    background: linear-gradient(135deg, #E75480, #D147A3);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl) var(--spacing-xxl);
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 30px rgba(231, 84, 128, 0.4);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-big-booking:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 12px 40px rgba(231, 84, 128, 0.6);
+}
+
+.btn-big-booking:active {
+    transform: translateY(-2px) scale(1.02);
+}
+
 /* ========== INDICADOR DE SERVICIOS ========== */
 .services-indicator {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -461,6 +495,16 @@
         opacity: 1;
         transform: translateY(0);
     }
+    
+    .btn-big-booking {
+        padding: var(--spacing-lg) var(--spacing-xl);
+        font-size: var(--font-size-lg);
+        width: 100%;
+    }
+    
+    .big-booking-btn-container {
+        padding: var(--spacing-md);
+    }
 }
 
 @media (max-width: 480px) {
@@ -485,5 +529,10 @@
     
     .indicator-text p {
         font-size: var(--font-size-sm);
+    }
+    
+    .btn-big-booking {
+        padding: var(--spacing-md) var(--spacing-lg);
+        font-size: var(--font-size-md);
     }
 }

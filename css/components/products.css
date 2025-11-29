@@ -1,12 +1,14 @@
 /* Products Section Specific Styles */
 .products {
     background: var(--surface-color);
+    padding: var(--spacing-xl) 0;
 }
 
 .products-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: var(--spacing-lg);
+    padding: var(--spacing-lg) 0;
 }
 
 .product-card {
@@ -16,6 +18,7 @@
     transition: var(--transition);
     border: 1px solid rgba(255, 255, 255, 0.1);
     cursor: pointer;
+    position: relative;
 }
 
 .product-card:hover {
@@ -63,6 +66,7 @@
     color: white;
     font-weight: 600;
     font-size: var(--font-size-lg);
+    text-align: center;
 }
 
 .product-info {
@@ -79,17 +83,80 @@
 .product-info p {
     color: var(--text-secondary);
     font-size: var(--font-size-sm);
+    line-height: 1.5;
+    margin-bottom: var(--spacing-sm);
 }
 
-/* Responsive */
+.product-price {
+    color: var(--primary-color);
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    margin-top: var(--spacing-sm);
+}
+
+/* Responsive Products */
 @media (max-width: 768px) {
     .products-grid {
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--spacing-md);
+    }
+    
+    .product-image-container {
+        height: 200px;
     }
 }
 
 @media (max-width: 480px) {
     .products-grid {
         grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .product-image-container {
+        height: 180px;
+    }
+    
+    .product-info {
+        padding: var(--spacing-md);
+    }
+    
+    .product-info h3 {
+        font-size: var(--font-size-md);
+    }
+}
+
+/* Touch-friendly styles for mobile products */
+@media (hover: none) and (pointer: coarse) {
+    .product-card {
+        cursor: default;
+    }
+    
+    .product-card:active {
+        transform: scale(0.98);
+    }
+    
+    .product-overlay {
+        opacity: 0.7;
+    }
+    
+    .product-card .product-overlay {
+        opacity: 0.7;
+    }
+}
+
+/* Product loading states */
+.product-card.loading {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 0.8;
+    }
+    100% {
+        opacity: 0.6;
     }
 }

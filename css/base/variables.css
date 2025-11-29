@@ -14,6 +14,7 @@
     --text-primary: #ffffff;
     --text-secondary: #b3b3cc;
     --text-muted: #8888a6;
+    --gray-color: #8888a6; /* Variable faltante agregada */
     
     /* Colores de estado */
     --success-color: #27ae60;
@@ -40,19 +41,138 @@
     --spacing-xl: 2rem;
     --spacing-2xl: 3rem;
     --spacing-3xl: 4rem;
+    --spacing-4xl: 6rem; /* Nueva variable agregada */
+    --spacing-5xl: 8rem; /* Nueva variable agregada */
     
     /* Bordes */
     --border-radius: 8px;
+    --border-radius-sm: 4px; /* Nueva variable agregada */
     --border-radius-lg: 12px;
     --border-radius-xl: 16px;
+    --border-radius-2xl: 20px; /* Nueva variable agregada */
     
     /* Sombras */
     --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.2);
     --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.3);
     --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.4);
+    --shadow-2xl: 0 24px 48px rgba(0, 0, 0, 0.5); /* Nueva variable agregada */
     
     /* Transiciones */
     --transition: all 0.3s ease;
     --transition-slow: all 0.5s ease;
+    --transition-fast: all 0.15s ease; /* Nueva variable agregada */
+    
+    /* ========== VARIABLES NUEVAS PARA LAS MEJORAS ========== */
+    
+    /* Header heights para sistema de portales */
+    --header-height: 140px;
+    --header-height-scrolled: 110px;
+    --header-height-mobile: 120px;
+    --header-height-mobile-scrolled: 90px;
+    
+    /* Z-index system */
+    --z-dropdown: 1000;
+    --z-sticky: 1020;
+    --z-fixed: 1030;
+    --z-modal-backdrop: 1040;
+    --z-modal: 1050;
+    --z-popover: 1060;
+    --z-tooltip: 1070;
+    
+    /* Breakpoints */
+    --breakpoint-xs: 0px;
+    --breakpoint-sm: 576px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 992px;
+    --breakpoint-xl: 1200px;
+    --breakpoint-xxl: 1400px;
+    
+    /* Component-specific variables */
+    --btn-padding-y: var(--spacing-md);
+    --btn-padding-x: var(--spacing-xl);
+    --btn-font-size: var(--font-size-md);
+    --btn-border-radius: var(--border-radius);
+    --btn-line-height: 1.5;
+    
+    /* Card variables */
+    --card-bg: var(--surface-color);
+    --card-border-color: rgba(255, 255, 255, 0.1);
+    --card-border-radius: var(--border-radius-lg);
+    --card-box-shadow: var(--shadow-md);
+    --card-padding: var(--spacing-lg);
+    
+    /* Form variables */
+    --input-bg: rgba(255, 255, 255, 0.1);
+    --input-border-color: rgba(255, 255, 255, 0.2);
+    --input-color: var(--text-primary);
+    --input-placeholder-color: var(--text-muted);
+    --input-focus-bg: rgba(255, 255, 255, 0.15);
+    --input-focus-border-color: var(--primary-color);
+    --input-focus-shadow: 0 0 0 2px rgba(233, 30, 99, 0.2);
+    
+    /* Modal variables */
+    --modal-backdrop-bg: rgba(0, 0, 0, 0.8);
+    --modal-backdrop-blur: blur(10px);
+    --modal-bg: linear-gradient(135deg, var(--surface-color) 0%, var(--background-darker) 100%);
+    --modal-border-radius: var(--border-radius-lg);
+    --modal-box-shadow: var(--shadow-2xl);
+    --modal-padding: var(--spacing-lg);
+    
+    /* Navigation variables */
+    --nav-link-color: rgba(255, 255, 255, 0.9);
+    --nav-link-hover-color: var(--primary-color);
+    --nav-link-active-color: var(--primary-color);
+    --nav-link-padding: var(--spacing-md) 0;
+    
+    /* Grid system */
+    --grid-gap: var(--spacing-lg);
+    --grid-columns: 12;
+    --container-max-width: 1200px;
+    --container-padding: var(--spacing-lg);
+    
+    /* Animation variables */
+    --animation-duration: 0.3s;
+    --animation-timing: ease;
+    --animation-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --animation-slide: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ========== RESPONSIVE VARIABLES ========== */
+@media (max-width: 768px) {
+    :root {
+        --header-height: 120px;
+        --header-height-scrolled: 90px;
+        --container-padding: var(--spacing-md);
+        --btn-padding-y: var(--spacing-sm);
+        --btn-padding-x: var(--spacing-lg);
+        --card-padding: var(--spacing-md);
+        --modal-padding: var(--spacing-md);
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --header-height: 110px;
+        --header-height-scrolled: 80px;
+        --container-padding: var(--spacing-sm);
+        --btn-padding-y: var(--spacing-xs);
+        --btn-padding-x: var(--spacing-md);
+        --card-padding: var(--spacing-sm);
+        --modal-padding: var(--spacing-sm);
+    }
+}
+
+/* ========== MODOS DE COLOR (PARA FUTURAS MEJORAS) ========== */
+@media (prefers-color-scheme: light) {
+    :root {
+        --background-dark: #f8f9fa;
+        --background-darker: #e9ecef;
+        --surface-color: #ffffff;
+        --surface-light: #f8f9fa;
+        --text-primary: #212529;
+        --text-secondary: #6c757d;
+        --text-muted: #adb5bd;
+        --gray-color: #6c757d;
+    }
 }

@@ -55,6 +55,7 @@
     display: block !important; /* Forzar visualización */
     flex-shrink: 0; /* Evitar que se reduzca */
     border: 2px solid rgba(231, 84, 128, 0.3); /* Borde sutil */
+    background: transparent; /* Fondo transparente */
 }
 
 .logo-text {
@@ -115,7 +116,8 @@
     letter-spacing: 0.5px;
 }
 
-.nav-compact a:hover {
+.nav-compact a:hover,
+.nav-compact a.active {
     color: #E75480;
 }
 
@@ -130,7 +132,8 @@
     transition: width 0.3s ease;
 }
 
-.nav-compact a:hover::after {
+.nav-compact a:hover::after,
+.nav-compact a.active::after {
     width: 100%;
 }
 
@@ -240,6 +243,7 @@
         text-overflow: unset; /* No recortar texto */
         max-width: none; /* Sin límite de ancho */
         padding: 6px 0; /* Más espacio interno */
+        margin-top: 5px; /* BAJAR EL NOMBRE EN MÓVILES */
     }
     
     .logo-subtitle {
@@ -319,6 +323,7 @@
         white-space: nowrap; /* Mantener en una línea */
         overflow: visible; /* Mostrar texto completo */
         text-overflow: unset; /* Sin puntos suspensivos */
+        margin-top: 8px; /* BAJAR MÁS EL NOMBRE EN MÓVILES PEQUEÑOS */
     }
     
     .logo-subtitle {
@@ -362,6 +367,7 @@
     .logo-title {
         font-size: 1.8rem;
         padding: 4px 0;
+        margin-top: 10px; /* AÚN MÁS ESPACIO EN PANTALLAS MUY PEQUEÑAS */
     }
     
     .logo-image-small {
@@ -434,7 +440,7 @@ html {
 
 /* Estilo de fallback para imágenes que no cargan */
 .logo-image-small {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: transparent; /* Fondo transparente */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -501,4 +507,20 @@ html {
     white-space: nowrap !important;
     overflow: visible !important;
     text-overflow: unset !important;
+}
+
+/* Estilos para secciones portales */
+.section-portal {
+    display: none;
+    min-height: 100vh;
+    padding-top: 140px;
+}
+
+.section-portal.section-active {
+    display: block;
+}
+
+/* Ajuste para header scrolled */
+.header.scrolled + main .section-portal {
+    padding-top: 110px;
 }

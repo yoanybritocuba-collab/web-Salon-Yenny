@@ -1,13 +1,22 @@
-/* Image Viewer Modal */
+/* Image Viewer Modal - MODERNO CON ZOOM */
+.image-viewer-modal {
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 10000;
+}
+
 .image-viewer-modal .modal-content {
-    max-width: 90%;
-    max-height: 90%;
+    max-width: 95vw;
+    max-height: 95vh;
     background: transparent;
     border: none;
     box-shadow: none;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
 
 .image-viewer-content {
@@ -15,20 +24,45 @@
     background: transparent;
     border: none;
     box-shadow: none;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .image-viewer-container {
     position: relative;
     max-width: 100%;
     max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
 }
 
-.image-viewer-container img {
+.zoomable-image {
     max-width: 100%;
-    max-height: 80vh;
+    max-height: 70vh;
     object-fit: contain;
-    border-radius: var(--border-radius-lg);
+    border-radius: var(--border-radius);
     box-shadow: var(--shadow-xl);
+    cursor: grab;
+    transition: transform 0.3s ease;
+    transform-origin: center center;
+}
+
+.zoomable-image:active {
+    cursor: grabbing;
+}
+
+.zoomable-image.zoomed {
+    cursor: grab;
 }
 
 .image-viewer-controls {
@@ -36,25 +70,231 @@
     justify-content: center;
     gap: var(--spacing-md);
     margin-top: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: var(--border-radius-lg);
+    backdrop-filter: blur(10px);
 }
 
-.image-viewer-modal .close {
+.zoom-controls {
     position: absolute;
-    top: -40px;
-    right: 0;
-    color: white;
-    font-size: 2rem;
-    z-index: 1001;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    background: rgba(0, 0, 0, 0.7);
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius);
+    backdrop-filter: blur(10px);
+    z-index: 10;
 }
 
-/* Responsive */
+.zoom-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-lg);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.zoom-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.zoom-btn:active {
+    transform: scale(0.95);
+}
+
+.image-viewer-close {
+    position: absolute;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    color: white;
+    font-size: 2.5rem;
+    z-index: 1001;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.image-viewer-close:hover {
+    background: rgba(231, 84, 128, 0.8);
+    transform: scale(1.1);
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .image-viewer-container {
+        padding: var(--spacing-sm);
+    }
+    
+    .zoom-controls {
+        position: fixed;
+        bottom: var(--spacing-lg);
+        top: auto;
+        right: var(--spacing-lg);
+        flex-direction: row;
+    }
+    
+    .image-viewer-controls {
+        position: fixed;
+        bottom: var(--spacing-lg);
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 400px;
+    }
+    
+    .zoomable-image {
+        max-height: 60vh;
+    }
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
+    .image-viewer-modal .modal-content {
+        max-width: 100vw;
+        max-height: 100vh;
+        margin: 0;
+        border-radius: 0;
+    }
+    
+    .image-viewer-container {
+        padding: var(--spacing-sm);
+        border-radius: 0;
+    }
+    
+    .zoomable-image {
+        max-height: 60vh;
+    }
+    
     .image-viewer-controls {
         flex-direction: column;
         align-items: center;
+        gap: var(--spacing-sm);
+        width: 90%;
     }
     
     .image-viewer-controls .btn {
-        width: 200px;
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    .zoom-controls {
+        flex-direction: row;
+        top: auto;
+        bottom: var(--spacing-lg);
+        right: 50%;
+        transform: translateX(50%);
+    }
+    
+    .image-viewer-close {
+        top: var(--spacing-md);
+        right: var(--spacing-md);
+        width: 45px;
+        height: 45px;
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .zoomable-image {
+        max-height: 50vh;
+    }
+    
+    .image-viewer-controls {
+        padding: var(--spacing-sm);
+    }
+    
+    .zoom-btn {
+        width: 35px;
+        height: 35px;
+        font-size: var(--font-size-md);
+    }
+    
+    .image-viewer-close {
+        width: 40px;
+        height: 40px;
+        font-size: 1.8rem;
+    }
+}
+
+/* Zoom level indicator */
+.zoom-level {
+    position: absolute;
+    top: var(--spacing-lg);
+    left: var(--spacing-lg);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-sm);
+    backdrop-filter: blur(10px);
+    display: none;
+}
+
+.zoomable-image.zoomed ~ .zoom-level {
+    display: block;
+}
+
+/* Loading state for images */
+.zoomable-image.loading {
+    opacity: 0.7;
+    filter: blur(5px);
+}
+
+/* Animation for image transitions */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.zoomable-image {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Gesture hints for mobile */
+.gesture-hint {
+    position: absolute;
+    bottom: var(--spacing-lg);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius-lg);
+    font-size: var(--font-size-sm);
+    text-align: center;
+    backdrop-filter: blur(10px);
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .gesture-hint {
+        display: block;
     }
 }

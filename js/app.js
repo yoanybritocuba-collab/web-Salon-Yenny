@@ -6,6 +6,10 @@ let selectedTime = null;
 let selectedServices = [];
 let isBookingPaused = false;
 let lastScrollTop = 0;
+let currentSection = 'inicio'; // Portal actual
+let zoomLevel = 1; // Nivel de zoom para imágenes
+let isDragging = false;
+let startX, startY, scrollLeft, scrollTop;
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
@@ -129,6 +133,72 @@ function getElement(id) {
     return element;
 }
 
+// ========== SISTEMA DE PORTALES SEPARADOS ==========
+function initPortalNavigation() {
+    console.log('🚀 Inicializando sistema de portales...');
+    
+    // Obtener todos los enlaces de navegación
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('.section-portal');
+    
+    // Configurar event listeners para navegación
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetSection = link.getAttribute('data-section');
+            switchSection(targetSection);
+            
+            // Cerrar menú móvil si está abierto
+            const navCompact = document.querySelector('.nav-compact');
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            if (navCompact && navCompact.classList.contains('mobile-open')) {
+                navCompact.classList.remove('mobile-open');
+                mobileMenuToggle.classList.remove('active');
+            }
+        });
+    });
+    
+    // Mostrar sección inicial
+    switchSection('inicio');
+}
+
+function switchSection(sectionId) {
+    console.log(`🔄 Cambiando a sección: ${sectionId}`);
+    
+    // Ocultar todas las secciones
+    const sections = document.querySelectorAll('.section-portal');
+    sections.forEach(section => {
+        section.classList.remove('section-active');
+    });
+    
+    // Mostrar sección objetivo
+    const targetSection = document.getElementById(sectionId);
+    if (targetSection) {
+        targetSection.classList.add('section-active');
+        currentSection = sectionId;
+        
+        // Scroll suave al inicio de la sección
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+    
+    // Actualizar navegación activa
+    updateActiveNav(sectionId);
+}
+
+function updateActiveNav(activeSection) {
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        if (link.getAttribute('data-section') === activeSection) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+}
+
 // ========== HEADER SCROLL EFFECT MEJORADO ==========
 function initHeaderScroll() {
     const header = document.querySelector('.header');
@@ -164,9 +234,44 @@ function initMobileMenu() {
     
     if (mobileMenuToggle && navCompact) {
         mobileMenuToggle.addEventListener('click', function() {
-            navCompact.classList.toggle('active');
+            navCompact.classList.toggle('mobile-open');
             this.classList.toggle('active');
         });
+    }
+}
+
+// ========== SISTEMA DE CITAS INTELIGENTE ==========
+function initSmartBooking() {
+    console.log('🎯 Inicializando sistema de citas inteligente...');
+    
+    const bookingBtn = getElement('bookingBtn');
+    const heroBookingBtn = getElement('heroBookingBtn');
+    const bigBookingBtn = getElement('bigBookingBtn');
+    
+    if (bookingBtn) {
+        bookingBtn.addEventListener('click', handleBookingButtonClick);
+    }
+    
+    if (heroBookingBtn) {
+        heroBookingBtn.addEventListener('click', handleBookingButtonClick);
+    }
+    
+    if (bigBookingBtn) {
+        bigBookingBtn.addEventListener('click', openBookingModal);
+    }
+}
+
+function handleBookingButtonClick() {
+    console.log('📅 Botón de cita clickeado, estado servicios:', selectedServices.length);
+    
+    if (selectedServices.length === 0) {
+        // No hay servicios seleccionados, ir a servicios y mostrar indicador
+        switchSection('servicios');
+        showServicesIndicator();
+        showNotification('👆 Selecciona los servicios que deseas reservar', 'info');
+    } else {
+        // Ya hay servicios seleccionados, abrir modal directamente
+        openBookingModal();
     }
 }
 
@@ -326,20 +431,6 @@ function updateBookingPanel() {
             <span class="btn-icon">✅</span>
             Confirmar Cita (${totalDuration}min)
         `;
-    }
-}
-
-// ========== SCROLL TO SERVICES ==========
-function scrollToServices() {
-    const servicesSection = document.getElementById('servicios');
-    if (servicesSection) {
-        servicesSection.scrollIntoView({ 
-            behavior: 'smooth',
-            block: 'start'
-        });
-        
-        // Mostrar indicador después de un pequeño delay
-        setTimeout(showServicesIndicator, 500);
     }
 }
 
@@ -569,6 +660,12 @@ async function loadProducts() {
                     <div class="product-price">$${product.precio}</div>
                 </div>
             `;
+            
+            // Agregar evento click para abrir visor de imágenes
+            productCard.addEventListener('click', () => {
+                openProductViewer(index);
+            });
+            
             productsContainer.appendChild(productCard);
         });
         
@@ -671,6 +768,131 @@ async function loadGallery() {
     }
 }
 
+// ========== SISTEMA DE ZOOM PARA IMÁGENES ==========
+function initImageZoom() {
+    console.log('🔍 Inicializando sistema de zoom para imágenes...');
+    
+    const zoomInBtn = getElement('zoomIn');
+    const zoomOutBtn = getElement('zoomOut');
+    const resetZoomBtn = getElement('resetZoom');
+    const closeImageViewerBtn = getElement('closeImageViewer');
+    const viewerImage = getElement('viewerImage');
+    
+    if (zoomInBtn) {
+        zoomInBtn.addEventListener('click', zoomIn);
+    }
+    
+    if (zoomOutBtn) {
+        zoomOutBtn.addEventListener('click', zoomOut);
+    }
+    
+    if (resetZoomBtn) {
+        resetZoomBtn.addEventListener('click', resetZoom);
+    }
+    
+    if (closeImageViewerBtn) {
+        closeImageViewerBtn.addEventListener('click', closeImageViewer);
+    }
+    
+    if (viewerImage) {
+        // Touch events para zoom en móviles
+        viewerImage.addEventListener('touchstart', handleTouchStart, { passive: false });
+        viewerImage.addEventListener('touchmove', handleTouchMove, { passive: false });
+        viewerImage.addEventListener('touchend', handleTouchEnd);
+        
+        // Double click para zoom
+        viewerImage.addEventListener('dblclick', toggleZoom);
+        
+        // Mouse wheel para zoom
+        viewerImage.addEventListener('wheel', handleWheel, { passive: false });
+    }
+}
+
+function zoomIn() {
+    if (zoomLevel < 3) {
+        zoomLevel += 0.25;
+        applyZoom();
+    }
+}
+
+function zoomOut() {
+    if (zoomLevel > 0.5) {
+        zoomLevel -= 0.25;
+        applyZoom();
+    }
+}
+
+function resetZoom() {
+    zoomLevel = 1;
+    applyZoom();
+}
+
+function toggleZoom() {
+    if (zoomLevel === 1) {
+        zoomLevel = 2;
+    } else {
+        zoomLevel = 1;
+    }
+    applyZoom();
+}
+
+function applyZoom() {
+    const viewerImage = getElement('viewerImage');
+    if (viewerImage) {
+        viewerImage.style.transform = `scale(${zoomLevel})`;
+        viewerImage.style.transition = 'transform 0.3s ease';
+    }
+}
+
+// Touch events para zoom en móviles
+function handleTouchStart(e) {
+    if (e.touches.length === 2) {
+        e.preventDefault();
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        const distance = Math.hypot(
+            touch2.clientX - touch1.clientX,
+            touch2.clientY - touch1.clientY
+        );
+        this.startDistance = distance;
+        this.startZoom = zoomLevel;
+    }
+}
+
+function handleTouchMove(e) {
+    if (e.touches.length === 2) {
+        e.preventDefault();
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        const distance = Math.hypot(
+            touch2.clientX - touch1.clientX,
+            touch2.clientY - touch1.clientY
+        );
+        
+        if (this.startDistance) {
+            const scale = distance / this.startDistance;
+            zoomLevel = Math.max(0.5, Math.min(3, this.startZoom * scale));
+            applyZoom();
+        }
+    }
+}
+
+function handleTouchEnd(e) {
+    this.startDistance = null;
+    this.startZoom = null;
+}
+
+function handleWheel(e) {
+    e.preventDefault();
+    if (e.deltaY < 0) {
+        // Scroll up - zoom in
+        zoomIn();
+    } else {
+        // Scroll down - zoom out
+        zoomOut();
+    }
+}
+
 // ========== VISOR DE IMÁGENES CORREGIDO ==========
 function openImageViewer(index) {
     currentImageIndex = index;
@@ -682,6 +904,39 @@ function openImageViewer(index) {
     viewerImage.src = `imagenes/Galería-Trabajo/${currentImages[currentImageIndex].archivo}`;
     viewerImage.alt = currentImages[currentImageIndex].descripcion;
     viewerModal.style.display = 'block';
+    
+    // Resetear zoom al abrir
+    resetZoom();
+}
+
+function openProductViewer(index) {
+    // Cargar productos para el visor
+    fetch('js/galeria.json')
+        .then(response => response.json())
+        .then(data => {
+            currentImages = data.productos.map((product, idx) => ({
+                id: idx + 1,
+                archivo: product.imagen,
+                descripcion: product.nombre
+            }));
+            
+            currentImageIndex = index;
+            const viewerModal = getElement('imageViewerModal');
+            const viewerImage = getElement('viewerImage');
+            
+            if (!viewerModal || !viewerImage) return;
+            
+            viewerImage.src = `imagenes/productos/${currentImages[currentImageIndex].archivo}`;
+            viewerImage.alt = currentImages[currentImageIndex].descripcion;
+            viewerModal.style.display = 'block';
+            
+            // Resetear zoom al abrir
+            resetZoom();
+        })
+        .catch(error => {
+            console.error('Error cargando productos para visor:', error);
+            showNotification('❌ Error al cargar la imagen', 'error');
+        });
 }
 
 function closeImageViewer() {
@@ -704,6 +959,9 @@ function navigateImage(direction) {
     if (viewerImage) {
         viewerImage.src = `imagenes/Galería-Trabajo/${currentImages[currentImageIndex].archivo}`;
         viewerImage.alt = currentImages[currentImageIndex].descripcion;
+        
+        // Resetear zoom al cambiar imagen
+        resetZoom();
     }
 }
 
@@ -1095,7 +1353,7 @@ function setupGlobalEventListeners() {
 
 // ========== INICIALIZACIÓN PRINCIPAL ==========
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Inicializando aplicación...');
+    console.log('🚀 Inicializando aplicación mejorada...');
     
     // Cargar estado de pausa desde localStorage
     const savedPauseState = localStorage.getItem('isBookingPaused');
@@ -1106,6 +1364,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicializar efectos del header
     initHeaderScroll();
     initMobileMenu();
+    
+    // Inicializar sistema de portales
+    initPortalNavigation();
+    
+    // Inicializar sistema de citas inteligente
+    initSmartBooking();
+    
+    // Inicializar sistema de zoom
+    initImageZoom();
     
     // Cargar contenido
     loadServices();
@@ -1118,25 +1385,15 @@ document.addEventListener('DOMContentLoaded', function() {
     setupBookingForm();
     setupAdminModal();
     
-    // Botones de citas
-    const bookingBtn = getElement('bookingBtn');
-    const heroBookingBtn = getElement('heroBookingBtn');
+    // Botón de confirmar cita en panel
     const insertarCitaBtn = getElement('insertarCitaBtn');
-    
-    if (bookingBtn) {
-        bookingBtn.addEventListener('click', scrollToServices);
-    }
-    
-    if (heroBookingBtn) {
-        heroBookingBtn.addEventListener('click', scrollToServices);
-    }
-    
     if (insertarCitaBtn) {
         insertarCitaBtn.addEventListener('click', openBookingModal);
     }
     
-    console.log('✅ Aplicación inicializada correctamente');
+    console.log('✅ Aplicación mejorada inicializada correctamente');
     console.log('📊 Estado de citas:', isBookingPaused ? '⏸️ PAUSADAS' : '✅ ACTIVAS');
+    console.log('🎯 Portal actual:', currentSection);
 });
 
 // ========== EXPORTAR FUNCIONES PARA HTML ==========
@@ -1146,3 +1403,4 @@ window.openImageViewer = openImageViewer;
 window.closeImageViewer = closeImageViewer;
 window.navigateImage = navigateImage;
 window.cancelarCita = cancelarCita;
+window.switchSection = switchSection;
