@@ -6,8 +6,8 @@ let selectedTime = null;
 let selectedServices = [];
 let isBookingPaused = false;
 let lastScrollTop = 0;
-let currentSection = 'inicio'; // Portal actual
-let zoomLevel = 1; // Nivel de zoom para imágenes
+let currentSection = 'inicio';
+let zoomLevel = 1;
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
@@ -131,6 +131,24 @@ function getElement(id) {
     return element;
 }
 
+// ========== FUNCIÓN PARA CERRAR TODOS LOS MODALES ==========
+function closeAllModals() {
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        modal.style.display = 'none';
+    });
+    
+    // Cerrar menú móvil si está abierto
+    const navCompact = document.querySelector('.nav-compact');
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    if (navCompact && navCompact.classList.contains('mobile-open')) {
+        navCompact.classList.remove('mobile-open');
+        mobileMenuToggle.classList.remove('active');
+    }
+    
+    console.log('🔒 Todos los modales cerrados');
+}
+
 // ========== SISTEMA DE PORTALES SEPARADOS ==========
 function initPortalNavigation() {
     console.log('🚀 Inicializando sistema de portales...');
@@ -144,14 +162,6 @@ function initPortalNavigation() {
             e.preventDefault();
             const targetSection = link.getAttribute('data-section');
             switchSection(targetSection);
-            
-            // Cerrar menú móvil si está abierto
-            const navCompact = document.querySelector('.nav-compact');
-            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-            if (navCompact && navCompact.classList.contains('mobile-open')) {
-                navCompact.classList.remove('mobile-open');
-                mobileMenuToggle.classList.remove('active');
-            }
         });
     });
     
@@ -161,6 +171,9 @@ function initPortalNavigation() {
 
 function switchSection(sectionId) {
     console.log(`🔄 Cambiando a sección: ${sectionId}`);
+    
+    // Cerrar todos los modales al cambiar de sección
+    closeAllModals();
     
     // Ocultar todas las secciones
     const sections = document.querySelectorAll('.section-portal');
@@ -206,14 +219,11 @@ function initHeaderScroll() {
         const scrollThreshold = 100;
         
         if (scrollTop > lastScrollTop && scrollTop > scrollThreshold) {
-            // Scrolling down - hide header
             header.classList.add('hidden');
         } else {
-            // Scrolling up - show header
             header.classList.remove('hidden');
         }
         
-        // Add scrolled class for styling
         if (scrollTop > 50) {
             header.classList.add('scrolled');
         } else {
@@ -241,7 +251,6 @@ function initMobileMenu() {
 function scrollToServices() {
     switchSection('servicios');
     
-    // Mostrar indicador después de un pequeño delay
     setTimeout(showServicesIndicator, 500);
 }
 
@@ -251,7 +260,6 @@ function showServicesIndicator() {
     if (indicator) {
         indicator.style.display = 'block';
         
-        // Ocultar después de 8 segundos
         setTimeout(() => {
             indicator.style.display = 'none';
         }, 8000);
@@ -283,11 +291,9 @@ function handleBookingButtonClick() {
     console.log('📅 Botón de cita clickeado, estado servicios:', selectedServices.length);
     
     if (selectedServices.length === 0) {
-        // No hay servicios seleccionados, ir a servicios y mostrar indicador
         scrollToServices();
         showNotification('👆 Selecciona los servicios que deseas reservar', 'info');
     } else {
-        // Ya hay servicios seleccionados, abrir modal directamente
         openBookingModal();
     }
 }
@@ -325,14 +331,12 @@ function loadServices() {
         `;
         servicesContainer.appendChild(serviceCard);
 
-        // Event listener para el botón flotante
         const bookBtn = serviceCard.querySelector('.service-book-btn');
         bookBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             toggleServiceSelection(service, serviceCard, bookBtn);
         });
 
-        // Event listener para toda la tarjeta
         serviceCard.addEventListener('click', () => {
             toggleServiceSelection(service, serviceCard, bookBtn);
         });
@@ -344,24 +348,18 @@ function toggleServiceSelection(service, card, bookBtn) {
     const index = selectedServices.findIndex(s => s.id === service.id);
     
     if (index === -1) {
-        // Agregar servicio
         selectedServices.push(service);
         card.classList.add('selected');
         bookBtn.classList.add('added');
         bookBtn.innerHTML = '<span class="btn-icon">✓</span> Agregado';
         showNotification(`✅ ${service.name} añadido`, 'success');
-        
-        // Efecto visual de confirmación
         bookBtn.style.background = 'linear-gradient(135deg, #27ae60, #219653)';
     } else {
-        // Remover servicio
         selectedServices.splice(index, 1);
         card.classList.remove('selected');
         bookBtn.classList.remove('added');
         bookBtn.innerHTML = '<span class="btn-icon">➕</span> Agregar';
         showNotification(`🗑️ ${service.name} removido`, 'info');
-        
-        // Restaurar color original
         bookBtn.style.background = 'linear-gradient(135deg, #E75480, #D147A3)';
     }
     updateBookingPanel();
@@ -406,7 +404,6 @@ function updateBookingPanel() {
             selectedServicesPanel.appendChild(serviceItem);
         });
 
-        // Event listeners para botones de eliminar
         selectedServicesPanel.querySelectorAll('.remove-service').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -440,7 +437,6 @@ function updateBookingPanel() {
 
 // ========== MODAL DE CITAS ==========
 function openBookingModal() {
-    // Verificar si las citas están pausadas
     if (isBookingPaused) {
         showNotification('⏸️ Las citas están temporalmente desactivadas. Por favor, intente más tarde.', 'warning');
         return;
@@ -457,25 +453,34 @@ function openBookingModal() {
     updateBookingPreview();
     modal.style.display = 'block';
     
-    // Inicializar fecha mínima como hoy
     const dateInput = getElement('date');
     if (dateInput) {
         const today = new Date().toISOString().split('T')[0];
         dateInput.min = today;
-        dateInput.value = today; // Establecer hoy como valor por defecto
+        dateInput.value = today;
     }
     
-    // Generar horarios automáticamente al abrir el modal
+    const timeSlots = getElement('timeSlots');
+    if (timeSlots) {
+        timeSlots.innerHTML = `
+            <div class="time-slots-placeholder">
+                <div style="font-size: 2rem; margin-bottom: 10px;">⏳</div>
+                <strong>Preparando horarios...</strong>
+                <p style="margin-top: 5px; font-size: 0.9rem;">Cargando disponibilidad</p>
+            </div>
+        `;
+    }
+    
     setTimeout(() => {
         generateTimeSlots();
-    }, 100);
+    }, 300);
 }
 
 function closeBookingModal() {
     const modal = getElement('bookingModal');
     if (modal) {
         modal.style.display = 'none';
-        selectedTime = null; // Resetear hora seleccionada
+        selectedTime = null;
     }
 }
 
@@ -512,7 +517,7 @@ function updateBookingPreview() {
     servicesCount.textContent = `${selectedServices.length} servicio${selectedServices.length !== 1 ? 's' : ''}`;
 }
 
-// ========== GENERACIÓN DE HORARIOS INTELIGENTE - CORREGIDO ==========
+// ========== GENERACIÓN DE HORARIOS MEJORADA ==========
 function generateTimeSlots() {
     const timeSlots = getElement('timeSlots');
     const dateInput = getElement('date');
@@ -521,37 +526,40 @@ function generateTimeSlots() {
         return;
     }
 
-    // Obtener fecha seleccionada
     const selectedDate = dateInput.value;
     const today = new Date().toISOString().split('T')[0];
     
     console.log('📅 Generando horarios para:', selectedDate, 'Hoy:', today);
     
-    // Limpiar horarios anteriores
     timeSlots.innerHTML = '';
     selectedTime = null;
 
-    // Verificar si hay una fecha seleccionada
     if (!selectedDate) {
-        timeSlots.innerHTML = '<div class="time-slots-placeholder">⚠️ Primero selecciona una fecha</div>';
+        timeSlots.innerHTML = `
+            <div class="time-slots-placeholder">
+                <div style="font-size: 2rem; margin-bottom: 10px;">📅</div>
+                <strong>Selecciona una fecha primero</strong>
+                <p style="margin-top: 5px; font-size: 0.9rem;">Elige la fecha para ver los horarios disponibles</p>
+            </div>
+        `;
         return;
     }
 
-    // Generar horarios de 9:00 AM a 6:00 PM cada 30 minutos
-    const slots = [];
+    const allSlots = [];
     for (let hour = 9; hour <= 18; hour++) {
         for (let minute = 0; minute < 60; minute += 30) {
-            if (hour === 18 && minute > 0) break; // No pasar de las 18:00
+            if (hour === 18 && minute > 0) break;
             
             const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-            slots.push(timeString);
+            allSlots.push(timeString);
         }
     }
 
-    console.log('⏰ Horarios generados:', slots);
+    console.log('⏰ Todos los horarios generados:', allSlots);
 
-    // Si es hoy, filtrar horarios pasados
-    let availableSlots = slots;
+    let availableSlots = [];
+    let unavailableSlots = [];
+    
     if (selectedDate === today) {
         const now = new Date();
         const currentHour = now.getHours();
@@ -560,49 +568,111 @@ function generateTimeSlots() {
         
         console.log('🕐 Hora actual:', currentHour + ':' + currentMinute, 'Minutos:', currentTimeInMinutes);
         
-        // Solo mostrar horarios que sean al menos 30 minutos en el futuro
-        availableSlots = slots.filter(slot => {
+        allSlots.forEach(slot => {
             const [hours, minutes] = slot.split(':');
             const slotTimeInMinutes = parseInt(hours) * 60 + parseInt(minutes);
             const isAvailable = slotTimeInMinutes > currentTimeInMinutes + 30;
-            return isAvailable;
+            
+            if (isAvailable) {
+                availableSlots.push(slot);
+            } else {
+                unavailableSlots.push(slot);
+            }
         });
+    } else {
+        availableSlots = allSlots;
+        unavailableSlots = [];
     }
 
     console.log('✅ Horarios disponibles:', availableSlots);
+    console.log('❌ Horarios no disponibles:', unavailableSlots);
 
-    // Crear botones para cada horario disponible
-    if (availableSlots.length === 0) {
-        timeSlots.innerHTML = '<div class="time-slots-placeholder">😔 No hay horarios disponibles para esta fecha. Por favor selecciona otra fecha.</div>';
-    } else {
-        availableSlots.forEach(slot => {
-            const slotElement = document.createElement('button');
-            slotElement.type = 'button';
-            slotElement.className = 'time-slot';
-            slotElement.textContent = slot;
-            slotElement.addEventListener('click', function() {
-                // Remover selección anterior
-                timeSlots.querySelectorAll('.time-slot').forEach(s => {
-                    s.classList.remove('selected');
-                });
-                
-                // Seleccionar nuevo slot
-                this.classList.add('selected');
-                selectedTime = slot;
-                console.log('✅ Hora seleccionada:', selectedTime);
-                
-                // Mostrar confirmación visual
-                showNotification(`🕐 Hora seleccionada: ${selectedTime}`, 'success');
+    timeSlots.className = 'time-slots-container-modern';
+    
+    const timeHeader = document.createElement('div');
+    timeHeader.className = 'time-slots-header';
+    timeHeader.innerHTML = `
+        <div class="time-slots-title">⏰ Selecciona una hora</div>
+        <div class="time-slots-count">${availableSlots.length} disponibles</div>
+    `;
+    timeSlots.appendChild(timeHeader);
+
+    const timeGrid = document.createElement('div');
+    timeGrid.className = 'time-slots-modern';
+    
+    availableSlots.forEach(slot => {
+        const slotElement = createTimeSlot(slot, 'available', 'Disponible');
+        timeGrid.appendChild(slotElement);
+    });
+
+    unavailableSlots.forEach(slot => {
+        const slotElement = createTimeSlot(slot, 'unavailable', 'No disponible');
+        timeGrid.appendChild(slotElement);
+    });
+    
+    timeSlots.appendChild(timeGrid);
+
+    const timeInfo = document.createElement('div');
+    timeInfo.className = 'time-slots-info';
+    timeInfo.innerHTML = `
+        <div class="time-info-item">
+            <div class="time-info-dot available"></div>
+            <span>Disponible</span>
+        </div>
+        <div class="time-info-item">
+            <div class="time-info-dot unavailable"></div>
+            <span>No disponible</span>
+        </div>
+        <div class="time-info-item">
+            <div class="time-info-dot selected"></div>
+            <span>Seleccionado</span>
+        </div>
+    `;
+    timeSlots.appendChild(timeInfo);
+}
+
+function createTimeSlot(time, status, statusText) {
+    const slotElement = document.createElement('button');
+    slotElement.type = 'button';
+    slotElement.className = `time-slot ${status}`;
+    slotElement.innerHTML = `
+        ${time}
+        <span class="time-slot-status">${statusText}</span>
+    `;
+    
+    if (status === 'available') {
+        slotElement.addEventListener('click', function() {
+            document.querySelectorAll('.time-slot.selected').forEach(s => {
+                s.classList.remove('selected');
             });
             
-            timeSlots.appendChild(slotElement);
+            this.classList.add('selected');
+            selectedTime = time;
+            console.log('✅ Hora seleccionada:', selectedTime);
+            
+            updateTimeSlotStatus(this, 'selected', 'Seleccionado');
+            
+            showNotification(`🕐 Hora seleccionada: ${selectedTime}`, 'success');
         });
+    } else {
+        slotElement.disabled = true;
+    }
+    
+    return slotElement;
+}
+
+function updateTimeSlotStatus(element, status, statusText) {
+    element.classList.remove('available', 'unavailable', 'selected');
+    element.classList.add(status);
+    
+    const statusSpan = element.querySelector('.time-slot-status');
+    if (statusSpan) {
+        statusSpan.textContent = statusText;
     }
 }
 
 // ========== NOTIFICACIONES ==========
 function showNotification(message, type = 'info') {
-    // Crear elemento de notificación
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.innerHTML = `
@@ -610,7 +680,6 @@ function showNotification(message, type = 'info') {
         <button class="notification-close">&times;</button>
     `;
     
-    // Estilos básicos para la notificación
     notification.style.cssText = `
         position: fixed;
         top: 20px;
@@ -628,7 +697,6 @@ function showNotification(message, type = 'info') {
         animation: slideInRight 0.3s ease;
     `;
     
-    // Agregar estilos de animación si no existen
     if (!document.querySelector('#notification-styles')) {
         const style = document.createElement('style');
         style.id = 'notification-styles';
@@ -647,7 +715,6 @@ function showNotification(message, type = 'info') {
     
     document.body.appendChild(notification);
     
-    // Auto-remover después de 4 segundos
     setTimeout(() => {
         if (notification.parentNode) {
             notification.style.animation = 'slideOutRight 0.3s ease';
@@ -655,7 +722,6 @@ function showNotification(message, type = 'info') {
         }
     }, 4000);
     
-    // Cerrar al hacer click
     notification.querySelector('.notification-close').addEventListener('click', () => {
         notification.remove();
     });
@@ -687,7 +753,6 @@ async function loadProducts() {
                 </div>
             `;
             
-            // Agregar evento click para abrir visor de imágenes
             productCard.addEventListener('click', () => {
                 openProductViewer(index);
             });
@@ -711,7 +776,6 @@ async function loadGallery() {
         
         galleryContainer.innerHTML = '';
         
-        // Array con las imágenes de la galería de trabajos - RUTA CORREGIDA
         const galeriaTrabajos = [
             {
                 id: 1,
@@ -778,7 +842,6 @@ async function loadGallery() {
         console.error('❌ Error cargando galería:', error);
         showNotification('⚠️ Error cargando galería de trabajos', 'error');
         
-        // Mostrar mensaje de error en la galería
         const galleryContainer = getElement('galleryContainer');
         if (galleryContainer) {
             galleryContainer.innerHTML = `
@@ -821,15 +884,12 @@ function initImageZoom() {
     }
     
     if (viewerImage) {
-        // Touch events para zoom en móviles
         viewerImage.addEventListener('touchstart', handleTouchStart, { passive: false });
         viewerImage.addEventListener('touchmove', handleTouchMove, { passive: false });
         viewerImage.addEventListener('touchend', handleTouchEnd);
         
-        // Double click para zoom
         viewerImage.addEventListener('dblclick', toggleZoom);
         
-        // Mouse wheel para zoom
         viewerImage.addEventListener('wheel', handleWheel, { passive: false });
     }
 }
@@ -870,7 +930,6 @@ function applyZoom() {
     }
 }
 
-// Touch events para zoom en móviles
 function handleTouchStart(e) {
     if (e.touches.length === 2) {
         e.preventDefault();
@@ -911,10 +970,8 @@ function handleTouchEnd(e) {
 function handleWheel(e) {
     e.preventDefault();
     if (e.deltaY < 0) {
-        // Scroll up - zoom in
         zoomIn();
     } else {
-        // Scroll down - zoom out
         zoomOut();
     }
 }
@@ -931,12 +988,10 @@ function openImageViewer(index) {
     viewerImage.alt = currentImages[currentImageIndex].descripcion;
     viewerModal.style.display = 'block';
     
-    // Resetear zoom al abrir
     resetZoom();
 }
 
 function openProductViewer(index) {
-    // Cargar productos para el visor
     fetch('js/galeria.json')
         .then(response => response.json())
         .then(data => {
@@ -956,7 +1011,6 @@ function openProductViewer(index) {
             viewerImage.alt = currentImages[currentImageIndex].descripcion;
             viewerModal.style.display = 'block';
             
-            // Resetear zoom al abrir
             resetZoom();
         })
         .catch(error => {
@@ -986,7 +1040,6 @@ function navigateImage(direction) {
         viewerImage.src = `imagenes/Galería-Trabajo/${currentImages[currentImageIndex].archivo}`;
         viewerImage.alt = currentImages[currentImageIndex].descripcion;
         
-        // Resetear zoom al cambiar imagen
         resetZoom();
     }
 }
@@ -997,20 +1050,33 @@ function initializeDateInput() {
     if (dateInput) {
         const today = new Date().toISOString().split('T')[0];
         dateInput.min = today;
-        dateInput.value = today; // Establecer hoy como valor por defecto
+        dateInput.value = today;
         
         console.log('📅 Input de fecha inicializado. Hoy:', today);
         
         dateInput.addEventListener('change', function() {
             console.log('📅 Fecha seleccionada:', this.value);
-            selectedTime = null; // Resetear hora al cambiar fecha
-            generateTimeSlots();
+            selectedTime = null;
+            
+            const timeSlots = getElement('timeSlots');
+            if (timeSlots) {
+                timeSlots.innerHTML = `
+                    <div class="time-slots-placeholder">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">⏳</div>
+                        <strong>Cargando horarios...</strong>
+                        <p style="margin-top: 5px; font-size: 0.9rem;">Generando disponibilidad para ${this.value}</p>
+                    </div>
+                `;
+            }
+            
+            setTimeout(() => {
+                generateTimeSlots();
+            }, 500);
         });
         
-        // Generar horarios iniciales
         setTimeout(() => {
             generateTimeSlots();
-        }, 500);
+        }, 1000);
     } else {
         console.error('❌ No se encontró el elemento date input');
     }
@@ -1031,7 +1097,6 @@ function setupBookingForm() {
         console.log('✅ Servicios seleccionados:', selectedServices.length);
         console.log('🕐 Hora seleccionada:', selectedTime);
         
-        // Verificar si las citas están pausadas
         if (isBookingPaused) {
             showNotification('⏸️ Las citas están temporalmente desactivadas. Por favor, intente más tarde.', 'warning');
             return;
@@ -1045,7 +1110,6 @@ function setupBookingForm() {
         if (!selectedTime) {
             showNotification('⚠️ Selecciona una hora para tu cita', 'warning');
             
-            // Resaltar la sección de horarios
             const timeSlots = getElement('timeSlots');
             if (timeSlots) {
                 timeSlots.style.border = '2px solid #e74c3c';
@@ -1064,26 +1128,22 @@ function setupBookingForm() {
         
         console.log('📝 Datos del formulario:', { date, name, phone });
         
-        // Validaciones básicas
         if (!date || !name || !phone) {
             showNotification('⚠️ Completa todos los campos requeridos', 'warning');
             return;
         }
         
-        // Validar formato de teléfono
         if (phone.length < 8) {
             showNotification('⚠️ Ingresa un número de teléfono válido', 'warning');
             return;
         }
         
         try {
-            // Calcular total y duración
             const total = selectedServices.reduce((sum, service) => sum + service.price, 0);
             const duration = selectedServices.reduce((sum, service) => sum + service.duration, 0);
             
             console.log('💾 Guardando cita en Firebase...');
             
-            // Crear cita en Firebase
             const docRef = await addDoc(collection(db, "citas"), {
                 fecha: date,
                 hora: selectedTime,
@@ -1098,26 +1158,21 @@ function setupBookingForm() {
             
             console.log('✅ Cita guardada con ID:', docRef.id);
             
-            // Mostrar modal de éxito
             closeBookingModal();
             showSuccessModal();
             
-            // Resetear selección
             selectedServices = [];
             updateBookingPanel();
             
-            // Resetear formulario
             bookingForm.reset();
             selectedTime = null;
             
-            // Resetear fecha a hoy
             const dateInput = getElement('date');
             if (dateInput) {
                 const today = new Date().toISOString().split('T')[0];
                 dateInput.value = today;
             }
             
-            // Resetear horarios
             generateTimeSlots();
             
             console.log('🔄 Formulario reseteado');
@@ -1157,6 +1212,85 @@ function setupAdminModal() {
             } else if (password !== null) {
                 showNotification('❌ Contraseña incorrecta', 'error');
             }
+        });
+    }
+}
+
+// ========== COMPORTAMIENTO CORTINA EN MÓVILES PARA ADMIN ==========
+function setupAdminScrollBehavior() {
+    const adminContent = document.querySelector('.admin-content');
+    const adminHeader = document.querySelector('.admin-header');
+    const adminTabs = document.querySelector('.admin-tabs');
+    
+    if (!adminContent || !adminHeader || !adminTabs) {
+        console.log('❌ Elementos admin no encontrados');
+        return;
+    }
+
+    let lastScrollTop = 0;
+    let scrollTimeout;
+    let isHidden = false;
+
+    adminContent.addEventListener('scroll', function() {
+        const scrollTop = adminContent.scrollTop;
+        
+        clearTimeout(scrollTimeout);
+        
+        if (scrollTop > lastScrollTop && scrollTop > 30 && !isHidden) {
+            adminHeader.style.transform = 'translateY(-100%)';
+            adminTabs.style.transform = 'translateY(-100%)';
+            adminHeader.style.transition = 'transform 0.3s ease';
+            adminTabs.style.transition = 'transform 0.3s ease';
+            isHidden = true;
+        } else if (scrollTop <= lastScrollTop && isHidden) {
+            adminHeader.style.transform = 'translateY(0)';
+            adminTabs.style.transform = 'translateY(0)';
+            isHidden = false;
+        }
+        
+        lastScrollTop = scrollTop;
+        
+        scrollTimeout = setTimeout(() => {
+            if (isHidden) {
+                adminHeader.style.transform = 'translateY(0)';
+                adminTabs.style.transform = 'translateY(0)';
+                isHidden = false;
+            }
+        }, 3000);
+    });
+
+    if (window.innerWidth <= 768) {
+        let lastWindowScroll = 0;
+        let windowScrollTimeout;
+        let windowHidden = false;
+        
+        window.addEventListener('scroll', function() {
+            const adminModal = document.getElementById('adminModal');
+            if (!adminModal || adminModal.style.display !== 'block') return;
+            
+            const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+            
+            clearTimeout(windowScrollTimeout);
+            
+            if (currentScroll > lastWindowScroll && currentScroll > 50 && !windowHidden) {
+                adminHeader.style.transform = 'translateY(-100%)';
+                adminTabs.style.transform = 'translateY(-100%)';
+                windowHidden = true;
+            } else if (currentScroll <= lastWindowScroll && windowHidden) {
+                adminHeader.style.transform = 'translateY(0)';
+                adminTabs.style.transform = 'translateY(0)';
+                windowHidden = false;
+            }
+            
+            lastWindowScroll = currentScroll;
+            
+            windowScrollTimeout = setTimeout(() => {
+                if (windowHidden) {
+                    adminHeader.style.transform = 'translateY(0)';
+                    adminTabs.style.transform = 'translateY(0)';
+                    windowHidden = false;
+                }
+            }, 3000);
         });
     }
 }
@@ -1203,7 +1337,7 @@ function loadAdminContent() {
             </div>
             
             <div id="estadisticasTab" class="tab-content">
-                <h3>📊 Estadísticas del Día</h3>
+                <h3 style="color: var(--primary-color); margin-bottom: 20px; text-align: center;">📊 Estadísticas del Día</h3>
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon">💰</div>
@@ -1231,7 +1365,6 @@ function loadAdminContent() {
         </div>
     `;
     
-    // Configurar botón de pausar/reanudar citas
     const toggleBookingBtn = getElement('toggleBookingBtn');
     if (toggleBookingBtn) {
         toggleBookingBtn.addEventListener('click', function() {
@@ -1241,16 +1374,16 @@ function loadAdminContent() {
                 isBookingPaused ? '⏸️ Citas pausadas - No se aceptan nuevas reservas' : '✅ Citas reanudadas - Ya puedes aceptar reservas',
                 isBookingPaused ? 'warning' : 'success'
             );
-            loadAdminContent(); // Recargar para actualizar la interfaz
+            loadAdminContent();
         });
     }
     
-    // Cargar citas y estadísticas
     loadCitas();
     loadEstadisticas();
     
-    // Configurar tabs
     setupAdminTabs();
+    
+    setTimeout(setupAdminScrollBehavior, 100);
 }
 
 function setupAdminTabs() {
@@ -1259,11 +1392,9 @@ function setupAdminTabs() {
     
     tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            // Remover active de todos
             tabBtns.forEach(b => b.classList.remove('active'));
             tabContents.forEach(c => c.classList.remove('active'));
             
-            // Activar tab seleccionado
             btn.classList.add('active');
             const tabId = btn.getAttribute('data-tab') + 'Tab';
             document.getElementById(tabId).classList.add('active');
@@ -1293,7 +1424,6 @@ function loadCitas() {
             const cita = doc.data();
             totalCitas++;
             
-            // Contar citas de hoy
             if (cita.fecha === today) {
                 citasHoy++;
             }
@@ -1335,7 +1465,6 @@ function loadCitas() {
             citasList.appendChild(citaElement);
         });
 
-        // Actualizar contadores
         const totalCitasElement = getElement('totalCitas');
         const citasHoyElement = getElement('citasHoy');
         if (totalCitasElement) totalCitasElement.textContent = totalCitas;
@@ -1355,7 +1484,6 @@ function loadEstadisticas() {
         snapshot.forEach((doc) => {
             const cita = doc.data();
             
-            // Solo contar citas de hoy y confirmadas
             if (cita.fecha === today && cita.estado === 'confirmada') {
                 ingresosHoy += cita.total;
                 tiempoTotal += cita.duracion;
@@ -1363,7 +1491,6 @@ function loadEstadisticas() {
             }
         });
 
-        // Actualizar estadísticas
         const ingresosHoyElement = getElement('ingresosHoy');
         const tiempoTotalElement = getElement('tiempoTotal');
         const citasCompletadasElement = getElement('citasCompletadas');
@@ -1389,7 +1516,6 @@ async function cancelarCita(citaId) {
 
 // ========== EVENT LISTENERS GLOBALES ==========
 function setupGlobalEventListeners() {
-    // Cerrar modales al hacer click fuera
     document.addEventListener('click', function(e) {
         const modals = document.querySelectorAll('.modal');
         modals.forEach(modal => {
@@ -1399,20 +1525,17 @@ function setupGlobalEventListeners() {
         });
     });
     
-    // Cerrar modales con botón X
     document.querySelectorAll('.close').forEach(closeBtn => {
         closeBtn.addEventListener('click', function() {
             this.closest('.modal').style.display = 'none';
         });
     });
     
-    // Cerrar modal de éxito
     const closeSuccessBtn = getElement('closeSuccessModal');
     if (closeSuccessBtn) {
         closeSuccessBtn.addEventListener('click', closeSuccessModal);
     }
     
-    // Navegación de imágenes
     const prevImageBtn = getElement('prevImage');
     const nextImageBtn = getElement('nextImage');
     
@@ -1424,47 +1547,88 @@ function setupGlobalEventListeners() {
     }
 }
 
-// ========== INICIALIZACIÓN PRINCIPAL ==========
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Inicializando aplicación mejorada...');
+// ========== INICIALIZACIÓN DE NAVEGACIÓN CORREGIDA ==========
+function initNavigation() {
+    console.log('📍 Inicializando navegación corregida...');
     
-    // Cargar estado de pausa desde localStorage
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetSection = this.getAttribute('data-section');
+            console.log('🔄 Navegando a:', targetSection);
+            switchSection(targetSection);
+        });
+    });
+    
+    const bookingButtons = [
+        getElement('bookingBtn'),
+        getElement('heroBookingBtn'), 
+        getElement('bigBookingBtn'),
+        getElement('insertarCitaBtn')
+    ];
+    
+    bookingButtons.forEach(btn => {
+        if (btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                handleBookingButtonClick();
+            });
+        }
+    });
+    
+    const adminBtn = getElement('adminBtn');
+    if (adminBtn) {
+        adminBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const password = prompt('🔐 Ingresa la contraseña de administración:');
+            if (password === 'y1994') {
+                const adminModal = getElement('adminModal');
+                adminModal.style.display = 'block';
+                loadAdminContent();
+            } else if (password !== null) {
+                showNotification('❌ Contraseña incorrecta', 'error');
+            }
+        });
+    }
+}
+
+// ========== INICIALIZACIÓN PRINCIPAL CORREGIDA ==========
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Inicializando aplicación corregida...');
+    
     const savedPauseState = localStorage.getItem('isBookingPaused');
     if (savedPauseState !== null) {
         isBookingPaused = savedPauseState === 'true';
     }
     
-    // Inicializar efectos del header
     initHeaderScroll();
     initMobileMenu();
     
-    // Inicializar sistema de portales
     initPortalNavigation();
+    initNavigation();
     
-    // Inicializar sistema de citas inteligente
     initSmartBooking();
     
-    // Inicializar sistema de zoom
     initImageZoom();
     
-    // Cargar contenido
     loadServices();
     loadProducts();
     loadGallery();
     initializeDateInput();
     
-    // Configurar eventos
     setupGlobalEventListeners();
     setupBookingForm();
-    setupAdminModal();
     
-    // Botón de confirmar cita en panel
     const insertarCitaBtn = getElement('insertarCitaBtn');
     if (insertarCitaBtn) {
-        insertarCitaBtn.addEventListener('click', openBookingModal);
+        insertarCitaBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openBookingModal();
+        });
     }
     
-    console.log('✅ Aplicación mejorada inicializada correctamente');
+    console.log('✅ Aplicación corregida inicializada correctamente');
     console.log('📊 Estado de citas:', isBookingPaused ? '⏸️ PAUSADAS' : '✅ ACTIVAS');
     console.log('🎯 Portal actual:', currentSection);
 });

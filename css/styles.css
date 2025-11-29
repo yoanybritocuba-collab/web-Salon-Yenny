@@ -622,6 +622,228 @@ body {
     font-weight: 600;
 }
 
+/* ========== ESTILOS MEJORADOS PARA HORARIOS ========== */
+.time-slots-modern {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 12px;
+    margin-top: 10px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 15px;
+    border: 2px solid #e0e0e0;
+}
+
+.time-slot {
+    padding: 15px 10px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: center;
+    color: #333;
+    position: relative;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.time-slot:hover {
+    border-color: #E75480;
+    background: #fff5f7;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(231, 84, 128, 0.2);
+}
+
+.time-slot.selected {
+    border-color: #27ae60;
+    background: #27ae60;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+}
+
+/* Horarios disponibles */
+.time-slot.available {
+    border-color: #27ae60;
+    background: #d4edda;
+    color: #155724;
+}
+
+.time-slot.available:hover {
+    border-color: #219653;
+    background: #c8e6c9;
+    transform: translateY(-2px);
+}
+
+/* Horarios no disponibles */
+.time-slot.unavailable {
+    border-color: #e74c3c;
+    background: #f8d7da;
+    color: #721c24;
+    text-decoration: line-through;
+    cursor: not-allowed;
+    opacity: 0.7;
+    position: relative;
+}
+
+.time-slot.unavailable::before {
+    content: "✕";
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #e74c3c;
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.time-slot.unavailable:hover {
+    border-color: #c0392b;
+    background: #f5b7b1;
+    transform: none;
+}
+
+/* Estado de los horarios */
+.time-slot-status {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: normal;
+    margin-top: 4px;
+    opacity: 0.8;
+}
+
+.time-slot.available .time-slot-status {
+    color: #155724;
+}
+
+.time-slot.unavailable .time-slot-status {
+    color: #721c24;
+}
+
+.time-slots-placeholder {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+    font-style: italic;
+    grid-column: 1 / -1;
+    background: white;
+    border-radius: 10px;
+    border: 2px dashed #ddd;
+}
+
+.time-slots-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 0 10px;
+}
+
+.time-slots-title {
+    font-weight: 600;
+    color: #333;
+    font-size: 1rem;
+}
+
+.time-slots-count {
+    background: #E75480;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Mejoras para el formulario de horarios */
+.modern-form-group.time-group {
+    grid-column: 1 / -1;
+}
+
+.time-slots-container {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    border: 2px solid #e0e0e0;
+    margin-top: 10px;
+}
+
+.time-slots-info {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    font-size: 0.9rem;
+}
+
+.time-info-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.time-info-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.time-info-dot.available {
+    background: #27ae60;
+}
+
+.time-info-dot.unavailable {
+    background: #e74c3c;
+}
+
+.time-info-dot.selected {
+    background: #27ae60;
+    border: 2px solid #155724;
+}
+
+/* Responsive para horarios */
+@media (max-width: 768px) {
+    .time-slots-modern {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 8px;
+        padding: 10px;
+    }
+    
+    .time-slot {
+        padding: 12px 8px;
+        font-size: 0.85rem;
+        min-height: 45px;
+    }
+    
+    .time-slots-info {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .time-slots-modern {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .time-slot {
+        padding: 10px 5px;
+        font-size: 0.8rem;
+    }
+}
+
 /* ========== MODALES ========== */
 .modal {
     display: none;
@@ -819,47 +1041,6 @@ body {
     outline: none;
     border-color: #E75480;
     box-shadow: 0 0 0 3px rgba(231, 84, 128, 0.1);
-}
-
-/* Time Slots - ESTILOS CORREGIDOS */
-.time-slots-modern {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.time-slot {
-    padding: 12px 8px;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    background: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
-    text-align: center;
-    color: #333;
-}
-
-.time-slot:hover {
-    border-color: #E75480;
-    background: #f8f9fa;
-    transform: translateY(-2px);
-}
-
-.time-slot.selected {
-    border-color: #27ae60;
-    background: #27ae60;
-    color: white;
-    transform: translateY(-2px);
-}
-
-.time-slots-placeholder {
-    text-align: center;
-    padding: 30px;
-    color: #666;
-    font-style: italic;
-    grid-column: 1 / -1;
 }
 
 /* Botón de confirmar */

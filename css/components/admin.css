@@ -1,37 +1,49 @@
-/* ========== PANEL DE ADMINISTRACIÓN MEJORADO ========== */
+/* ========== PANEL DE ADMINISTRACIÓN REDISEÑADO - COMPACTO Y ELEGANTE ========== */
 .admin-modal .modal-content {
-    max-width: 900px;
-    max-height: 85vh;
+    max-width: 700px;
+    max-height: 80vh;
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .admin-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: var(--spacing-xl);
+    padding: 20px;
     text-align: center;
-    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+    border-radius: 16px 16px 0 0;
+    position: relative;
+    z-index: 100;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .admin-header h2 {
-    margin: 0 0 var(--spacing-sm) 0;
-    font-size: var(--font-size-2xl);
+    margin: 0 0 8px 0;
+    font-size: 1.4rem;
     font-weight: 700;
 }
 
 .admin-header p {
     margin: 0;
     opacity: 0.9;
-    font-size: var(--font-size-md);
+    font-size: 0.85rem;
 }
 
-/* ========== CONTROLES GLOBALES ========== */
+/* ========== CONTROLES GLOBALES COMPACTOS ========== */
 .admin-global-controls {
-    margin-top: var(--spacing-lg);
-    padding: var(--spacing-lg);
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: var(--border-radius);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
 }
 
 .control-group {
@@ -39,27 +51,38 @@
 }
 
 .control-group h4 {
-    margin: 0 0 var(--spacing-md) 0;
+    margin: 0 0 12px 0;
     color: white;
-    font-size: var(--font-size-lg);
+    font-size: 1rem;
+    font-weight: 600;
 }
 
 #toggleBookingBtn {
-    padding: var(--spacing-md) var(--spacing-xl);
-    font-size: var(--font-size-md);
-    font-weight: 600;
+    background: linear-gradient(135deg, #E75480, #D147A3);
+    color: white;
     border: none;
-    border-radius: var(--border-radius);
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin-bottom: var(--spacing-md);
+    margin-bottom: 10px;
+    box-shadow: 0 4px 15px rgba(231, 84, 128, 0.3);
+}
+
+#toggleBookingBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(231, 84, 128, 0.4);
 }
 
 .status-indicator {
-    padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: var(--border-radius);
+    padding: 6px 12px;
+    border-radius: 20px;
     font-weight: 600;
-    font-size: var(--font-size-sm);
+    font-size: 0.75rem;
+    display: inline-block;
+    margin-top: 5px;
 }
 
 .status-indicator.active {
@@ -74,24 +97,31 @@
     border: 1px solid rgba(243, 156, 18, 0.3);
 }
 
-/* ========== TABS DE ADMINISTRACIÓN ========== */
+/* ========== TABS ELEGANTES Y COMPACTOS ========== */
 .admin-tabs {
     display: flex;
     background: rgba(255, 255, 255, 0.05);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 0 var(--spacing-xl);
+    padding: 0 15px;
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    flex-shrink: 0;
+    backdrop-filter: blur(10px);
 }
 
 .tab-btn {
     background: none;
     border: none;
-    color: var(--gray-color);
-    padding: var(--spacing-lg) var(--spacing-xl);
-    font-size: var(--font-size-md);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 14px 20px;
+    font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     border-bottom: 3px solid transparent;
+    position: relative;
+    overflow: hidden;
 }
 
 .tab-btn:hover {
@@ -105,54 +135,79 @@
     background: rgba(255, 255, 255, 0.02);
 }
 
-/* ========== CONTENIDO DE TABS ========== */
+.tab-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--primary-color);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.tab-btn.active::after {
+    width: 100%;
+}
+
+/* ========== CONTENIDO DE TABS COMPACTO ========== */
 .admin-content {
-    padding: var(--spacing-xl);
+    padding: 20px;
     overflow-y: auto;
     flex: 1;
+    max-height: calc(80vh - 180px);
 }
 
 .tab-content {
     display: none;
+    animation: fadeInUp 0.4s ease;
 }
 
 .tab-content.active {
     display: block;
-    animation: fadeIn 0.3s ease;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-/* ========== LISTA DE CITAS MEJORADA ========== */
+/* ========== LISTA DE CITAS ELEGANTE Y COMPACTA ========== */
 .citas-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--spacing-xl);
-    padding-bottom: var(--spacing-md);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
     border-bottom: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .citas-header h3 {
     margin: 0;
     color: var(--primary-color);
-    font-size: var(--font-size-xl);
+    font-size: 1.2rem;
+    font-weight: 700;
 }
 
 .citas-stats {
     display: flex;
-    gap: var(--spacing-lg);
+    gap: 15px;
 }
 
 .stat-item {
-    background: rgba(255, 255, 255, 0.1);
-    padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: var(--border-radius);
+    background: rgba(255, 255, 255, 0.08);
+    padding: 8px 12px;
+    border-radius: 10px;
     color: white;
-    font-size: var(--font-size-sm);
+    font-size: 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .stat-item strong {
@@ -162,60 +217,67 @@
 .citas-list {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-lg);
-    max-height: 400px;
+    gap: 12px;
+    max-height: 350px;
     overflow-y: auto;
-    padding-right: var(--spacing-sm);
+    padding-right: 8px;
 }
 
 .cita-item {
     background: rgba(255, 255, 255, 0.05);
-    border-radius: var(--border-radius-lg);
-    padding: var(--spacing-lg);
+    border-radius: 12px;
+    padding: 16px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
     position: relative;
+    backdrop-filter: blur(10px);
 }
 
 .cita-item:hover {
     background: rgba(255, 255, 255, 0.08);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
+/* Estados de cita */
 .cita-item.confirmada {
     border-left: 4px solid #27ae60;
+    background: rgba(39, 174, 96, 0.08);
 }
 
 .cita-item.cancelada {
     border-left: 4px solid #e74c3c;
-    opacity: 0.7;
+    background: rgba(231, 76, 60, 0.08);
+    opacity: 0.8;
 }
 
 .cita-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: var(--spacing-md);
+    margin-bottom: 12px;
 }
 
 .cita-cliente h4 {
-    margin: 0 0 var(--spacing-xs) 0;
+    margin: 0 0 4px 0;
     color: white;
-    font-size: var(--font-size-lg);
+    font-size: 1rem;
+    font-weight: 600;
 }
 
 .cita-telefono {
-    color: var(--gray-color);
-    font-size: var(--font-size-sm);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8rem;
 }
 
 .cita-estado-badge {
-    padding: var(--spacing-xs) var(--spacing-sm);
+    padding: 4px 10px;
     border-radius: 20px;
-    font-size: var(--font-size-xs);
+    font-size: 0.7rem;
     font-weight: 600;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .cita-estado-badge.confirmada {
@@ -231,46 +293,49 @@
 }
 
 .cita-details {
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: 15px;
 }
 
 .cita-fecha {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--spacing-sm);
-    padding: var(--spacing-sm);
+    margin-bottom: 8px;
+    padding: 10px;
     background: rgba(255, 255, 255, 0.05);
-    border-radius: var(--border-radius);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .cita-fecha strong {
     color: white;
-    font-size: var(--font-size-md);
+    font-size: 0.9rem;
 }
 
 .cita-hora {
     color: var(--primary-color);
     font-weight: 600;
-    font-size: var(--font-size-md);
+    font-size: 0.9rem;
 }
 
 .cita-servicios {
-    margin-bottom: var(--spacing-sm);
-    padding: var(--spacing-sm);
+    margin-bottom: 8px;
+    padding: 10px;
     background: rgba(255, 255, 255, 0.05);
-    border-radius: var(--border-radius);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .cita-servicios strong {
     color: var(--primary-color);
     display: block;
-    margin-bottom: var(--spacing-xs);
+    margin-bottom: 6px;
+    font-size: 0.85rem;
 }
 
 .cita-servicios span {
-    color: white;
-    font-size: var(--font-size-sm);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.8rem;
     line-height: 1.4;
 }
 
@@ -278,94 +343,140 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--spacing-sm);
+    padding: 10px;
     background: rgba(255, 255, 255, 0.05);
-    border-radius: var(--border-radius);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .cita-precio {
     color: #27ae60;
-    font-weight: 600;
-    font-size: var(--font-size-md);
+    font-weight: 700;
+    font-size: 0.95rem;
 }
 
 .cita-duracion {
-    color: var(--gray-color);
+    color: rgba(255, 255, 255, 0.7);
     font-weight: 600;
-    font-size: var(--font-size-sm);
+    font-size: 0.8rem;
 }
 
+/* ========== BOTONES DE ACCIÓN MEJORADOS ========== */
 .cita-actions {
     display: flex;
-    gap: var(--spacing-sm);
+    gap: 8px;
     justify-content: flex-end;
+    margin-top: 10px;
 }
 
 .btn-sm {
-    padding: var(--spacing-xs) var(--spacing-md);
-    font-size: var(--font-size-sm);
-    border-radius: var(--border-radius);
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+    background: linear-gradient(135deg, #c0392b, #a93226);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #27ae60, #219653);
+    color: white;
+    box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
 }
 
 .no-citas {
     text-align: center;
-    padding: var(--spacing-2xl);
-    color: var(--gray-color);
+    padding: 40px 20px;
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .no-citas p {
     margin: 0;
-    font-size: var(--font-size-lg);
+    font-size: 1rem;
     opacity: 0.7;
 }
 
-/* ========== ESTADÍSTICAS ========== */
+/* ========== ESTADÍSTICAS ELEGANTES ========== */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--spacing-lg);
-    margin-top: var(--spacing-lg);
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
 }
 
 .stat-card {
     background: rgba(255, 255, 255, 0.05);
-    border-radius: var(--border-radius-lg);
-    padding: var(--spacing-xl);
+    border-radius: 12px;
+    padding: 20px;
     text-align: center;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: transform 0.3s ease;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
 }
 
 .stat-card:hover {
     transform: translateY(-5px);
     background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .stat-icon {
-    font-size: 2.5rem;
-    margin-bottom: var(--spacing-md);
+    font-size: 2.2rem;
+    margin-bottom: 12px;
+    opacity: 0.9;
 }
 
 .stat-value {
     display: block;
-    font-size: var(--font-size-2xl);
+    font-size: 1.8rem;
     font-weight: 700;
     color: white;
-    margin-bottom: var(--spacing-xs);
+    margin-bottom: 6px;
 }
 
 .stat-label {
-    color: var(--gray-color);
-    font-size: var(--font-size-sm);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8rem;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-/* ========== RESPONSIVE ========== */
+/* ========== COMPORTAMIENTO RESPONSIVE MEJORADO ========== */
 @media (max-width: 768px) {
     .admin-modal .modal-content {
-        margin: 2% auto;
-        width: 98%;
-        max-width: 98%;
+        margin: 5% auto;
+        width: 95%;
+        max-width: 95%;
+        max-height: 90vh;
+        border-radius: 12px;
+    }
+    
+    .admin-header {
+        padding: 15px;
+    }
+    
+    .admin-header h2 {
+        font-size: 1.2rem;
     }
     
     .admin-tabs {
@@ -374,14 +485,20 @@
     }
     
     .tab-btn {
-        padding: var(--spacing-md);
+        padding: 12px 15px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         border-right: none;
+        text-align: left;
+        border-bottom: 3px solid transparent;
+    }
+    
+    .tab-btn.active {
+        border-bottom-color: var(--primary-color);
     }
     
     .citas-header {
         flex-direction: column;
-        gap: var(--spacing-md);
+        gap: 12px;
         align-items: flex-start;
     }
     
@@ -392,18 +509,18 @@
     
     .cita-header {
         flex-direction: column;
-        gap: var(--spacing-md);
+        gap: 10px;
     }
     
     .cita-fecha {
         flex-direction: column;
-        gap: var(--spacing-xs);
+        gap: 6px;
         align-items: flex-start;
     }
     
     .cita-totales {
         flex-direction: column;
-        gap: var(--spacing-xs);
+        gap: 6px;
         align-items: flex-start;
     }
     
@@ -413,38 +530,75 @@
     
     .cita-actions {
         justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .admin-content {
+        max-height: calc(90vh - 150px);
+        padding: 15px;
+    }
+
+    .citas-list {
+        max-height: 45vh;
+    }
+    
+    .cita-item {
+        padding: 12px;
+    }
+    
+    .admin-global-controls {
+        padding: 12px;
+        margin-top: 12px;
     }
 }
 
 @media (max-width: 480px) {
     .admin-content {
-        padding: var(--spacing-md);
+        padding: 12px;
     }
     
     .admin-header {
-        padding: var(--spacing-lg);
+        padding: 12px;
+    }
+    
+    .admin-header h2 {
+        font-size: 1.1rem;
     }
     
     .admin-global-controls {
-        padding: var(--spacing-md);
+        padding: 10px;
     }
     
     .citas-list {
-        max-height: 300px;
+        max-height: 40vh;
     }
     
     .stat-card {
-        padding: var(--spacing-lg);
+        padding: 15px;
+    }
+    
+    .cita-item {
+        padding: 10px;
+    }
+    
+    .citas-stats {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .stat-item {
+        width: 100%;
+        text-align: center;
     }
 }
 
-/* ========== SCROLLBAR PERSONALIZADO ========== */
+/* ========== SCROLLBAR ELEGANTE ========== */
 .citas-list::-webkit-scrollbar {
-    width: 6px;
+    width: 5px;
 }
 
 .citas-list::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 3px;
 }
 
@@ -455,4 +609,93 @@
 
 .citas-list::-webkit-scrollbar-thumb:hover {
     background: var(--secondary-color);
+}
+
+.admin-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.admin-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+.admin-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 3px;
+}
+
+.admin-content::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+}
+
+/* ========== ANIMACIONES SUAVES ========== */
+.admin-modal .modal-content {
+    animation: modalSlideIn 0.4s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.cita-item {
+    animation: slideInUp 0.5s ease;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========== EFECTOS DE GLOW ELEGANTES ========== */
+.stat-card:hover .stat-icon {
+    animation: gentleGlow 2s ease-in-out infinite;
+}
+
+@keyframes gentleGlow {
+    0%, 100% {
+        filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+    }
+    50% {
+        filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
+    }
+}
+
+/* ========== BOTÓN DE CERRAR MEJORADO ========== */
+.admin-modal .close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    z-index: 101;
+}
+
+.admin-modal .close:hover {
+    background: rgba(231, 76, 60, 0.8);
+    transform: rotate(90deg);
 }

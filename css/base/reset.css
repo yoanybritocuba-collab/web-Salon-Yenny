@@ -1,4 +1,4 @@
-/* Reset moderno */
+/* Reset CSS moderno */
 *, *::before, *::after {
     box-sizing: border-box;
 }
@@ -13,9 +13,8 @@ html {
 }
 
 body {
-    line-height: 1.6;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 
 img, picture, video, canvas, svg {
@@ -42,18 +41,7 @@ ul, ol {
     list-style: none;
 }
 
-table {
-    border-collapse: collapse;
-    border-spacing: 0;
-}
-
-/* Focus visible para accesibilidad */
-:focus-visible {
-    outline: 2px solid var(--primary-color);
-    outline-offset: 2px;
-}
-
-/* Reduce motion para preferencias del usuario */
+/* Remove all animations and transitions for people that prefer not to see them */
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
         animation-duration: 0.01ms !important;

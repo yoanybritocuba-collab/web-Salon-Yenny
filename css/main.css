@@ -4,7 +4,7 @@
 @import url('./components/header.css');
 @import url('./components/footer.css');
 @import url('./components/services.css');
-@import url('./components/booking.css');
+/* booking.css se integra directamente en este archivo */
 @import url('./components/gallery.css');
 @import url('./components/admin.css');
 @import url('./components/products.css');
@@ -281,6 +281,18 @@ section {
 }
 
 /* ========== SERVICIOS ========== */
+.services-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--spacing-2xl);
+    align-items: start;
+}
+
+.services-column {
+    display: flex;
+    flex-direction: column;
+}
+
 .services-scroll-container {
     max-height: 600px;
     overflow-y: auto;
@@ -410,6 +422,33 @@ section {
     font-weight: 600;
 }
 
+.service-book-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.service-book-btn:hover {
+    transform: scale(1.05);
+}
+
+.service-book-btn.added {
+    background: linear-gradient(135deg, #27ae60, #219653);
+}
+
 /* ========== PRODUCTOS ========== */
 .products {
     background: var(--surface-color);
@@ -491,6 +530,13 @@ section {
 .product-info p {
     color: var(--text-secondary);
     font-size: var(--font-size-sm);
+}
+
+.product-price {
+    color: var(--primary-color);
+    font-weight: 700;
+    font-size: var(--font-size-lg);
+    margin-top: var(--spacing-sm);
 }
 
 /* ========== GALERÍA ========== */
@@ -657,7 +703,509 @@ section {
     background: rgba(255, 255, 255, 0.1);
 }
 
-/* ========== RESPONSIVE ========== */
+/* ========== ESTILOS PARA EL MODAL DE CITAS (INTEGRADO) ========== */
+.modern-booking-modal {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    max-width: 500px; /* REDUCIDO de 600px a 500px */
+    width: 90%;
+    animation: slideIn 0.3s ease;
+    max-height: 85vh; /* REDUCIDO para mejor visualización */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.modern-modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 20px; /* REDUCIDO padding */
+    border-radius: 20px 20px 0 0;
+    text-align: center;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.modern-modal-body {
+    padding: 15px; /* REDUCIDO de 20px a 15px */
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* ESPACIO CONSISTENTE */
+}
+
+.booking-summary {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px; /* REDUCIDO */
+    padding: 12px; /* REDUCIDO */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    flex-shrink: 0;
+}
+
+.summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px; /* REDUCIDO */
+}
+
+.services-count {
+    background: rgba(233, 30, 99, 0.2);
+    color: #E75480;
+    padding: 3px 6px; /* REDUCIDO */
+    border-radius: 12px; /* REDUCIDO */
+    font-size: 0.65rem; /* REDUCIDO */
+    font-weight: 600;
+}
+
+.services-preview {
+    max-height: 80px; /* REDUCIDO de 120px a 80px */
+    overflow-y: auto;
+    margin-bottom: 8px; /* REDUCIDO */
+}
+
+.preview-service-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0; /* REDUCIDO */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.8rem; /* REDUCIDO */
+}
+
+.preview-service-item:last-child {
+    border-bottom: none;
+}
+
+.summary-total {
+    border-top: 1px solid rgba(255, 255, 255, 0.2); /* REDUCIDO grosor */
+    padding-top: 8px; /* REDUCIDO */
+}
+
+.total-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3px; /* REDUCIDO */
+    font-size: 0.8rem; /* REDUCIDO */
+}
+
+.total-line:last-child {
+    margin-bottom: 0;
+}
+
+.duration {
+    color: #E75480;
+    font-weight: 600;
+}
+
+.modern-booking-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* REDUCIDO de 15px */
+    flex: 1;
+    overflow: hidden;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px; /* REDUCIDO de 15px */
+}
+
+.modern-form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.modern-label {
+    display: flex;
+    align-items: center;
+    gap: 6px; /* REDUCIDO */
+    color: white;
+    font-weight: 600;
+    margin-bottom: 4px; /* REDUCIDO */
+    font-size: 0.75rem; /* REDUCIDO */
+}
+
+.label-icon {
+    font-size: 0.9rem; /* REDUCIDO */
+}
+
+.modern-input {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2); /* REDUCIDO grosor */
+    border-radius: 8px; /* REDUCIDO */
+    padding: 10px; /* REDUCIDO de 12px */
+    color: white;
+    font-size: 0.85rem; /* REDUCIDO */
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.modern-input:focus {
+    outline: none;
+    border-color: #E75480;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.time-group {
+    grid-column: 1 / -1;
+}
+
+/* ========== ESTILOS MEJORADOS PARA HORARIOS ========== */
+.time-slots-container-modern {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px; /* REDUCIDO */
+    padding: 12px; /* REDUCIDO */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: 180px; /* LIMITAR ALTURA MÁXIMA */
+}
+
+.time-slots-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px; /* REDUCIDO */
+    flex-shrink: 0;
+}
+
+.time-slots-title {
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem; /* REDUCIDO */
+}
+
+.time-slots-count {
+    background: rgba(233, 30, 99, 0.2);
+    color: #E75480;
+    padding: 3px 6px; /* REDUCIDO */
+    border-radius: 12px; /* REDUCIDO */
+    font-size: 0.65rem; /* REDUCIDO */
+    font-weight: 600;
+}
+
+.time-slots-modern {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); /* REDUCIDO tamaño mínimo */
+    gap: 6px; /* REDUCIDO */
+    margin-bottom: 10px; /* REDUCIDO */
+    overflow-y: auto;
+    flex: 1;
+    padding: 3px; /* REDUCIDO */
+}
+
+.time-slot {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2); /* REDUCIDO grosor */
+    border-radius: 6px; /* REDUCIDO */
+    padding: 8px 4px; /* REDUCIDO */
+    color: #E75480;
+    font-weight: 600;
+    font-size: 0.75rem; /* REDUCIDO */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px; /* REDUCIDO */
+    min-height: 50px; /* REDUCIDO de 60px */
+    justify-content: center;
+}
+
+.time-slot:hover {
+    background: rgba(231, 84, 128, 0.2);
+    border-color: #E75480;
+    transform: translateY(-1px); /* REDUCIDO efecto */
+}
+
+.time-slot.selected {
+    background: rgba(231, 84, 128, 0.3);
+    border-color: #E75480;
+    color: white;
+    box-shadow: 0 3px 10px rgba(231, 84, 128, 0.4); /* REDUCIDO sombra */
+}
+
+.time-slot.available {
+    border-color: rgba(39, 174, 96, 0.5);
+    background: rgba(39, 174, 96, 0.1);
+}
+
+.time-slot.available:hover {
+    background: rgba(39, 174, 96, 0.2);
+}
+
+.time-slot.unavailable {
+    border-color: rgba(231, 76, 60, 0.5);
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+    cursor: not-allowed;
+}
+
+.time-slot.unavailable:hover {
+    background: rgba(231, 76, 60, 0.2);
+}
+
+.time-slot-status {
+    font-size: 0.55rem; /* REDUCIDO */
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.time-slot.available .time-slot-status {
+    color: #27ae60;
+}
+
+.time-slot.unavailable .time-slot-status {
+    color: #e74c3c;
+}
+
+.time-slot.selected .time-slot-status {
+    color: white;
+}
+
+.time-slots-info {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* REDUCIDO */
+    flex-wrap: wrap;
+    flex-shrink: 0;
+    padding-top: 8px; /* REDUCIDO */
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.time-info-item {
+    display: flex;
+    align-items: center;
+    gap: 3px; /* REDUCIDO */
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.65rem; /* REDUCIDO */
+}
+
+.time-info-dot {
+    width: 8px; /* REDUCIDO */
+    height: 8px; /* REDUCIDO */
+    border-radius: 50%;
+}
+
+.time-info-dot.available {
+    background: #27ae60;
+}
+
+.time-info-dot.unavailable {
+    background: #e74c3c;
+}
+
+.time-info-dot.selected {
+    background: #E75480;
+}
+
+.time-slots-placeholder {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 20px 12px; /* REDUCIDO */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-modern-confirm {
+    background: linear-gradient(135deg, #E75480, #D147A3);
+    color: white;
+    border: none;
+    border-radius: 10px; /* REDUCIDO */
+    padding: 14px 16px; /* REDUCIDO */
+    font-size: 0.9rem; /* REDUCIDO */
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px; /* REDUCIDO */
+    width: 100%;
+    margin-top: 8px; /* REDUCIDO */
+    flex-shrink: 0;
+}
+
+.btn-modern-confirm:hover {
+    transform: translateY(-2px); /* REDUCIDO efecto */
+    box-shadow: 0 8px 20px rgba(231, 84, 128, 0.5); /* REDUCIDO sombra */
+}
+
+.btn-subtext {
+    font-size: 0.65rem; /* REDUCIDO */
+    opacity: 0.9;
+    font-weight: 400;
+}
+
+/* ========== PANEL DE SERVICIOS SELECCIONADOS CORREGIDO ========== */
+.booking-panel {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px; /* REDUCIDO */
+    padding: 12px; /* REDUCIDO */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: sticky;
+    top: 15px; /* REDUCIDO */
+    max-height: 400px; /* ALTURA MÁXIMA FIJA */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* OCULTAR DESBORDAMIENTO */
+}
+
+.booking-panel-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 10px; /* ESPACIO CONSISTENTE */
+}
+
+.panel-header {
+    text-align: center;
+    margin-bottom: 10px; /* REDUCIDO */
+    flex-shrink: 0;
+}
+
+.panel-header h3 {
+    color: #E75480;
+    margin-bottom: 3px; /* REDUCIDO */
+    font-size: 1rem; /* REDUCIDO */
+}
+
+.panel-header p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.75rem; /* REDUCIDO */
+}
+
+.selected-services-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.selected-services-panel h4 {
+    color: white;
+    font-size: 0.9rem; /* REDUCIDO */
+    margin-bottom: 8px; /* REDUCIDO */
+    flex-shrink: 0;
+}
+
+.services-panel-list {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 8px; /* REDUCIDO */
+    min-height: 100px; /* ALTURA MÍNIMA */
+}
+
+.panel-service-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px; /* REDUCIDO */
+    padding: 6px; /* REDUCIDO */
+    margin-bottom: 4px; /* REDUCIDO */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.panel-service-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3px; /* REDUCIDO */
+}
+
+.panel-service-name {
+    color: white;
+    font-weight: 500;
+    font-size: 0.8rem; /* REDUCIDO */
+}
+
+.remove-service {
+    background: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+    border: none;
+    border-radius: 50%;
+    width: 18px; /* REDUCIDO */
+    height: 18px; /* REDUCIDO */
+    cursor: pointer;
+    font-size: 10px; /* REDUCIDO */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.remove-service:hover {
+    background: rgba(231, 76, 60, 0.4);
+    transform: scale(1.05); /* REDUCIDO efecto */
+}
+
+.panel-service-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem; /* REDUCIDO */
+}
+
+.panel-service-details .price {
+    color: #27ae60;
+    font-weight: 600;
+}
+
+.panel-service-details .duration {
+    color: #E75480;
+    font-weight: 600;
+}
+
+.panel-total {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 6px; /* REDUCIDO */
+    padding: 8px; /* REDUCIDO */
+    margin-top: 8px; /* REDUCIDO */
+    flex-shrink: 0;
+}
+
+.total-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px; /* REDUCIDO */
+    font-size: 0.8rem; /* REDUCIDO */
+}
+
+.total-item:last-child {
+    margin-bottom: 0;
+}
+
+.empty-selection {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 15px; /* REDUCIDO */
+    font-style: italic;
+    font-size: 0.8rem; /* REDUCIDO */
+}
+
+.btn-panel {
+    width: 100%;
+    margin-top: 8px; /* REDUCIDO */
+    padding: 10px; /* REDUCIDO de 12px */
+    font-size: 0.85rem; /* REDUCIDO */
+    flex-shrink: 0;
+}
+
+.btn-panel:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* ========== RESPONSIVE MEJORADO ========== */
 @media (max-width: 768px) {
     .container {
         padding: 0 var(--spacing-md);
@@ -714,6 +1262,60 @@ section {
         font-size: var(--font-size-lg);
         width: 100%;
     }
+
+    /* Responsive para modal de citas */
+    .modern-booking-modal {
+        width: 95%;
+        margin: 2% auto;
+        max-height: 90vh; /* AJUSTADO */
+        border-radius: 15px;
+    }
+    
+    .modern-modal-header {
+        padding: 12px 15px; /* REDUCIDO */
+        border-radius: 15px 15px 0 0;
+    }
+    
+    .modern-modal-body {
+        padding: 12px; /* REDUCIDO */
+        gap: 10px; /* REDUCIDO */
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 8px; /* REDUCIDO */
+    }
+    
+    .time-slots-modern {
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); /* REDUCIDO */
+        gap: 4px; /* REDUCIDO */
+    }
+    
+    .time-slot {
+        padding: 6px 3px; /* REDUCIDO */
+        font-size: 0.7rem; /* REDUCIDO */
+        min-height: 45px; /* REDUCIDO */
+    }
+    
+    .time-slot-status {
+        font-size: 0.5rem; /* REDUCIDO */
+    }
+    
+    .booking-panel {
+        position: relative;
+        top: 0;
+        margin-top: 15px; /* REDUCIDO */
+        max-height: 300px; /* REDUCIDO para móviles */
+    }
+    
+    .services-panel-list {
+        max-height: 120px; /* REDUCIDO */
+    }
+    
+    .btn-modern-confirm {
+        padding: 12px 14px; /* REDUCIDO */
+        font-size: 0.85rem; /* REDUCIDO */
+    }
 }
 
 @media (max-width: 480px) {
@@ -752,6 +1354,49 @@ section {
     .btn-big-booking {
         padding: var(--spacing-md) var(--spacing-lg);
         font-size: var(--font-size-md);
+    }
+
+    /* Responsive para móviles pequeños */
+    .modern-modal-body {
+        padding: 10px; /* REDUCIDO */
+    }
+    
+    .time-slots-modern {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .time-slot {
+        padding: 5px 2px; /* REDUCIDO */
+        font-size: 0.65rem; /* REDUCIDO */
+        min-height: 40px; /* REDUCIDO */
+    }
+    
+    .time-slot-status {
+        font-size: 0.45rem; /* REDUCIDO */
+    }
+    
+    .time-slots-info {
+        gap: 8px; /* REDUCIDO */
+    }
+    
+    .time-info-item {
+        font-size: 0.55rem; /* REDUCIDO */
+    }
+    
+    .booking-summary {
+        padding: 10px; /* REDUCIDO */
+    }
+    
+    .preview-service-item {
+        font-size: 0.75rem; /* REDUCIDO */
+    }
+    
+    .total-line {
+        font-size: 0.75rem; /* REDUCIDO */
+    }
+    
+    .booking-panel {
+        max-height: 250px; /* MÁS REDUCIDO para móviles pequeños */
     }
 }
 
@@ -837,4 +1482,47 @@ html {
 *:focus-visible {
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
+}
+
+/* Scrollbar personalizado para modal de citas */
+.time-slots-modern::-webkit-scrollbar {
+    width: 3px; /* REDUCIDO */
+}
+
+.time-slots-modern::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+}
+
+.time-slots-modern::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 2px;
+}
+
+.services-panel-list::-webkit-scrollbar {
+    width: 3px; /* REDUCIDO */
+}
+
+.services-panel-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+}
+
+.services-panel-list::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 2px;
+}
+
+.modern-modal-body::-webkit-scrollbar {
+    width: 4px;
+}
+
+.modern-modal-body::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+}
+
+.modern-modal-body::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 2px;
 }
