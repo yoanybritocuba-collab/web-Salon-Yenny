@@ -1,4 +1,4 @@
-/* ========== ESTILOS PARA EL MODAL DE CITAS ========== */
+/* ========== ESTILOS PARA EL MODAL DE CITAS - COMPLETAMENTE DESPLAZABLE ========== */
 .modern-booking-modal {
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     border-radius: 20px;
@@ -6,10 +6,11 @@
     max-width: 500px;
     width: 90%;
     animation: slideIn 0.3s ease;
-    max-height: 85vh;
+    max-height: 90vh;
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .modern-modal-header {
@@ -20,6 +21,7 @@
     text-align: center;
     position: relative;
     flex-shrink: 0;
+    z-index: 10;
 }
 
 .modern-modal-body {
@@ -29,6 +31,27 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+}
+
+/* HACER TODO EL CONTENIDO DESPLAZABLE EN MÓVILES */
+.modern-modal-body {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) rgba(255, 255, 255, 0.1);
+}
+
+.modern-modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modern-modal-body::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+.modern-modal-body::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 3px;
 }
 
 .booking-summary {
@@ -133,11 +156,12 @@
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 8px;
-    padding: 10px;
+    padding: 12px; /* AUMENTADO para mejor tocabilidad en móviles */
     color: white;
     font-size: 0.85rem;
     transition: all 0.3s ease;
     width: 100%;
+    -webkit-appearance: none; /* Remover estilos por defecto en iOS */
 }
 
 .modern-input:focus {
@@ -146,11 +170,18 @@
     background: rgba(255, 255, 255, 0.15);
 }
 
+/* MEJORAS ESPECÍFICAS PARA INPUTS EN MÓVILES */
+input[type="date"],
+input[type="tel"],
+input[type="text"] {
+    min-height: 44px; /* Tamaño mínimo para tocabilidad en móviles */
+}
+
 .time-group {
     grid-column: 1 / -1;
 }
 
-/* ========== ESTILOS MEJORADOS PARA HORARIOS ========== */
+/* ========== CONTENEDOR DE HORARIOS DESPLAZABLE ========== */
 .time-slots-container-modern {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 12px;
@@ -160,7 +191,7 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    max-height: 180px;
+    max-height: 200px;
 }
 
 .time-slots-header {
@@ -194,13 +225,14 @@
     overflow-y: auto;
     flex: 1;
     padding: 3px;
+    -webkit-overflow-scrolling: touch;
 }
 
 .time-slot {
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 6px;
-    padding: 8px 4px;
+    padding: 10px 4px; /* AUMENTADO para móviles */
     color: #E75480;
     font-weight: 600;
     font-size: 0.75rem;
@@ -210,8 +242,9 @@
     flex-direction: column;
     align-items: center;
     gap: 3px;
-    min-height: 50px;
+    min-height: 55px; /* AUMENTADO para móviles */
     justify-content: center;
+    -webkit-tap-highlight-color: transparent; /* Remover highlight en tap */
 }
 
 .time-slot:hover {
@@ -312,37 +345,53 @@
     align-items: center;
 }
 
+/* ========== BOTÓN DE CONFIRMAR MEJORADO - SIEMPRE ACCESIBLE ========== */
+.form-actions {
+    margin-top: auto; /* Empuja el botón hacia abajo */
+    padding-top: 15px;
+    flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
+    background: linear-gradient(transparent, rgba(26, 26, 46, 0.9));
+    padding-bottom: 5px;
+}
+
 .btn-modern-confirm {
     background: linear-gradient(135deg, #E75480, #D147A3);
     color: white;
     border: none;
-    border-radius: 10px;
-    padding: 14px 16px;
-    font-size: 0.9rem;
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
+    gap: 4px;
     width: 100%;
-    margin-top: 8px;
-    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(231, 84, 128, 0.4);
+    min-height: 60px; /* ALTURA MÍNIMA PARA MÓVILES */
+    -webkit-tap-highlight-color: transparent;
 }
 
 .btn-modern-confirm:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(231, 84, 128, 0.5);
+    box-shadow: 0 8px 25px rgba(231, 84, 128, 0.6);
+}
+
+.btn-modern-confirm:active {
+    transform: translateY(0);
 }
 
 .btn-subtext {
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     opacity: 0.9;
     font-weight: 400;
 }
 
-/* ========== PANEL DE SERVICIOS SELECCIONADOS - CORREGIDO DEFINITIVAMENTE ========== */
+/* ========== PANEL DE SERVICIOS MEJORADO ========== */
 .booking-panel {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 12px;
@@ -350,11 +399,11 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
     position: sticky;
     top: 20px;
-    height: auto; /* CAMBIO IMPORTANTE: quitamos max-height */
-    min-height: 300px; /* Altura mínima garantizada */
+    height: auto;
+    min-height: 300px;
     display: flex;
     flex-direction: column;
-    overflow: visible; /* CAMBIO CRÍTICO: quitamos hidden */
+    overflow: hidden;
 }
 
 .booking-panel-content {
@@ -385,7 +434,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    min-height: 150px; /* Altura mínima para el área de servicios */
+    min-height: 150px;
 }
 
 .selected-services-panel h4 {
@@ -399,11 +448,12 @@
     flex: 1;
     overflow-y: auto;
     margin-bottom: 10px;
-    max-height: 200px; /* Máximo para scroll pero sin cortar contenido */
+    max-height: 200px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     padding: 8px;
     background: rgba(255, 255, 255, 0.03);
+    -webkit-overflow-scrolling: touch;
 }
 
 .panel-service-item {
@@ -448,6 +498,7 @@
     justify-content: center;
     transition: all 0.3s ease;
     flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .remove-service:hover {
@@ -521,7 +572,7 @@
     margin-bottom: 8px;
 }
 
-/* BOTÓN DE CONFIRMAR CITA - SIEMPRE VISIBLE Y ACCESIBLE */
+/* BOTÓN DE CONFIRMAR EN PANEL */
 .btn-panel {
     width: 100%;
     padding: 14px 16px;
@@ -542,6 +593,8 @@
     flex-shrink: 0;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    min-height: 50px;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .btn-panel:hover:not(:disabled) {
@@ -563,38 +616,17 @@
     color: rgba(255, 255, 255, 0.5);
 }
 
-/* ========== LAYOUT DE SERVICIOS MEJORADO ========== */
-.services-layout {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 25px;
-    align-items: start;
-}
-
-.services-column {
-    display: flex;
-    flex-direction: column;
-}
-
-.services-scroll-container {
-    max-height: 600px;
-    overflow-y: auto;
-    padding-right: 10px;
-}
-
-.services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-}
-
-/* ========== RESPONSIVE MEJORADO ========== */
+/* ========== RESPONSIVE MEJORADO PARA MÓVILES ========== */
 @media (max-width: 768px) {
     .modern-booking-modal {
         width: 95%;
         margin: 2% auto;
-        max-height: 90vh;
+        max-height: 95vh; /* MÁS ALTO en móviles */
         border-radius: 15px;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
     
     .modern-modal-header {
@@ -605,26 +637,28 @@
     .modern-modal-body {
         padding: 12px;
         gap: 10px;
+        max-height: none;
+        overflow-y: auto;
     }
     
     .form-grid {
         grid-template-columns: 1fr;
-        gap: 8px;
+        gap: 12px; /* MÁS ESPACIO en móviles */
     }
     
     .time-slots-modern {
-        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-        gap: 4px;
+        grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); /* MÁS GRANDES en móviles */
+        gap: 6px;
     }
     
     .time-slot {
-        padding: 6px 3px;
-        font-size: 0.7rem;
-        min-height: 45px;
+        padding: 12px 6px; /* MÁS GRANDES en móviles */
+        font-size: 0.8rem;
+        min-height: 60px; /* MÁS ALTOS en móviles */
     }
     
     .time-slot-status {
-        font-size: 0.5rem;
+        font-size: 0.6rem;
     }
     
     .booking-panel {
@@ -639,8 +673,9 @@
     }
     
     .btn-modern-confirm {
-        padding: 12px 14px;
-        font-size: 0.85rem;
+        padding: 18px 16px; /* MÁS GRANDE en móviles */
+        font-size: 1rem;
+        min-height: 65px; /* MÁS ALTO en móviles */
     }
     
     .services-layout {
@@ -651,6 +686,18 @@
     .btn-panel {
         padding: 16px 14px;
         font-size: 1rem;
+        min-height: 55px;
+    }
+    
+    /* MEJORAS ESPECÍFICAS PARA MÓVILES */
+    .modern-input {
+        padding: 14px; /* MÁS PADDING en móviles */
+        font-size: 16px; /* Previene zoom en iOS */
+        min-height: 50px; /* MEJOR TOCABILIDAD */
+    }
+    
+    .time-slots-container-modern {
+        max-height: 220px; /* MÁS ALTO en móviles */
     }
 }
 
@@ -664,13 +711,13 @@
     }
     
     .time-slot {
-        padding: 5px 2px;
-        font-size: 0.65rem;
-        min-height: 40px;
+        padding: 10px 4px;
+        font-size: 0.75rem;
+        min-height: 55px;
     }
     
     .time-slot-status {
-        font-size: 0.45rem;
+        font-size: 0.55rem;
     }
     
     .time-slots-info {
@@ -678,7 +725,7 @@
     }
     
     .time-info-item {
-        font-size: 0.55rem;
+        font-size: 0.6rem;
     }
     
     .booking-summary {
@@ -702,15 +749,37 @@
         max-height: 120px;
     }
     
+    .btn-modern-confirm {
+        padding: 16px 14px;
+        font-size: 0.95rem;
+        min-height: 60px;
+    }
+    
     .btn-panel {
         padding: 14px 12px;
         font-size: 0.9rem;
+        min-height: 50px;
+    }
+    
+    /* MEJORAS EXTRA PARA MÓVILES PEQUEÑOS */
+    .modern-booking-modal {
+        width: 98%;
+        margin: 1% auto;
+        max-height: 98vh;
+    }
+    
+    .modern-modal-header h2 {
+        font-size: 1.2rem;
+    }
+    
+    .modern-input {
+        font-size: 16px; /* IMPORTANTE: Previene zoom en iOS */
     }
 }
 
-/* Scrollbar personalizado */
+/* ========== SCROLLBAR MEJORADO ========== */
 .time-slots-modern::-webkit-scrollbar {
-    width: 3px;
+    width: 4px;
 }
 
 .time-slots-modern::-webkit-scrollbar-track {
@@ -737,30 +806,41 @@
     border-radius: 2px;
 }
 
-.modern-modal-body::-webkit-scrollbar {
-    width: 4px;
+/* ========== MEJORAS DE ACCESIBILIDAD TÁCTIL ========== */
+@media (hover: none) and (pointer: coarse) {
+    .time-slot:hover {
+        transform: none;
+    }
+    
+    .btn-modern-confirm:hover {
+        transform: none;
+    }
+    
+    .btn-panel:hover:not(:disabled) {
+        transform: none;
+    }
+    
+    /* Efectos solo en active para móviles */
+    .time-slot:active {
+        transform: scale(0.95);
+    }
+    
+    .btn-modern-confirm:active {
+        transform: scale(0.98);
+    }
+    
+    .btn-panel:active:not(:disabled) {
+        transform: scale(0.98);
+    }
 }
 
-.modern-modal-body::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 2px;
-}
-
-.modern-modal-body::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
-    border-radius: 2px;
-}
-
-.services-scroll-container::-webkit-scrollbar {
-    width: 6px;
-}
-
-.services-scroll-container::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
-}
-
-.services-scroll-container::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
-    border-radius: 3px;
+/* ========== PREVENIR ZOOM EN IOS AL HACER FOCUS ========== */
+@media screen and (max-width: 768px) {
+    input[type="date"],
+    input[type="tel"],
+    input[type="text"],
+    select,
+    textarea {
+        font-size: 16px; /* Esto previene el zoom en iOS */
+    }
 }

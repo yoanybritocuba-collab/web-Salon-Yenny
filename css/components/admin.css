@@ -36,439 +36,27 @@
     font-size: 0.85rem;
 }
 
-/* ========== CONTROLES GLOBALES COMPACTOS ========== */
-.admin-global-controls {
-    margin-top: 15px;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-}
-
-.control-group {
-    text-align: center;
-}
-
-.control-group h4 {
-    margin: 0 0 12px 0;
-    color: white;
-    font-size: 1rem;
-    font-weight: 600;
-}
-
-#toggleBookingBtn {
-    background: linear-gradient(135deg, #E75480, #D147A3);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 10px 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-bottom: 10px;
-    box-shadow: 0 4px 15px rgba(231, 84, 128, 0.3);
-}
-
-#toggleBookingBtn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(231, 84, 128, 0.4);
-}
-
-.status-indicator {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-weight: 600;
-    font-size: 0.75rem;
-    display: inline-block;
-    margin-top: 5px;
-}
-
-.status-indicator.active {
-    background: rgba(39, 174, 96, 0.2);
-    color: #27ae60;
-    border: 1px solid rgba(39, 174, 96, 0.3);
-}
-
-.status-indicator.paused {
-    background: rgba(243, 156, 18, 0.2);
-    color: #f39c12;
-    border: 1px solid rgba(243, 156, 18, 0.3);
-}
-
-/* ========== TABS ELEGANTES Y COMPACTOS ========== */
-.admin-tabs {
-    display: flex;
-    background: rgba(255, 255, 255, 0.05);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 0 15px;
-    position: sticky;
-    top: 0;
-    z-index: 90;
-    flex-shrink: 0;
-    backdrop-filter: blur(10px);
-}
-
-.tab-btn {
-    background: none;
-    border: none;
-    color: rgba(255, 255, 255, 0.7);
-    padding: 14px 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border-bottom: 3px solid transparent;
-    position: relative;
-    overflow: hidden;
-}
-
-.tab-btn:hover {
-    color: white;
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.tab-btn.active {
-    color: var(--primary-color);
-    border-bottom-color: var(--primary-color);
-    background: rgba(255, 255, 255, 0.02);
-}
-
-.tab-btn::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background: var(--primary-color);
-    transition: all 0.3s ease;
-    transform: translateX(-50%);
-}
-
-.tab-btn.active::after {
-    width: 100%;
-}
-
-/* ========== CONTENIDO DE TABS COMPACTO ========== */
+/* ========== CONTENIDO DESPLAZABLE ========== */
 .admin-content {
     padding: 20px;
     overflow-y: auto;
     flex: 1;
     max-height: calc(80vh - 180px);
+    -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
 }
 
-.tab-content {
-    display: none;
-    animation: fadeInUp 0.4s ease;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ========== LISTA DE CITAS ELEGANTE Y COMPACTA ========== */
-.citas-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-}
-
-.citas-header h3 {
-    margin: 0;
-    color: var(--primary-color);
-    font-size: 1.2rem;
-    font-weight: 700;
-}
-
-.citas-stats {
-    display: flex;
-    gap: 15px;
-}
-
-.stat-item {
-    background: rgba(255, 255, 255, 0.08);
-    padding: 8px 12px;
-    border-radius: 10px;
-    color: white;
-    font-size: 0.8rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.stat-item strong {
-    color: var(--primary-color);
-}
-
-.citas-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    max-height: 350px;
-    overflow-y: auto;
-    padding-right: 8px;
-}
-
-.cita-item {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
-    position: relative;
-    backdrop-filter: blur(10px);
-}
-
-.cita-item:hover {
-    background: rgba(255, 255, 255, 0.08);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-    border-color: rgba(255, 255, 255, 0.2);
-}
-
-/* Estados de cita */
-.cita-item.confirmada {
-    border-left: 4px solid #27ae60;
-    background: rgba(39, 174, 96, 0.08);
-}
-
-.cita-item.cancelada {
-    border-left: 4px solid #e74c3c;
-    background: rgba(231, 76, 60, 0.08);
-    opacity: 0.8;
-}
-
-.cita-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 12px;
-}
-
-.cita-cliente h4 {
-    margin: 0 0 4px 0;
-    color: white;
-    font-size: 1rem;
-    font-weight: 600;
-}
-
-.cita-telefono {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.8rem;
-}
-
-.cita-estado-badge {
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.cita-estado-badge.confirmada {
-    background: rgba(39, 174, 96, 0.2);
-    color: #27ae60;
-    border: 1px solid rgba(39, 174, 96, 0.3);
-}
-
-.cita-estado-badge.cancelada {
-    background: rgba(231, 76, 60, 0.2);
-    color: #e74c3c;
-    border: 1px solid rgba(231, 76, 60, 0.3);
-}
-
-.cita-details {
-    margin-bottom: 15px;
-}
-
-.cita-fecha {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.cita-fecha strong {
-    color: white;
-    font-size: 0.9rem;
-}
-
-.cita-hora {
-    color: var(--primary-color);
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.cita-servicios {
-    margin-bottom: 8px;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.cita-servicios strong {
-    color: var(--primary-color);
-    display: block;
-    margin-bottom: 6px;
-    font-size: 0.85rem;
-}
-
-.cita-servicios span {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 0.8rem;
-    line-height: 1.4;
-}
-
-.cita-totales {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.cita-precio {
-    color: #27ae60;
-    font-weight: 700;
-    font-size: 0.95rem;
-}
-
-.cita-duracion {
-    color: rgba(255, 255, 255, 0.7);
-    font-weight: 600;
-    font-size: 0.8rem;
-}
-
-/* ========== BOTONES DE ACCIÓN MEJORADOS ========== */
-.cita-actions {
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
-    margin-top: 10px;
-}
-
-.btn-sm {
-    padding: 6px 12px;
-    font-size: 0.75rem;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 600;
-}
-
-.btn-danger {
-    background: linear-gradient(135deg, #e74c3c, #c0392b);
-    color: white;
-    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
-}
-
-.btn-danger:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
-    background: linear-gradient(135deg, #c0392b, #a93226);
-}
-
-.btn-success {
-    background: linear-gradient(135deg, #27ae60, #219653);
-    color: white;
-    box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
-}
-
-.btn-success:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
-}
-
-.no-citas {
-    text-align: center;
-    padding: 40px 20px;
-    color: rgba(255, 255, 255, 0.6);
-}
-
-.no-citas p {
-    margin: 0;
-    font-size: 1rem;
-    opacity: 0.7;
-}
-
-/* ========== ESTADÍSTICAS ELEGANTES ========== */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 15px;
-    margin-top: 20px;
-}
-
-.stat-card {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 20px;
-    text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-}
-
-.stat-card:hover {
-    transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-.stat-icon {
-    font-size: 2.2rem;
-    margin-bottom: 12px;
-    opacity: 0.9;
-}
-
-.stat-value {
-    display: block;
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: white;
-    margin-bottom: 6px;
-}
-
-.stat-label {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* ========== COMPORTAMIENTO RESPONSIVE MEJORADO ========== */
+/* ========== RESPONSIVE MEJORADO PARA MÓVILES ========== */
 @media (max-width: 768px) {
     .admin-modal .modal-content {
         margin: 5% auto;
         width: 95%;
         max-width: 95%;
-        max-height: 90vh;
+        max-height: 90vh; /* MÁS ALTO en móviles */
         border-radius: 12px;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
     
     .admin-header {
@@ -479,76 +67,27 @@
         font-size: 1.2rem;
     }
     
-    .admin-tabs {
-        flex-direction: column;
-        padding: 0;
-    }
-    
-    .tab-btn {
-        padding: 12px 15px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        border-right: none;
-        text-align: left;
-        border-bottom: 3px solid transparent;
-    }
-    
-    .tab-btn.active {
-        border-bottom-color: var(--primary-color);
-    }
-    
-    .citas-header {
-        flex-direction: column;
-        gap: 12px;
-        align-items: flex-start;
-    }
-    
-    .citas-stats {
-        width: 100%;
-        justify-content: space-between;
-    }
-    
-    .cita-header {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .cita-fecha {
-        flex-direction: column;
-        gap: 6px;
-        align-items: flex-start;
-    }
-    
-    .cita-totales {
-        flex-direction: column;
-        gap: 6px;
-        align-items: flex-start;
-    }
-    
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .cita-actions {
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
     .admin-content {
         max-height: calc(90vh - 150px);
         padding: 15px;
     }
 
     .citas-list {
-        max-height: 45vh;
+        max-height: 50vh; /* LIMITAR ALTURA para mejor desplazamiento */
+    }
+    
+    /* MEJORAS DE TOCABILIDAD */
+    .btn-sm {
+        min-height: 40px;
+        padding: 10px 15px;
     }
     
     .cita-item {
-        padding: 12px;
+        padding: 15px;
     }
     
     .admin-global-controls {
-        padding: 12px;
-        margin-top: 12px;
+        padding: 15px;
     }
 }
 
@@ -565,52 +104,24 @@
         font-size: 1.1rem;
     }
     
-    .admin-global-controls {
-        padding: 10px;
-    }
-    
     .citas-list {
-        max-height: 40vh;
-    }
-    
-    .stat-card {
-        padding: 15px;
+        max-height: 45vh;
     }
     
     .cita-item {
-        padding: 10px;
+        padding: 12px;
     }
     
-    .citas-stats {
-        flex-direction: column;
-        gap: 8px;
-    }
-    
-    .stat-item {
-        width: 100%;
-        text-align: center;
+    /* BOTONES MÁS GRANDES EN MÓVILES */
+    .btn-danger,
+    .btn-success {
+        min-height: 44px;
+        padding: 12px 16px;
+        font-size: 0.9rem;
     }
 }
 
 /* ========== SCROLLBAR ELEGANTE ========== */
-.citas-list::-webkit-scrollbar {
-    width: 5px;
-}
-
-.citas-list::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 3px;
-}
-
-.citas-list::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
-    border-radius: 3px;
-}
-
-.citas-list::-webkit-scrollbar-thumb:hover {
-    background: var(--secondary-color);
-}
-
 .admin-content::-webkit-scrollbar {
     width: 6px;
 }
@@ -629,73 +140,16 @@
     background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
 }
 
-/* ========== ANIMACIONES SUAVES ========== */
-.admin-modal .modal-content {
-    animation: modalSlideIn 0.4s ease;
+.citas-list::-webkit-scrollbar {
+    width: 4px;
 }
 
-@keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-30px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+.citas-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
 }
 
-.cita-item {
-    animation: slideInUp 0.5s ease;
-}
-
-@keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ========== EFECTOS DE GLOW ELEGANTES ========== */
-.stat-card:hover .stat-icon {
-    animation: gentleGlow 2s ease-in-out infinite;
-}
-
-@keyframes gentleGlow {
-    0%, 100% {
-        filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
-    }
-    50% {
-        filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
-    }
-}
-
-/* ========== BOTÓN DE CERRAR MEJORADO ========== */
-.admin-modal .close {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    color: white;
-    font-size: 24px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    width: 35px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    z-index: 101;
-}
-
-.admin-modal .close:hover {
-    background: rgba(231, 76, 60, 0.8);
-    transform: rotate(90deg);
+.citas-list::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 2px;
 }
