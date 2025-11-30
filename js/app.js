@@ -259,6 +259,7 @@ function initPortalNavigation() {
             const targetSection = link.getAttribute('data-section');
             switchSection(targetSection);
             
+            // Cerrar menú móvil al hacer clic en un enlace
             const navCompact = document.querySelector('.nav-compact');
             const mobileMenuToggle = document.getElementById('mobileMenuToggle');
             if (navCompact && navCompact.classList.contains('mobile-open')) {
@@ -351,18 +352,35 @@ function initHeaderScroll() {
     }, { passive: true });
 }
 
+// ========== MENÚ MÓVIL MEJORADO ==========
 function initMobileMenu() {
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const navCompact = document.querySelector('.nav-compact');
     
     if (mobileMenuToggle && navCompact) {
-        mobileMenuToggle.addEventListener('click', function() {
+        mobileMenuToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
             navCompact.classList.toggle('mobile-open');
             this.classList.toggle('active');
         });
     }
 
-    // NUEVO: Configurar botón admin en menú móvil
+    // Cerrar menú al hacer clic fuera
+    document.addEventListener('click', function(e) {
+        const navCompact = document.querySelector('.nav-compact');
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        
+        if (navCompact && navCompact.classList.contains('mobile-open') && 
+            !navCompact.contains(e.target) && 
+            e.target !== mobileMenuToggle) {
+            navCompact.classList.remove('mobile-open');
+            if (mobileMenuToggle) {
+                mobileMenuToggle.classList.remove('active');
+            }
+        }
+    });
+
+    // Configurar botón admin en menú móvil
     const adminMobileBtn = document.getElementById('adminMobileBtn');
     if (adminMobileBtn) {
         adminMobileBtn.addEventListener('click', function(e) {
@@ -370,6 +388,8 @@ function initMobileMenu() {
             openAdminModal();
             
             // Cerrar menú móvil después de hacer clic
+            const navCompact = document.querySelector('.nav-compact');
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
             if (navCompact && navCompact.classList.contains('mobile-open')) {
                 navCompact.classList.remove('mobile-open');
                 mobileMenuToggle.classList.remove('active');
@@ -1409,7 +1429,7 @@ function setupAdminModal() {
         });
     }
 
-    // NUEVO: Configurar evento para cerrar modal admin
+    // Configurar evento para cerrar modal admin
     const closeAdminBtn = adminModal?.querySelector('.close');
     if (closeAdminBtn) {
         closeAdminBtn.addEventListener('click', () => {
@@ -1770,7 +1790,7 @@ function initNavigation() {
         }
     });
     
-    // NUEVO: Configuración mejorada del botón admin
+    // Configuración mejorada del botón admin
     const adminBtn = getElement('adminBtn');
     if (adminBtn) {
         adminBtn.addEventListener('click', function(e) {
@@ -1780,6 +1800,7 @@ function initNavigation() {
     }
 }
 
+// ========== INICIALIZACIÓN PRINCIPAL ==========
 document.addEventListener('DOMContentLoaded', function() {
     const savedPauseState = localStorage.getItem('isBookingPaused');
     if (savedPauseState !== null) {
@@ -1787,7 +1808,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     initHeaderScroll();
-    initMobileMenu();
+    initMobileMenu(); // MENÚ MÓVIL INICIALIZADO
     initPortalNavigation();
     initNavigation();
     initSmartBooking();
@@ -1800,7 +1821,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     setupGlobalEventListeners();
     setupBookingForm();
-    setupAdminModal(); // NUEVO: Inicializar modal admin
+    setupAdminModal();
     
     const insertarCitaBtn = getElement('insertarCitaBtn');
     if (insertarCitaBtn) {
@@ -1811,6 +1832,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// ========== FUNCIONES GLOBALES ==========
 window.openBookingModal = openBookingModal;
 window.closeBookingModal = closeBookingModal;
 window.openImageViewer = openImageViewer;
@@ -1819,4 +1841,4 @@ window.navigateImage = navigateImage;
 window.cancelarCita = cancelarCita;
 window.switchSection = switchSection;
 window.scrollToServices = scrollToServices;
-window.openAdminModal = openAdminModal; // NUEVO: Hacer accesible globalmente
+window.openAdminModal = openAdminModal;

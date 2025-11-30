@@ -7,6 +7,33 @@
     <link rel="stylesheet" href="css/main.css">
     <!-- Fuente Dancing Script para el nombre -->
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos para los enlaces de contacto */
+        .contact-link {
+            color: inherit;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid transparent;
+            padding: 2px 0;
+        }
+
+        .contact-link:hover {
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--primary-color);
+            transform: translateY(-1px);
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .contact-item p {
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
 
@@ -168,7 +195,7 @@
             </div>
         </section>
 
-        <!-- Contact Section -->
+        <!-- Contact Section MODIFICADA CON ENLACES FUNCIONALES -->
         <section id="contacto" class="contact">
             <div class="container">
                 <h2 class="section-title">Contáctanos</h2>
@@ -176,15 +203,21 @@
                     <div class="contact-info">
                         <div class="contact-item">
                             <span class="contact-icon">📍</span>
-                            <p>Tellstrase 32, 8400 Winterthur</p>
+                            <a href="https://maps.google.com/?q=Tellstrase 32, 8400 Winterthur" target="_blank" class="contact-link">
+                                Tellstrase 32, 8400 Winterthur
+                            </a>
                         </div>
                         <div class="contact-item">
                             <span class="contact-icon">📞</span>
-                            <p>+41 76 123 45 67</p>
+                            <a href="tel:+41793923464" class="contact-link">
+                                +41 79 392 34 64
+                            </a>
                         </div>
                         <div class="contact-item">
                             <span class="contact-icon">✉️</span>
-                            <p>yennyarileidy@outlook.es</p>
+                            <a href="mailto:yennyarileidy@outlook.es" class="contact-link">
+                                yennyarileidy@outlook.es
+                            </a>
                         </div>
                         <div class="contact-item">
                             <span class="contact-icon">🕒</span>
@@ -390,8 +423,8 @@
                 </div>
                 <div class="footer-section">
                     <h3>Contacto</h3>
-                    <p>📞 +41 793923464</p>
-                    <p>✉️ yennyarileidy@outlook.es</p>
+                    <p>📞 <a href="tel:+41793923464" class="contact-link">+41 79 392 34 64</a></p>
+                    <p>✉️ <a href="mailto:yennyarileidy@outlook.es" class="contact-link">yennyarileidy@outlook.es</a></p>
                 </div>
             </div>
             <div class="footer-bottom">
