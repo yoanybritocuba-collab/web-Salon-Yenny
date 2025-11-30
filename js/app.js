@@ -1400,26 +1400,25 @@ function generateBookingCode() {
     return code;
 }
 
-// ========== FUNCIÓN MEJORADA PARA ABRIR ADMIN MODAL ==========
+// ========== NUEVO SISTEMA DE AUTENTICACIÓN INTEGRADO EN EL MODAL ==========
 function openAdminModal() {
-    const password = prompt('🔐 Ingresa la contraseña de administración:');
-    if (password === 'y1994') {
-        const adminModal = getElement('adminModal');
-        if (adminModal) {
-            adminModal.style.display = 'block';
-            adminModal.classList.add('show');
-            loadAdminContent();
-            
-            // Asegurar que el modal sea responsive
-            const adminModalContent = adminModal.querySelector('.admin-modal-content');
-            if (adminModalContent) {
-                adminModalContent.style.maxWidth = '95%';
-                adminModalContent.style.maxHeight = '90vh';
-                adminModalContent.style.overflowY = 'auto';
-            }
-        }
-    } else if (password !== null) {
-        showNotification('❌ Contraseña incorrecta', 'error');
+    const adminModal = getElement('adminModal');
+    if (adminModal) {
+        // Mostrar la sección de autenticación primero
+        const adminAuth = getElement('adminAuth');
+        const adminContent = getElement('adminContent');
+        
+        if (adminAuth) adminAuth.style.display = 'block';
+        if (adminContent) adminContent.style.display = 'none';
+        
+        adminModal.style.display = 'block';
+        adminModal.classList.add('show');
+        
+        // Enfocar el campo de contraseña automáticamente
+        setTimeout(() => {
+            const passwordInput = getElement('adminPasswordInput');
+            if (passwordInput) passwordInput.focus();
+        }, 300);
     }
 }
 
@@ -1443,7 +1442,7 @@ function setupAdminModal() {
         });
     }
 
-    // NUEVO: Configurar botón admin en menú móvil
+    // Configurar botón admin en menú móvil
     const adminMobileBtn = document.getElementById('adminMobileBtn');
     if (adminMobileBtn) {
         adminMobileBtn.addEventListener('click', function(e) {
@@ -1456,6 +1455,29 @@ function setupAdminModal() {
             if (navCompact && navCompact.classList.contains('mobile-open')) {
                 navCompact.classList.remove('mobile-open');
                 mobileMenuToggle.classList.remove('active');
+            }
+        });
+    }
+
+    // Configurar el formulario de autenticación
+    const adminAuthForm = getElement('adminAuthForm');
+    if (adminAuthForm) {
+        adminAuthForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const passwordInput = getElement('adminPasswordInput');
+            if (passwordInput && passwordInput.value === 'y1994') {
+                // Contraseña correcta, mostrar contenido de admin
+                const adminAuth = getElement('adminAuth');
+                const adminContent = getElement('adminContent');
+                
+                if (adminAuth) adminAuth.style.display = 'none';
+                if (adminContent) adminContent.style.display = 'block';
+                
+                loadAdminContent();
+            } else {
+                showNotification('❌ Contraseña incorrecta', 'error');
+                passwordInput.value = '';
+                passwordInput.focus();
             }
         });
     }
@@ -1650,23 +1672,9 @@ function loadEstadisticas() {
 
         const ingresosHoyElement = getElement('ingresosHoy');
         const tiempoTotalElement = getElement('tiempoTotal');
-        const citasCompletadasElement = getElement('citasCompletadas');
-        const eficienciaElement = getElement('eficiencia');
-        const ocupadoHoyElement = getElement('ocupadoHoy');
-        const disponibleHoyElement = getElement('disponibleHoy');
-        const capacityFill = getElement('capacityFill');
         
         if (ingresosHoyElement) ingresosHoyElement.textContent = ingresosHoy;
         if (tiempoTotalElement) tiempoTotalElement.textContent = tiempoTotal;
-        if (citasCompletadasElement) citasCompletadasElement.textContent = citasCompletadas;
-        
-        const eficiencia = Math.round((tiempoTotal / 540) * 100);
-        const disponible = 540 - tiempoTotal;
-        
-        if (eficienciaElement) eficienciaElement.textContent = eficiencia;
-        if (ocupadoHoyElement) ocupadoHoyElement.textContent = tiempoTotal;
-        if (disponibleHoyElement) disponibleHoyElement.textContent = disponible;
-        if (capacityFill) capacityFill.style.width = `${eficiencia}%`;
     });
 }
 
@@ -1782,7 +1790,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     setupGlobalEventListeners();
     setupBookingForm();
-    setupAdminModal(); // INICIALIZAR MODAL ADMIN
+    setupAdminModal();
     
     const insertarCitaBtn = getElement('insertarCitaBtn');
     if (insertarCitaBtn) {

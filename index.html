@@ -33,6 +33,17 @@
         .contact-item p {
             margin: 0;
         }
+
+        /* Estilos para el botón admin en móvil */
+        .admin-mobile-item {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .admin-mobile-item {
+                display: block;
+            }
+        }
     </style>
 </head>
 <body>
@@ -59,7 +70,7 @@
                         <li><a href="#servicios" class="nav-link" data-section="servicios">Servicios</a></li>
                         <li><a href="#productos" class="nav-link" data-section="productos">Productos</a></li>
                         <li><a href="#galeria" class="nav-link" data-section="galeria">Galería</a></li>
-                        <!-- NUEVO: Elemento admin en menú móvil -->
+                        <!-- Elemento admin en menú móvil -->
                         <li class="admin-mobile-item">
                             <a href="#" class="nav-link" id="adminMobileBtn">Panel Admin</a>
                         </li>
@@ -282,7 +293,7 @@
                         </div>
                     </div>
 
-                    <!-- NUEVO: Campo de hora personalizada para evitar superposición -->
+                    <!-- Campo de hora personalizada para evitar superposición -->
                     <div class="form-group modern-form-group custom-time-group">
                         <label for="customTime" class="modern-label">
                             <span class="label-icon">🕒</span>
@@ -371,13 +382,32 @@
         </div>
     </div>
 
-    <!-- Admin Modal -->
+    <!-- Admin Modal CORREGIDO CON AUTENTICACIÓN INTEGRADA -->
     <div id="adminModal" class="modal admin-modal">
         <div class="modal-content admin-modal-content">
             <span class="close">&times;</span>
-            <div id="adminContent">
-                <!-- Contenido administrativo se carga aquí -->
+            
+            <!-- Sección de Autenticación -->
+            <div id="adminAuth" class="admin-auth">
+                <h2>🔐 Acceso Administrativo</h2>
+                <p>Ingresa la contraseña para acceder al panel</p>
+                <form id="adminAuthForm" class="admin-auth-form">
+                    <div class="password-input-container">
+                        <input 
+                            type="password" 
+                            id="adminPasswordInput" 
+                            placeholder="Ingresa la contraseña"
+                            required
+                        >
+                    </div>
+                    <button type="submit" class="auth-btn">
+                        🚀 Acceder al Panel
+                    </button>
+                </form>
             </div>
+            
+            <!-- Sección de Contenido del Admin (se muestra después de la autenticación) -->
+            <div id="adminContent" style="display: none;"></div>
         </div>
     </div>
 

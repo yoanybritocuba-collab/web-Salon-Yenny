@@ -1,15 +1,36 @@
-/* ========== PANEL DE ADMINISTRACIÓN REDISEÑADO - COMPACTO Y ELEGANTE ========== */
-.admin-modal .modal-content {
-    max-width: 700px;
-    max-height: 80vh;
+/* ========== NUEVO PANEL DE ADMINISTRACIÓN MÓVIL MEJORADO ========== */
+.admin-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.admin-modal.show {
+    display: flex;
+}
+
+.admin-modal-content {
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    border-radius: 16px;
+    border-radius: 20px;
     overflow: hidden;
     position: relative;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    margin: auto;
 }
 
 .admin-header {
@@ -17,7 +38,7 @@
     color: white;
     padding: 20px;
     text-align: center;
-    border-radius: 16px 16px 0 0;
+    border-radius: 20px 20px 0 0;
     position: relative;
     z-index: 100;
     flex-shrink: 0;
@@ -36,179 +57,347 @@
     font-size: 0.85rem;
 }
 
-/* ========== CONTENIDO DESPLAZABLE ========== */
-.admin-content {
-    padding: 20px;
-    overflow-y: auto;
+.admin-global-controls {
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+}
+
+.control-group h4 {
+    margin: 0 0 10px 0;
+    color: white;
+    font-size: 1rem;
+}
+
+.status-indicator {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.status-indicator.active {
+    color: #27ae60;
+}
+
+.status-indicator.paused {
+    color: #e74c3c;
+}
+
+.admin-tabs {
+    display: flex;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 15px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
     flex: 1;
-    max-height: calc(80vh - 180px);
-    -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
-}
-
-/* ========== RESPONSIVE MEJORADO PARA MÓVILES ========== */
-@media (max-width: 768px) {
-    .admin-modal .modal-content {
-        margin: 2% auto;
-        width: 98%;
-        max-width: 98%;
-        max-height: 95vh;
-        border-radius: 12px;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-    
-    .admin-header {
-        padding: 15px;
-        position: sticky;
-        top: 0;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        z-index: 10;
-    }
-    
-    .admin-header h2 {
-        font-size: 1.2rem;
-        margin-bottom: 5px;
-    }
-    
-    .admin-header p {
-        font-size: 0.8rem;
-    }
-    
-    .admin-content {
-        max-height: calc(95vh - 140px);
-        padding: 15px;
-    }
-
-    /* CONTROLES DE ADMIN EN MÓVIL */
-    .admin-controls {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .admin-controls .btn {
-        width: 100%;
-        text-align: center;
-    }
-
-    /* LISTA DE CITAS MEJORADA PARA MÓVILES */
-    .citas-list {
-        max-height: 50vh;
-        gap: 10px;
-    }
-    
-    .cita-item {
-        padding: 12px;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .cita-info {
-        width: 100%;
-    }
-
-    .cita-actions {
-        width: 100%;
-        display: flex;
-        gap: 8px;
-    }
-
-    .cita-actions .btn {
-        flex: 1;
-        min-height: 44px; /* Tamaño táctil mínimo */
-    }
-    
-    /* MEJORAS DE TOCABILIDAD */
-    .btn-sm {
-        min-height: 44px;
-        padding: 12px 16px;
-        font-size: 0.9rem;
-    }
-    
-    /* FORMULARIOS EN MÓVIL */
-    .admin-form {
-        gap: 12px;
-    }
-
-    .form-group {
-        flex-direction: column;
-    }
-
-    .form-group label {
-        margin-bottom: 5px;
-    }
-}
-
-@media (max-width: 480px) {
-    .admin-content {
-        padding: 12px;
-    }
-    
-    .admin-header {
-        padding: 12px 15px;
-    }
-    
-    .admin-header h2 {
-        font-size: 1.1rem;
-    }
-    
-    .citas-list {
-        max-height: 45vh;
-    }
-    
-    .cita-item {
-        padding: 10px;
-    }
-    
-    /* BOTONES MÁS GRANDES EN MÓVILES PEQUEÑOS */
-    .btn-danger,
-    .btn-success {
-        min-height: 46px;
-        padding: 13px 16px;
-        font-size: 0.9rem;
-    }
-
-    /* TEXTO MÁS LEGIBLE */
-    .cita-info h4 {
-        font-size: 1rem;
-    }
-
-    .cita-info p {
-        font-size: 0.85rem;
-    }
-}
-
-/* ========== GARANTIZAR QUE EL MODAL SEA SIEMPRE VISIBLE ========== */
-.admin-modal {
-    display: none;
-    position: fixed;
-    z-index: 10000; /* Valor muy alto para estar por encima de todo */
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    text-align: center;
+    font-size: 0.9rem;
+    min-height: 50px;
+    display: flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
 }
 
-.admin-modal.show {
+.tab-btn.active {
+    color: white;
+    border-bottom-color: #667eea;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.admin-content {
+    padding: 0;
+    overflow-y: auto;
+    flex: 1;
+    max-height: calc(90vh - 200px);
+    -webkit-overflow-scrolling: touch;
+}
+
+.tab-content {
+    display: none;
+    padding: 20px;
+    height: 100%;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* ========== ESTILOS PARA CITAS ========== */
+.citas-header {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
-.admin-modal-content {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    border-radius: 16px;
-    overflow: hidden;
-    position: relative;
+.citas-header h3 {
+    margin: 0;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.citas-stats {
+    display: flex;
+    gap: 10px;
+}
+
+.stat-item {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: white;
+}
+
+.citas-list {
+    max-height: 400px;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+    gap: 15px;
+    padding-right: 5px;
+}
+
+.cita-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 15px;
+    border-left: 4px solid #667eea;
+    transition: all 0.3s ease;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    width: 95%;
-    max-width: 700px;
-    max-height: 95vh;
+}
+
+.cita-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+}
+
+.cita-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    gap: 10px;
+}
+
+.cita-cliente h4 {
+    margin: 0 0 5px 0;
+    color: white;
+    font-size: 1rem;
+}
+
+.cita-telefono {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    display: block;
+}
+
+.cita-codigo {
+    background: rgba(102, 126, 234, 0.2);
+    color: #667eea;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    margin-top: 4px;
+    display: inline-block;
+}
+
+.cita-estado-badge {
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.cita-estado-badge.confirmada {
+    background: rgba(39, 174, 96, 0.2);
+    color: #27ae60;
+    border: 1px solid rgba(39, 174, 96, 0.3);
+}
+
+.cita-estado-badge.cancelada {
+    background: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.cita-details {
+    margin-bottom: 15px;
+}
+
+.cita-fecha {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.cita-fecha strong {
+    color: white;
+    font-size: 0.95rem;
+}
+
+.cita-hora {
+    color: #667eea;
+    font-weight: 600;
+}
+
+.cita-servicios {
+    margin-bottom: 8px;
+}
+
+.cita-servicios strong {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+}
+
+.cita-servicios span {
+    color: white;
+    font-size: 0.9rem;
+    display: block;
+    margin-top: 4px;
+}
+
+.cita-totales {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.cita-precio {
+    color: #27ae60;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.cita-duracion {
+    color: #3498db;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.cita-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: white;
+}
+
+.btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #27ae60, #219653);
+    color: white;
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    flex: 1;
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+}
+
+.btn-sm {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    min-height: 40px;
+}
+
+.no-citas {
+    text-align: center;
+    padding: 40px 20px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.no-citas p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* ========== ESTILOS PARA ESTADÍSTICAS ========== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #667eea;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
 }
 
 /* ========== SCROLLBAR ELEGANTE ========== */
@@ -222,12 +411,12 @@
 }
 
 .admin-content::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: linear-gradient(135deg, #667eea, #764ba2);
     border-radius: 3px;
 }
 
 .admin-content::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+    background: linear-gradient(135deg, #764ba2, #667eea);
 }
 
 .citas-list::-webkit-scrollbar {
@@ -240,6 +429,330 @@
 }
 
 .citas-list::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
+    background: #667eea;
     border-radius: 2px;
+}
+
+.citas-list::-webkit-scrollbar-thumb:hover {
+    background: #764ba2;
+}
+
+/* ========== SISTEMA DE AUTENTICACIÓN INTEGRADO ========== */
+.admin-auth {
+    padding: 40px 30px;
+    text-align: center;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 20px;
+}
+
+.admin-auth h2 {
+    color: white;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+.admin-auth p {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 30px;
+    font-size: 0.95rem;
+}
+
+.admin-auth-form {
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.password-input-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.password-input-container input {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.password-input-container input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.password-input-container input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.auth-btn {
+    width: 100%;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 54px;
+}
+
+.auth-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.auth-btn:active {
+    transform: translateY(0);
+}
+
+/* ========== BOTÓN CERRAR MODAL ========== */
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.3);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.close:hover {
+    background: rgba(0, 0, 0, 0.5);
+    transform: scale(1.1);
+}
+
+/* ========== RESPONSIVE MEJORADO PARA MÓVILES ========== */
+@media (max-width: 768px) {
+    .admin-modal {
+        padding: 5px;
+    }
+    
+    .admin-modal-content {
+        max-width: 100%;
+        max-height: 95vh;
+        border-radius: 16px;
+        margin: 0;
+    }
+    
+    .admin-header {
+        padding: 15px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    .admin-header h2 {
+        font-size: 1.2rem;
+        margin-bottom: 5px;
+    }
+    
+    .admin-header p {
+        font-size: 0.8rem;
+    }
+    
+    .admin-global-controls {
+        margin-top: 12px;
+        padding: 12px;
+    }
+    
+    .control-group h4 {
+        font-size: 0.9rem;
+    }
+    
+    .admin-content {
+        max-height: calc(95vh - 180px);
+    }
+    
+    .tab-content {
+        padding: 15px;
+    }
+    
+    .citas-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .citas-stats {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .stat-item {
+        flex: 1;
+        text-align: center;
+    }
+    
+    .citas-list {
+        max-height: 50vh;
+        gap: 12px;
+    }
+    
+    .cita-item {
+        padding: 12px;
+    }
+    
+    .cita-header {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .cita-estado-badge {
+        align-self: flex-start;
+    }
+    
+    .cita-actions .btn {
+        min-height: 46px;
+        font-size: 0.9rem;
+    }
+    
+    .tab-btn {
+        padding: 12px 15px;
+        font-size: 0.85rem;
+        min-height: 46px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-auth {
+        padding: 30px 20px;
+    }
+    
+    .admin-auth h2 {
+        font-size: 1.3rem;
+    }
+    
+    .admin-auth-form {
+        max-width: 100%;
+    }
+    
+    .password-input-container input {
+        padding: 12px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .auth-btn {
+        padding: 12px 16px;
+        min-height: 50px;
+        font-size: 0.9rem;
+    }
+    
+    .close {
+        top: 10px;
+        right: 15px;
+        width: 35px;
+        height: 35px;
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-modal {
+        padding: 0;
+    }
+    
+    .admin-modal-content {
+        border-radius: 0;
+        height: 100vh;
+        max-height: 100vh;
+    }
+    
+    .admin-header {
+        border-radius: 0;
+        padding: 15px 15px 12px 15px;
+    }
+    
+    .tab-content {
+        padding: 12px;
+    }
+    
+    .citas-list {
+        max-height: 55vh;
+        gap: 10px;
+    }
+    
+    .cita-item {
+        padding: 10px;
+    }
+    
+    .cita-cliente h4 {
+        font-size: 0.95rem;
+    }
+    
+    .cita-telefono {
+        font-size: 0.8rem;
+    }
+    
+    .btn {
+        min-height: 48px;
+        font-size: 0.9rem;
+    }
+    
+    .stat-card {
+        padding: 15px;
+    }
+    
+    .stat-icon {
+        font-size: 2rem;
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+    }
+    
+    .admin-auth {
+        padding: 25px 15px;
+    }
+    
+    .admin-auth h2 {
+        font-size: 1.2rem;
+    }
+}
+
+/* ========== ANIMACIONES ========== */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.admin-modal-content {
+    animation: slideInUp 0.3s ease;
+}
+
+.cita-item {
+    animation: fadeIn 0.3s ease;
 }
