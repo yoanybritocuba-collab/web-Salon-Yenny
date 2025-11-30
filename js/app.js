@@ -361,6 +361,21 @@ function initMobileMenu() {
             this.classList.toggle('active');
         });
     }
+
+    // NUEVO: Configurar botón admin en menú móvil
+    const adminMobileBtn = document.getElementById('adminMobileBtn');
+    if (adminMobileBtn) {
+        adminMobileBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openAdminModal();
+            
+            // Cerrar menú móvil después de hacer clic
+            if (navCompact && navCompact.classList.contains('mobile-open')) {
+                navCompact.classList.remove('mobile-open');
+                mobileMenuToggle.classList.remove('active');
+            }
+        });
+    }
 }
 
 function scrollToServices() {
@@ -1368,19 +1383,38 @@ function generateBookingCode() {
     return code;
 }
 
+// ========== FUNCIÓN MEJORADA PARA ABRIR ADMIN MODAL ==========
+function openAdminModal() {
+    const password = prompt('🔐 Ingresa la contraseña de administración:');
+    if (password === 'y1994') {
+        const adminModal = getElement('adminModal');
+        if (adminModal) {
+            adminModal.style.display = 'block';
+            adminModal.classList.add('show');
+            loadAdminContent();
+        }
+    } else if (password !== null) {
+        showNotification('❌ Contraseña incorrecta', 'error');
+    }
+}
+
 function setupAdminModal() {
     const adminBtn = getElement('adminBtn');
     const adminModal = getElement('adminModal');
     
     if (adminBtn && adminModal) {
-        adminBtn.addEventListener('click', () => {
-            const password = prompt('🔐 Ingresa la contraseña de administración:');
-            if (password === 'y1994') {
-                adminModal.style.display = 'block';
-                loadAdminContent();
-            } else if (password !== null) {
-                showNotification('❌ Contraseña incorrecta', 'error');
-            }
+        adminBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            openAdminModal();
+        });
+    }
+
+    // NUEVO: Configurar evento para cerrar modal admin
+    const closeAdminBtn = adminModal?.querySelector('.close');
+    if (closeAdminBtn) {
+        closeAdminBtn.addEventListener('click', () => {
+            adminModal.style.display = 'none';
+            adminModal.classList.remove('show');
         });
     }
 }
@@ -1678,13 +1712,16 @@ function setupGlobalEventListeners() {
         modals.forEach(modal => {
             if (e.target === modal) {
                 modal.style.display = 'none';
+                modal.classList.remove('show');
             }
         });
     });
     
     document.querySelectorAll('.close').forEach(closeBtn => {
         closeBtn.addEventListener('click', function() {
-            this.closest('.modal').style.display = 'none';
+            const modal = this.closest('.modal');
+            modal.style.display = 'none';
+            modal.classList.remove('show');
         });
     });
     
@@ -1698,6 +1735,13 @@ function setupGlobalEventListeners() {
     
     if (prevImageBtn) prevImageBtn.addEventListener('click', () => navigateImage(-1));
     if (nextImageBtn) nextImageBtn.addEventListener('click', () => navigateImage(1));
+}
+
+function closeSuccessModal() {
+    const successModal = getElement('successModal');
+    if (successModal) {
+        successModal.style.display = 'none';
+    }
 }
 
 function initNavigation() {
@@ -1726,18 +1770,12 @@ function initNavigation() {
         }
     });
     
+    // NUEVO: Configuración mejorada del botón admin
     const adminBtn = getElement('adminBtn');
     if (adminBtn) {
         adminBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            const password = prompt('🔐 Ingresa la contraseña de administración:');
-            if (password === 'y1994') {
-                const adminModal = getElement('adminModal');
-                adminModal.style.display = 'block';
-                loadAdminContent();
-            } else if (password !== null) {
-                showNotification('❌ Contraseña incorrecta', 'error');
-            }
+            openAdminModal();
         });
     }
 }
@@ -1762,6 +1800,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     setupGlobalEventListeners();
     setupBookingForm();
+    setupAdminModal(); // NUEVO: Inicializar modal admin
     
     const insertarCitaBtn = getElement('insertarCitaBtn');
     if (insertarCitaBtn) {
@@ -1780,3 +1819,4 @@ window.navigateImage = navigateImage;
 window.cancelarCita = cancelarCita;
 window.switchSection = switchSection;
 window.scrollToServices = scrollToServices;
+window.openAdminModal = openAdminModal; // NUEVO: Hacer accesible globalmente

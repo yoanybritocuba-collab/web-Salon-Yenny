@@ -120,6 +120,11 @@
   font-size: 0.9rem;
 }
 
+/* OCULTAR ELEMENTO ADMIN EN ESCRITORIO */
+.admin-mobile-item {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .nav-compact {
     display: none;
@@ -133,6 +138,7 @@
     right: 0;
     background: var(--header-bg);
     padding: 1rem;
+    z-index: 1001;
   }
 
   .nav-compact.mobile-open ul {
@@ -140,11 +146,67 @@
     gap: 1rem;
   }
 
+  /* MOSTRAR ELEMENTO ADMIN EN MÓVIL */
+  .admin-mobile-item {
+    display: block;
+    text-align: center;
+    padding: 0.8rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: var(--border-radius);
+    margin-top: 0.5rem;
+  }
+
+  .admin-mobile-item .nav-link {
+    color: white;
+    font-weight: 600;
+    display: block;
+  }
+
   .mobile-menu-toggle {
     display: block;
   }
 
+  /* MOSTRAR BOTONES EN MÓVILES CON DISEÑO MEJORADO */
   .header-actions {
-    display: none;
+    display: flex !important;
+    gap: 0.5rem;
+    margin-left: auto;
+    margin-right: 1rem;
+  }
+
+  /* BOTÓN ADMIN COMPACTO PARA MÓVILES */
+  .btn-compact {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  /* AJUSTAR LOGO EN MÓVILES */
+  .logo-title {
+    font-size: 1.4rem;
+  }
+
+  .logo-image-small {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-actions {
+    gap: 0.3rem;
+  }
+
+  .btn-compact {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+  }
+
+  .logo-title {
+    font-size: 1.2rem;
+  }
+
+  .logo-subtitle {
+    font-size: 0.6rem;
   }
 }

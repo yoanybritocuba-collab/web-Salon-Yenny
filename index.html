@@ -32,6 +32,10 @@
                         <li><a href="#servicios" class="nav-link" data-section="servicios">Servicios</a></li>
                         <li><a href="#productos" class="nav-link" data-section="productos">Productos</a></li>
                         <li><a href="#galeria" class="nav-link" data-section="galeria">Galería</a></li>
+                        <!-- NUEVO: Elemento admin en menú móvil -->
+                        <li class="admin-mobile-item">
+                            <a href="#" class="nav-link" id="adminMobileBtn">Panel Admin</a>
+                        </li>
                     </ul>
                 </nav>
 
@@ -335,8 +339,8 @@
     </div>
 
     <!-- Admin Modal -->
-    <div id="adminModal" class="modal">
-        <div class="modal-content admin-modal">
+    <div id="adminModal" class="modal admin-modal">
+        <div class="modal-content admin-modal-content">
             <span class="close">&times;</span>
             <div id="adminContent">
                 <!-- Contenido administrativo se carga aquí -->
