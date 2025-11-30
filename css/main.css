@@ -647,6 +647,23 @@ section {
     font-weight: 500;
 }
 
+/* Estilos para los enlaces de contacto */
+.contact-link {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid transparent;
+    padding: 2px 0;
+    display: block;
+    flex: 1;
+}
+
+.contact-link:hover {
+    color: var(--primary-color);
+    border-bottom: 1px solid var(--primary-color);
+    transform: translateY(-1px);
+}
+
 /* ========== MODALES ========== */
 .modal {
     display: none;
@@ -701,6 +718,60 @@ section {
 .close:hover {
     color: var(--primary-color);
     background: rgba(255, 255, 255, 0.1);
+}
+
+/* ========== ESTILOS RESPONSIVE PARA ADMIN MODAL ========== */
+.admin-modal .modal-content {
+    max-width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+    margin: 5% auto;
+}
+
+@media (max-width: 768px) {
+    .admin-modal .modal-content {
+        width: 95%;
+        margin: 10% auto;
+        padding: 15px;
+    }
+    
+    .admin-header h2 {
+        font-size: 1.3rem;
+    }
+    
+    .admin-tabs {
+        flex-direction: column;
+    }
+    
+    .tab-btn {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+    
+    .citas-list {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+    
+    .cita-item {
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .stat-card {
+        padding: 15px;
+    }
+}
+
+/* Estilos para botón admin en móvil */
+.admin-mobile-item {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .admin-mobile-item {
+        display: block;
+    }
 }
 
 /* ========== RESPONSIVE ========== */
@@ -759,6 +830,11 @@ section {
         padding: var(--spacing-lg) var(--spacing-xl);
         font-size: var(--font-size-lg);
         width: 100%;
+    }
+
+    /* Enlaces de contacto en móvil */
+    .contact-link {
+        text-align: center;
     }
 }
 

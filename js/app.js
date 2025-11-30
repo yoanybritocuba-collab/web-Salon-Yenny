@@ -259,7 +259,6 @@ function initPortalNavigation() {
             const targetSection = link.getAttribute('data-section');
             switchSection(targetSection);
             
-            // Cerrar menú móvil al hacer clic en un enlace
             const navCompact = document.querySelector('.nav-compact');
             const mobileMenuToggle = document.getElementById('mobileMenuToggle');
             if (navCompact && navCompact.classList.contains('mobile-open')) {
@@ -352,14 +351,12 @@ function initHeaderScroll() {
     }, { passive: true });
 }
 
-// ========== MENÚ MÓVIL MEJORADO ==========
 function initMobileMenu() {
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const navCompact = document.querySelector('.nav-compact');
     
     if (mobileMenuToggle && navCompact) {
-        mobileMenuToggle.addEventListener('click', function(e) {
-            e.stopPropagation();
+        mobileMenuToggle.addEventListener('click', function() {
             navCompact.classList.toggle('mobile-open');
             this.classList.toggle('active');
         });
@@ -1412,6 +1409,14 @@ function openAdminModal() {
             adminModal.style.display = 'block';
             adminModal.classList.add('show');
             loadAdminContent();
+            
+            // Asegurar que el modal sea responsive
+            const adminModalContent = adminModal.querySelector('.admin-modal-content');
+            if (adminModalContent) {
+                adminModalContent.style.maxWidth = '95%';
+                adminModalContent.style.maxHeight = '90vh';
+                adminModalContent.style.overflowY = 'auto';
+            }
         }
     } else if (password !== null) {
         showNotification('❌ Contraseña incorrecta', 'error');
@@ -1437,6 +1442,23 @@ function setupAdminModal() {
             adminModal.classList.remove('show');
         });
     }
+
+    // NUEVO: Configurar botón admin en menú móvil
+    const adminMobileBtn = document.getElementById('adminMobileBtn');
+    if (adminMobileBtn) {
+        adminMobileBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openAdminModal();
+            
+            // Cerrar menú móvil después de hacer clic
+            const navCompact = document.querySelector('.nav-compact');
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            if (navCompact && navCompact.classList.contains('mobile-open')) {
+                navCompact.classList.remove('mobile-open');
+                mobileMenuToggle.classList.remove('active');
+            }
+        });
+    }
 }
 
 function loadAdminContent() {
@@ -1445,8 +1467,8 @@ function loadAdminContent() {
     
     adminContent.innerHTML = `
         <div class="admin-header">
-            <h2>🔧 Panel de Administración Inteligente</h2>
-            <p>Gestión avanzada de citas y horarios</p>
+            <h2>🔧 Panel de Administración</h2>
+            <p>Gestión de citas y horarios</p>
             
             <div class="admin-global-controls">
                 <div class="control-group">
@@ -1462,19 +1484,17 @@ function loadAdminContent() {
         </div>
         
         <div class="admin-tabs">
-            <button class="tab-btn active" data-tab="citas">📅 Citas Programadas</button>
-            <button class="tab-btn" data-tab="estadisticas">📊 Estadísticas Avanzadas</button>
-            <button class="tab-btn" data-tab="horarios">⏰ Gestión de Horarios</button>
+            <button class="tab-btn active" data-tab="citas">📅 Citas</button>
+            <button class="tab-btn" data-tab="estadisticas">📊 Estadísticas</button>
         </div>
         
         <div class="admin-content">
             <div id="citasTab" class="tab-content active">
                 <div class="citas-header">
-                    <h3>Citas Confirmadas - Sistema Inteligente</h3>
+                    <h3>Citas Confirmadas</h3>
                     <div class="citas-stats">
                         <span class="stat-item">Total: <strong id="totalCitas">0</strong></span>
                         <span class="stat-item">Hoy: <strong id="citasHoy">0</strong></span>
-                        <span class="stat-item">Capacidad: <strong id="capacidadDia">540</strong>min</span>
                     </div>
                 </div>
                 <div id="citasList" class="citas-list">
@@ -1483,7 +1503,7 @@ function loadAdminContent() {
             </div>
             
             <div id="estadisticasTab" class="tab-content">
-                <h3 style="color: var(--primary-color); margin-bottom: 20px; text-align: center;">📊 Análisis de Rendimiento</h3>
+                <h3>Estadísticas</h3>
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon">💰</div>
@@ -1499,42 +1519,6 @@ function loadAdminContent() {
                             <span class="stat-label">Tiempo Ocupado</span>
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">📈</div>
-                        <div class="stat-info">
-                            <span class="stat-value"><span id="eficiencia">0</span>%</span>
-                            <span class="stat-label">Eficiencia</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="capacity-chart">
-                    <h4>Capacidad del Día</h4>
-                    <div class="capacity-bar">
-                        <div class="capacity-fill" id="capacityFill" style="width: 0%"></div>
-                    </div>
-                    <div class="capacity-stats">
-                        <span>Ocupado: <strong id="ocupadoHoy">0</strong>min</span>
-                        <span>Disponible: <strong id="disponibleHoy">540</strong>min</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="horariosTab" class="tab-content">
-                <h3 style="color: var(--primary-color); margin-bottom: 20px; text-align: center;">⏰ Configuración de Horarios</h3>
-                <div class="schedule-config">
-                    <div class="config-item">
-                        <label>Horario de Apertura:</label>
-                        <input type="time" id="openTime" value="09:00" class="time-input">
-                    </div>
-                    <div class="config-item">
-                        <label>Horario de Cierre:</label>
-                        <input type="time" id="closeTime" value="18:00" class="time-input">
-                    </div>
-                    <div class="config-item">
-                        <label>Duración Máxima Diaria (min):</label>
-                        <input type="number" id="maxDaily" value="540" class="number-input">
-                    </div>
-                    <button class="btn btn-success" id="saveScheduleConfig">💾 Guardar Configuración</button>
                 </div>
             </div>
         </div>
@@ -1546,7 +1530,7 @@ function loadAdminContent() {
             isBookingPaused = !isBookingPaused;
             localStorage.setItem('isBookingPaused', isBookingPaused);
             showNotification(
-                isBookingPaused ? '⏸️ Citas pausadas - No se aceptan nuevas reservas' : '✅ Citas reanudadas - Ya puedes aceptar reservas',
+                isBookingPaused ? '⏸️ Citas pausadas' : '✅ Citas reanudadas',
                 isBookingPaused ? 'warning' : 'success'
             );
             loadAdminContent();
@@ -1556,29 +1540,6 @@ function loadAdminContent() {
     loadCitas();
     loadEstadisticas();
     setupAdminTabs();
-    setupScheduleConfig();
-}
-
-function setupScheduleConfig() {
-    const saveConfigBtn = getElement('saveScheduleConfig');
-    if (saveConfigBtn) {
-        saveConfigBtn.addEventListener('click', function() {
-            const openTime = getElement('openTime').value;
-            const closeTime = getElement('closeTime').value;
-            const maxDaily = parseInt(getElement('maxDaily').value);
-            
-            scheduleManager.workDayStart = scheduleManager.timeToMinutes(openTime);
-            scheduleManager.workDayEnd = scheduleManager.timeToMinutes(closeTime);
-            scheduleManager.maxDailyCapacity = maxDaily;
-            
-            showNotification('✅ Configuración de horarios guardada correctamente', 'success');
-            
-            const bookingModal = getElement('bookingModal');
-            if (bookingModal && bookingModal.style.display === 'block') {
-                generateTimeSlots();
-            }
-        });
-    }
 }
 
 function setupAdminTabs() {
@@ -1800,7 +1761,7 @@ function initNavigation() {
     }
 }
 
-// ========== INICIALIZACIÓN PRINCIPAL ==========
+// ========== INICIALIZACIÓN PRINCIPAL CORREGIDA ==========
 document.addEventListener('DOMContentLoaded', function() {
     const savedPauseState = localStorage.getItem('isBookingPaused');
     if (savedPauseState !== null) {
@@ -1808,7 +1769,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     initHeaderScroll();
-    initMobileMenu(); // MENÚ MÓVIL INICIALIZADO
+    initMobileMenu();
     initPortalNavigation();
     initNavigation();
     initSmartBooking();
@@ -1821,7 +1782,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     setupGlobalEventListeners();
     setupBookingForm();
-    setupAdminModal();
+    setupAdminModal(); // INICIALIZAR MODAL ADMIN
     
     const insertarCitaBtn = getElement('insertarCitaBtn');
     if (insertarCitaBtn) {
