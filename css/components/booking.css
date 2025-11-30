@@ -31,10 +31,9 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+    -webkit-overflow-scrolling: touch;
 }
 
-/* HACER TODO EL CONTENIDO DESPLAZABLE EN MÓVILES */
 .modern-modal-body {
     scrollbar-width: thin;
     scrollbar-color: var(--primary-color) rgba(255, 255, 255, 0.1);
@@ -156,12 +155,12 @@
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 8px;
-    padding: 12px; /* AUMENTADO para mejor tocabilidad en móviles */
+    padding: 12px;
     color: white;
     font-size: 0.85rem;
     transition: all 0.3s ease;
     width: 100%;
-    -webkit-appearance: none; /* Remover estilos por defecto en iOS */
+    -webkit-appearance: none;
 }
 
 .modern-input:focus {
@@ -170,18 +169,17 @@
     background: rgba(255, 255, 255, 0.15);
 }
 
-/* MEJORAS ESPECÍFICAS PARA INPUTS EN MÓVILES */
 input[type="date"],
 input[type="tel"],
-input[type="text"] {
-    min-height: 44px; /* Tamaño mínimo para tocabilidad en móviles */
+input[type="text"],
+input[type="time"] {
+    min-height: 44px;
 }
 
 .time-group {
     grid-column: 1 / -1;
 }
 
-/* ========== CONTENEDOR DE HORARIOS DESPLAZABLE ========== */
 .time-slots-container-modern {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 12px;
@@ -191,7 +189,7 @@ input[type="text"] {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    max-height: 200px;
+    max-height: 150px;
 }
 
 .time-slots-header {
@@ -232,7 +230,7 @@ input[type="text"] {
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 6px;
-    padding: 10px 4px; /* AUMENTADO para móviles */
+    padding: 10px 4px;
     color: #E75480;
     font-weight: 600;
     font-size: 0.75rem;
@@ -242,9 +240,9 @@ input[type="text"] {
     flex-direction: column;
     align-items: center;
     gap: 3px;
-    min-height: 55px; /* AUMENTADO para móviles */
+    min-height: 55px;
     justify-content: center;
-    -webkit-tap-highlight-color: transparent; /* Remover highlight en tap */
+    -webkit-tap-highlight-color: transparent;
 }
 
 .time-slot:hover {
@@ -278,6 +276,20 @@ input[type="text"] {
 
 .time-slot.unavailable:hover {
     background: rgba(231, 76, 60, 0.2);
+}
+
+.time-slot.occupied {
+    border-color: rgba(231, 76, 60, 0.5);
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+    cursor: not-allowed;
+}
+
+.time-slot.conflict {
+    border-color: rgba(243, 156, 18, 0.5);
+    background: rgba(243, 156, 18, 0.1);
+    color: #f39c12;
+    cursor: not-allowed;
 }
 
 .time-slot-status {
@@ -334,6 +346,14 @@ input[type="text"] {
     background: #E75480;
 }
 
+.time-info-dot.occupied {
+    background: #e74c3c;
+}
+
+.time-info-dot.conflict {
+    background: #f39c12;
+}
+
 .time-slots-placeholder {
     text-align: center;
     color: rgba(255, 255, 255, 0.7);
@@ -345,9 +365,38 @@ input[type="text"] {
     align-items: center;
 }
 
-/* ========== BOTÓN DE CONFIRMAR MEJORADO - SIEMPRE ACCESIBLE ========== */
+.custom-time-group {
+    grid-column: 1 / -1;
+    margin-top: 10px;
+}
+
+.time-input {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 12px;
+    color: white;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    width: 100%;
+    min-height: 44px;
+}
+
+.time-input:focus {
+    outline: none;
+    border-color: #E75480;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.time-note {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.7rem;
+    margin-top: 4px;
+    display: block;
+}
+
 .form-actions {
-    margin-top: auto; /* Empuja el botón hacia abajo */
+    margin-top: auto;
     padding-top: 15px;
     flex-shrink: 0;
     position: sticky;
@@ -372,7 +421,7 @@ input[type="text"] {
     gap: 4px;
     width: 100%;
     box-shadow: 0 4px 15px rgba(231, 84, 128, 0.4);
-    min-height: 60px; /* ALTURA MÍNIMA PARA MÓVILES */
+    min-height: 60px;
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -391,7 +440,6 @@ input[type="text"] {
     font-weight: 400;
 }
 
-/* ========== PANEL DE SERVICIOS MEJORADO ========== */
 .booking-panel {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 12px;
@@ -572,7 +620,6 @@ input[type="text"] {
     margin-bottom: 8px;
 }
 
-/* BOTÓN DE CONFIRMAR EN PANEL */
 .btn-panel {
     width: 100%;
     padding: 14px 16px;
@@ -616,12 +663,44 @@ input[type="text"] {
     color: rgba(255, 255, 255, 0.5);
 }
 
-/* ========== RESPONSIVE MEJORADO PARA MÓVILES ========== */
+.system-info {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.info-icon {
+    font-size: 1.5rem;
+}
+
+.info-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-text strong {
+    color: white;
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+}
+
+.info-text span {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8rem;
+}
+
 @media (max-width: 768px) {
     .modern-booking-modal {
         width: 95%;
         margin: 2% auto;
-        max-height: 95vh; /* MÁS ALTO en móviles */
+        max-height: 95vh;
         border-radius: 15px;
         position: fixed;
         top: 50%;
@@ -643,18 +722,18 @@ input[type="text"] {
     
     .form-grid {
         grid-template-columns: 1fr;
-        gap: 12px; /* MÁS ESPACIO en móviles */
+        gap: 12px;
     }
     
     .time-slots-modern {
-        grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); /* MÁS GRANDES en móviles */
+        grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
         gap: 6px;
     }
     
     .time-slot {
-        padding: 12px 6px; /* MÁS GRANDES en móviles */
+        padding: 12px 6px;
         font-size: 0.8rem;
-        min-height: 60px; /* MÁS ALTOS en móviles */
+        min-height: 60px;
     }
     
     .time-slot-status {
@@ -673,9 +752,9 @@ input[type="text"] {
     }
     
     .btn-modern-confirm {
-        padding: 18px 16px; /* MÁS GRANDE en móviles */
+        padding: 18px 16px;
         font-size: 1rem;
-        min-height: 65px; /* MÁS ALTO en móviles */
+        min-height: 65px;
     }
     
     .services-layout {
@@ -689,15 +768,19 @@ input[type="text"] {
         min-height: 55px;
     }
     
-    /* MEJORAS ESPECÍFICAS PARA MÓVILES */
-    .modern-input {
-        padding: 14px; /* MÁS PADDING en móviles */
-        font-size: 16px; /* Previene zoom en iOS */
-        min-height: 50px; /* MEJOR TOCABILIDAD */
+    .modern-input,
+    .time-input {
+        padding: 14px;
+        font-size: 16px;
+        min-height: 50px;
     }
     
     .time-slots-container-modern {
-        max-height: 220px; /* MÁS ALTO en móviles */
+        max-height: 180px;
+    }
+    
+    .custom-time-group {
+        margin-top: 8px;
     }
 }
 
@@ -761,7 +844,6 @@ input[type="text"] {
         min-height: 50px;
     }
     
-    /* MEJORAS EXTRA PARA MÓVILES PEQUEÑOS */
     .modern-booking-modal {
         width: 98%;
         margin: 1% auto;
@@ -772,12 +854,16 @@ input[type="text"] {
         font-size: 1.2rem;
     }
     
-    .modern-input {
-        font-size: 16px; /* IMPORTANTE: Previene zoom en iOS */
+    .modern-input,
+    .time-input {
+        font-size: 16px;
+    }
+    
+    .custom-time-group {
+        margin-top: 5px;
     }
 }
 
-/* ========== SCROLLBAR MEJORADO ========== */
 .time-slots-modern::-webkit-scrollbar {
     width: 4px;
 }
@@ -806,7 +892,6 @@ input[type="text"] {
     border-radius: 2px;
 }
 
-/* ========== MEJORAS DE ACCESIBILIDAD TÁCTIL ========== */
 @media (hover: none) and (pointer: coarse) {
     .time-slot:hover {
         transform: none;
@@ -820,7 +905,6 @@ input[type="text"] {
         transform: none;
     }
     
-    /* Efectos solo en active para móviles */
     .time-slot:active {
         transform: scale(0.95);
     }
@@ -834,18 +918,17 @@ input[type="text"] {
     }
 }
 
-/* ========== PREVENIR ZOOM EN IOS AL HACER FOCUS ========== */
 @media screen and (max-width: 768px) {
     input[type="date"],
     input[type="tel"],
     input[type="text"],
+    input[type="time"],
     select,
     textarea {
-        font-size: 16px; /* Esto previene el zoom en iOS */
+        font-size: 16px;
     }
 }
 
-/* ========== CORRECCIÓN PARA TECLADO EN MÓVILES ========== */
 @media (max-width: 768px) {
     .modern-booking-modal {
         position: fixed !important;
@@ -854,30 +937,27 @@ input[type="text"] {
         transform: translate(-50%, -50%) !important;
         width: 95% !important;
         height: auto !important;
-        max-height: 85vh !important; /* Reducido para dar espacio al teclado */
+        max-height: 85vh !important;
         margin: 0 !important;
         border-radius: 15px;
     }
     
     .modern-modal-body {
-        max-height: calc(85vh - 150px) !important; /* Altura ajustada */
+        max-height: calc(85vh - 150px) !important;
         overflow-y: auto;
-        padding-bottom: 20px; /* Espacio extra abajo */
+        padding-bottom: 20px;
     }
     
-    /* Asegurar que el formulario sea desplazable */
     .modern-booking-form {
         min-height: auto;
         overflow: visible;
     }
     
-    /* Contenedor principal del modal con scroll */
     .modal-content {
         max-height: 100vh;
         overflow: hidden;
     }
     
-    /* Espacio extra para el botón cuando el teclado está activo */
     .form-actions {
         position: sticky !important;
         bottom: 0;
@@ -888,21 +968,19 @@ input[type="text"] {
         border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
     
-    /* Asegurar que los inputs tengan el tamaño correcto para móviles */
-    .modern-input {
-        font-size: 16px !important; /* Previene zoom en iOS */
+    .modern-input,
+    .time-input {
+        font-size: 16px !important;
         min-height: 50px;
         padding: 14px 12px;
     }
     
-    /* Mejorar el scroll en iOS */
     .modern-modal-body {
         -webkit-overflow-scrolling: touch;
         scroll-behavior: smooth;
     }
 }
 
-/* ========== CORRECCIÓN ESPECÍFICA PARA MÓVILES PEQUEÑOS ========== */
 @media (max-width: 480px) {
     .modern-booking-modal {
         max-height: 90vh !important;
@@ -911,7 +989,7 @@ input[type="text"] {
     
     .modern-modal-body {
         max-height: calc(90vh - 140px) !important;
-        padding: 10px 8px 30px 8px !important; /* Más padding abajo */
+        padding: 10px 8px 30px 8px !important;
     }
     
     .form-actions {
@@ -925,7 +1003,6 @@ input[type="text"] {
     }
 }
 
-/* ========== MEJORAS PARA CUANDO EL TECLADO ESTÁ ABIERTO ========== */
 @media (max-width: 768px) and (max-height: 700px) {
     .modern-booking-modal {
         max-height: 95vh !important;
@@ -944,7 +1021,6 @@ input[type="text"] {
     }
 }
 
-/* ========== GARANTIZAR QUE EL BOTÓN SIEMPRE SEA VISIBLE ========== */
 .modern-booking-modal {
     display: flex !important;
     flex-direction: column !important;
@@ -960,10 +1036,9 @@ input[type="text"] {
     flex: 1 !important;
     display: flex !important;
     flex-direction: column !important;
-    min-height: 0 !important; /* Permite que flex funcione correctamente */
+    min-height: 0 !important;
 }
 
-/* ========== PREVENIR PROBLEMAS DE SCROLL ========== */
 body.modal-open {
     overflow: hidden;
     position: fixed;
@@ -971,7 +1046,6 @@ body.modal-open {
     height: 100%;
 }
 
-/* ========== MEJORAS DE USABILIDAD TÁCTIL ========== */
 @media (max-width: 768px) {
     .time-slot {
         min-height: 50px;
@@ -980,7 +1054,7 @@ body.modal-open {
     }
     
     .form-grid {
-        gap: 15px; /* Más espacio entre campos */
+        gap: 15px;
     }
     
     .modern-form-group {
@@ -988,13 +1062,235 @@ body.modal-open {
     }
 }
 
-/* ========== CORRECCIÓN PARA iOS SPECÍFICO ========== */
 @supports (-webkit-touch-callout: none) {
     .modern-modal-body {
-        padding-bottom: 40px !important; /* Extra padding para iOS */
+        padding-bottom: 40px !important;
     }
     
     .form-actions {
         padding-bottom: 20px !important;
+    }
+}
+
+.capacity-chart {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.capacity-bar {
+    width: 100%;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.capacity-fill {
+    height: 100%;
+    background: linear-gradient(135deg, #27ae60, #219653);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+.capacity-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.schedule-config {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.config-item {
+    margin-bottom: 15px;
+}
+
+.config-item label {
+    display: block;
+    margin-bottom: 5px;
+    color: white;
+    font-weight: 600;
+}
+
+.number-input {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 10px;
+    color: white;
+    width: 100%;
+    font-size: 0.9rem;
+}
+
+.cita-codigo {
+    background: rgba(52, 152, 219, 0.2);
+    color: #3498db;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.ai-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    text-align: center;
+}
+
+.ai-loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top: 3px solid #E75480;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+.ai-loading-text {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+    .capacity-stats {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .schedule-config {
+        padding: 15px;
+    }
+    
+    .config-item {
+        margin-bottom: 12px;
+    }
+}
+
+.central-confirmation-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s ease;
+}
+
+.central-confirmation-content {
+    background: linear-gradient(135deg, #27ae60, #219653);
+    color: white;
+    padding: 40px 30px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: slideInUp 0.5s ease;
+}
+
+.confirmation-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    animation: bounce 1s ease;
+}
+
+.central-confirmation-content h2 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.confirmation-message {
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+    opacity: 0.9;
+}
+
+.confirmation-details {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.confirmation-detail {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    justify-content: center;
+}
+
+.confirmation-detail:last-child {
+    margin-bottom: 0;
+}
+
+.detail-icon {
+    font-size: 1.2rem;
+}
+
+.btn-confirmation-close {
+    background: white;
+    color: #27ae60;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.btn-confirmation-close:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+    from { 
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
     }
 }

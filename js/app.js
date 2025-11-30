@@ -6,8 +6,8 @@ let selectedTime = null;
 let selectedServices = [];
 let isBookingPaused = false;
 let lastScrollTop = 0;
-let currentSection = 'inicio'; // Portal actual
-let zoomLevel = 1; // Nivel de zoom para imágenes
+let currentSection = 'inicio';
+let zoomLevel = 1;
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
@@ -20,7 +20,9 @@ import {
     doc,
     onSnapshot,
     query,
-    orderBy
+    orderBy,
+    where,
+    getDocs
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 // Your web app's Firebase configuration
@@ -122,6 +124,122 @@ const services = [
     }
 ];
 
+// ========== SISTEMA INTELIGENTE DE GESTIÓN DE HORARIOS ==========
+class ScheduleManager {
+    constructor() {
+        this.workDayStart = 9 * 60;
+        this.workDayEnd = 18 * 60;
+        this.maxDailyCapacity = 540;
+        this.timeSlotInterval = 30;
+    }
+
+    timeToMinutes(timeStr) {
+        const [hours, minutes] = timeStr.split(':').map(Number);
+        return hours * 60 + minutes;
+    }
+
+    minutesToTime(minutes) {
+        const hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+    }
+
+    generateAllTimeSlots() {
+        const slots = [];
+        for (let time = this.workDayStart; time < this.workDayEnd; time += this.timeSlotInterval) {
+            slots.push(this.minutesToTime(time));
+        }
+        return slots;
+    }
+
+    async calculateAvailability(selectedDate, selectedServices) {
+        const totalDuration = selectedServices.reduce((sum, service) => sum + service.duration, 0);
+        const allSlots = this.generateAllTimeSlots();
+        const availability = {};
+        
+        try {
+            const existingAppointments = await this.getExistingAppointments(selectedDate);
+            
+            allSlots.forEach(slot => {
+                const slotStart = this.timeToMinutes(slot);
+                const slotEnd = slotStart + totalDuration;
+                
+                if (slotEnd > this.workDayEnd) {
+                    availability[slot] = { status: 'unavailable', reason: 'Fuera de horario laboral' };
+                    return;
+                }
+                
+                const hasConflict = existingAppointments.some(appointment => {
+                    const appointmentStart = this.timeToMinutes(appointment.hora);
+                    const appointmentEnd = appointmentStart + appointment.duracion;
+                    return (slotStart < appointmentEnd && slotEnd > appointmentStart);
+                });
+                
+                if (hasConflict) {
+                    availability[slot] = { status: 'unavailable', reason: 'Horario ocupado' };
+                } else {
+                    availability[slot] = { status: 'available', reason: 'Disponible' };
+                }
+            });
+            
+            return availability;
+        } catch (error) {
+            console.error('Error calculando disponibilidad:', error);
+            allSlots.forEach(slot => {
+                availability[slot] = { status: 'unavailable', reason: 'Error de sistema' };
+            });
+            return availability;
+        }
+    }
+
+    async getExistingAppointments(date) {
+        try {
+            const q = query(
+                collection(db, "citas"),
+                where("fecha", "==", date),
+                where("estado", "==", "confirmada")
+            );
+            const querySnapshot = await getDocs(q);
+            const appointments = [];
+            
+            querySnapshot.forEach((doc) => {
+                appointments.push(doc.data());
+            });
+            
+            return appointments;
+        } catch (error) {
+            console.error('Error obteniendo citas existentes:', error);
+            return [];
+        }
+    }
+
+    async checkSpecificAvailability(selectedDate, selectedTime, selectedServices) {
+        const totalDuration = selectedServices.reduce((sum, service) => sum + service.duration, 0);
+        const timeStart = this.timeToMinutes(selectedTime);
+        const timeEnd = timeStart + totalDuration;
+        
+        if (timeStart < this.workDayStart || timeEnd > this.workDayEnd) {
+            return { available: false, reason: 'Fuera del horario laboral' };
+        }
+        
+        const existingAppointments = await this.getExistingAppointments(selectedDate);
+        
+        const hasConflict = existingAppointments.some(appointment => {
+            const appointmentStart = this.timeToMinutes(appointment.hora);
+            const appointmentEnd = appointmentStart + appointment.duracion;
+            return (timeStart < appointmentEnd && timeEnd > appointmentStart);
+        });
+        
+        if (hasConflict) {
+            return { available: false, reason: 'Horario ya reservado' };
+        }
+        
+        return { available: true, reason: 'Disponible' };
+    }
+}
+
+const scheduleManager = new ScheduleManager();
+
 // ========== INICIALIZACIÓN SEGURA DEL DOM ==========
 function getElement(id) {
     const element = document.getElementById(id);
@@ -133,19 +251,14 @@ function getElement(id) {
 
 // ========== SISTEMA DE PORTALES SEPARADOS ==========
 function initPortalNavigation() {
-    console.log('🚀 Inicializando sistema de portales...');
-    
-    // Obtener todos los enlaces de navegación
     const navLinks = document.querySelectorAll('.nav-link');
     
-    // Configurar event listeners para navegación
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const targetSection = link.getAttribute('data-section');
             switchSection(targetSection);
             
-            // Cerrar menú móvil si está abierto
             const navCompact = document.querySelector('.nav-compact');
             const mobileMenuToggle = document.getElementById('mobileMenuToggle');
             if (navCompact && navCompact.classList.contains('mobile-open')) {
@@ -155,17 +268,12 @@ function initPortalNavigation() {
         });
     });
     
-    // Mostrar sección inicial
     switchSection('inicio');
 }
 
 function switchSection(sectionId) {
-    console.log(`🔄 Cambiando a sección: ${sectionId}`);
-    
-    // Cerrar todos los modales al cambiar de sección
     closeAllModals();
     
-    // Mostrar el botón grande solo en la sección de servicios
     const bigBookingContainer = getElement('bigBookingContainer');
     if (bigBookingContainer) {
         if (sectionId === 'servicios') {
@@ -175,26 +283,22 @@ function switchSection(sectionId) {
         }
     }
     
-    // Ocultar todas las secciones
     const sections = document.querySelectorAll('.section-portal');
     sections.forEach(section => {
         section.classList.remove('section-active');
     });
     
-    // Mostrar sección objetivo
     const targetSection = document.getElementById(sectionId);
     if (targetSection) {
         targetSection.classList.add('section-active');
         currentSection = sectionId;
         
-        // Scroll suave al inicio de la sección
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
         });
     }
     
-    // Actualizar navegación activa
     updateActiveNav(sectionId);
 }
 
@@ -209,25 +313,20 @@ function updateActiveNav(activeSection) {
     });
 }
 
-// ========== FUNCIÓN PARA CERRAR TODOS LOS MODALES ==========
 function closeAllModals() {
     const modals = document.querySelectorAll('.modal');
     modals.forEach(modal => {
         modal.style.display = 'none';
     });
     
-    // Cerrar menú móvil si está abierto
     const navCompact = document.querySelector('.nav-compact');
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     if (navCompact && navCompact.classList.contains('mobile-open')) {
         navCompact.classList.remove('mobile-open');
         mobileMenuToggle.classList.remove('active');
     }
-    
-    console.log('🔒 Todos los modales cerrados');
 }
 
-// ========== HEADER SCROLL EFFECT MEJORADO ==========
 function initHeaderScroll() {
     const header = document.querySelector('.header');
     if (!header) return;
@@ -237,14 +336,11 @@ function initHeaderScroll() {
         const scrollThreshold = 100;
         
         if (scrollTop > lastScrollTop && scrollTop > scrollThreshold) {
-            // Scrolling down - hide header
             header.classList.add('hidden');
         } else {
-            // Scrolling up - show header
             header.classList.remove('hidden');
         }
         
-        // Add scrolled class for styling
         if (scrollTop > 50) {
             header.classList.add('scrolled');
         } else {
@@ -255,7 +351,6 @@ function initHeaderScroll() {
     }, { passive: true });
 }
 
-// ========== MENÚ MÓVIL ==========
 function initMobileMenu() {
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const navCompact = document.querySelector('.nav-compact');
@@ -268,31 +363,22 @@ function initMobileMenu() {
     }
 }
 
-// ========== SCROLL TO SERVICES ==========
 function scrollToServices() {
     switchSection('servicios');
-    
-    // Mostrar indicador después de un pequeño delay
     setTimeout(showServicesIndicator, 500);
 }
 
-// ========== MOSTRAR INDICADOR DE SERVICIOS ==========
 function showServicesIndicator() {
     const indicator = getElement('servicesIndicator');
     if (indicator) {
         indicator.style.display = 'block';
-        
-        // Ocultar después de 8 segundos
         setTimeout(() => {
             indicator.style.display = 'none';
         }, 8000);
     }
 }
 
-// ========== SISTEMA DE CITAS INTELIGENTE ==========
 function initSmartBooking() {
-    console.log('🎯 Inicializando sistema de citas inteligente...');
-    
     const bookingBtn = getElement('bookingBtn');
     const heroBookingBtn = getElement('heroBookingBtn');
     const bigBookingBtn = getElement('bigBookingBtn');
@@ -308,7 +394,6 @@ function initSmartBooking() {
     
     if (bigBookingBtn) {
         bigBookingBtn.addEventListener('click', function() {
-            // Ocultar el botón grande al hacer clic
             if (bigBookingContainer) {
                 bigBookingContainer.style.display = 'none';
             }
@@ -318,36 +403,21 @@ function initSmartBooking() {
 }
 
 function handleBookingButtonClick() {
-    console.log('📅 Botón HACER TU CITA AQUI clickeado, estado servicios:', selectedServices.length);
-    
-    // Ocultar el botón grande si está visible
     const bigBookingContainer = getElement('bigBookingContainer');
     if (bigBookingContainer) {
         bigBookingContainer.style.display = 'none';
     }
     
     if (selectedServices.length === 0) {
-        // No hay servicios seleccionados, ir a servicios y mostrar indicador
         switchSection('servicios');
         showServicesIndicator();
         showNotification('👆 Selecciona los servicios que deseas reservar', 'info');
     } else {
-        // Ya hay servicios seleccionados, abrir modal directamente
         openBookingModal();
     }
 }
 
-// ========== FUNCIÓN PARA MOSTRAR EL BOTÓN GRANDE CUANDO SE NECESITE ==========
-function showBigBookingButton() {
-    const bigBookingContainer = getElement('bigBookingContainer');
-    if (bigBookingContainer) {
-        bigBookingContainer.style.display = 'block';
-    }
-}
-
-// ========== CARGA DE SERVICIOS CON BOTONES FLOTANTES ==========
 function loadServices() {
-    console.log('🔧 Cargando servicios...');
     const servicesContainer = getElement('servicesContainer');
     if (!servicesContainer) return;
 
@@ -378,43 +448,34 @@ function loadServices() {
         `;
         servicesContainer.appendChild(serviceCard);
 
-        // Event listener para el botón flotante
         const bookBtn = serviceCard.querySelector('.service-book-btn');
         bookBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             toggleServiceSelection(service, serviceCard, bookBtn);
         });
 
-        // Event listener para toda la tarjeta
         serviceCard.addEventListener('click', () => {
             toggleServiceSelection(service, serviceCard, bookBtn);
         });
     });
-    console.log('✅ Servicios cargados:', services.length);
 }
 
 function toggleServiceSelection(service, card, bookBtn) {
     const index = selectedServices.findIndex(s => s.id === service.id);
     
     if (index === -1) {
-        // Agregar servicio
         selectedServices.push(service);
         card.classList.add('selected');
         bookBtn.classList.add('added');
         bookBtn.innerHTML = '<span class="btn-icon">✓</span> Agregado';
         showNotification(`✅ ${service.name} añadido`, 'success');
-        
-        // Efecto visual de confirmación
         bookBtn.style.background = 'linear-gradient(135deg, #27ae60, #219653)';
     } else {
-        // Remover servicio
         selectedServices.splice(index, 1);
         card.classList.remove('selected');
         bookBtn.classList.remove('added');
         bookBtn.innerHTML = '<span class="btn-icon">➕</span> Agregar';
         showNotification(`🗑️ ${service.name} removido`, 'info');
-        
-        // Restaurar color original
         bookBtn.style.background = 'linear-gradient(135deg, #E75480, #D147A3)';
     }
     updateBookingPanel();
@@ -459,7 +520,6 @@ function updateBookingPanel() {
             selectedServicesPanel.appendChild(serviceItem);
         });
 
-        // Event listeners para botones de eliminar
         selectedServicesPanel.querySelectorAll('.remove-service').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -491,21 +551,16 @@ function updateBookingPanel() {
     }
 }
 
-// ========== MEJORAS PARA EL TECLADO EN MÓVILES ==========
 function initMobileKeyboardFix() {
     const bookingModal = getElement('bookingModal');
     const modalContent = document.querySelector('.modern-booking-modal');
     
     if (!bookingModal || !modalContent) return;
     
-    // Detectar cuando un input recibe foco
     const inputs = bookingModal.querySelectorAll('input, select, textarea');
     inputs.forEach(input => {
         input.addEventListener('focus', function() {
-            // Agregar clase al body para controlar el overflow
             document.body.classList.add('modal-open');
-            
-            // En móviles, hacer scroll al input activo
             setTimeout(() => {
                 this.scrollIntoView({ 
                     behavior: 'smooth', 
@@ -516,16 +571,14 @@ function initMobileKeyboardFix() {
         });
         
         input.addEventListener('blur', function() {
-            // Remover clase cuando no hay inputs enfocados
             if (!bookingModal.querySelector('input:focus, select:focus, textarea:focus')) {
                 document.body.classList.remove('modal-open');
             }
         });
     });
     
-    // Ajustar el modal cuando el teclado se muestra/oculta
     window.addEventListener('resize', function() {
-        if (window.innerHeight < 500) { // Teclado probablemente abierto
+        if (window.innerHeight < 500) {
             modalContent.style.maxHeight = '95vh';
         } else {
             modalContent.style.maxHeight = '90vh';
@@ -533,9 +586,7 @@ function initMobileKeyboardFix() {
     });
 }
 
-// ========== MODAL DE CITAS ==========
-function openBookingModal() {
-    // Verificar si las citas están pausadas
+async function openBookingModal() {
     if (isBookingPaused) {
         showNotification('⏸️ Las citas están temporalmente desactivadas. Por favor, intente más tarde.', 'warning');
         return;
@@ -552,32 +603,28 @@ function openBookingModal() {
     updateBookingPreview();
     modal.style.display = 'block';
     
-    // Inicializar fecha mínima como hoy
     const dateInput = getElement('date');
     if (dateInput) {
         const today = new Date().toISOString().split('T')[0];
         dateInput.min = today;
-        dateInput.value = today; // Establecer hoy como valor por defecto
+        dateInput.value = today;
     }
     
-    // Mostrar loading en horarios
     const timeSlots = getElement('timeSlots');
     if (timeSlots) {
         timeSlots.innerHTML = `
             <div class="time-slots-placeholder">
                 <div style="font-size: 2rem; margin-bottom: 10px;">⏳</div>
-                <strong>Preparando horarios...</strong>
-                <p style="margin-top: 5px; font-size: 0.9rem;">Cargando disponibilidad</p>
+                <strong>Calculando disponibilidad...</strong>
+                <p style="margin-top: 5px; font-size: 0.9rem;">Analizando horarios con IA</p>
             </div>
         `;
     }
     
-    // Generar horarios automáticamente al abrir el modal
     setTimeout(() => {
         generateTimeSlots();
     }, 300);
     
-    // INICIALIZAR CORRECCIONES PARA MÓVILES
     setTimeout(initMobileKeyboardFix, 100);
 }
 
@@ -585,7 +632,7 @@ function closeBookingModal() {
     const modal = getElement('bookingModal');
     if (modal) {
         modal.style.display = 'none';
-        selectedTime = null; // Resetear hora seleccionada
+        selectedTime = null;
     }
 }
 
@@ -622,26 +669,17 @@ function updateBookingPreview() {
     servicesCount.textContent = `${selectedServices.length} servicio${selectedServices.length !== 1 ? 's' : ''}`;
 }
 
-// ========== GENERACIÓN DE HORARIOS MEJORADA ==========
-function generateTimeSlots() {
+// ========== GENERACIÓN DE HORARIOS INTELIGENTE - CORREGIDO ==========
+async function generateTimeSlots() {
     const timeSlots = getElement('timeSlots');
     const dateInput = getElement('date');
-    if (!timeSlots || !dateInput) {
-        console.error('❌ No se encontraron elementos timeSlots o dateInput');
-        return;
-    }
+    if (!timeSlots || !dateInput) return;
 
-    // Obtener fecha seleccionada
     const selectedDate = dateInput.value;
-    const today = new Date().toISOString().split('T')[0];
     
-    console.log('📅 Generando horarios para:', selectedDate, 'Hoy:', today);
-    
-    // Limpiar horarios anteriores
     timeSlots.innerHTML = '';
     selectedTime = null;
 
-    // Verificar si hay una fecha seleccionada
     if (!selectedDate) {
         timeSlots.innerHTML = `
             <div class="time-slots-placeholder">
@@ -653,100 +691,46 @@ function generateTimeSlots() {
         return;
     }
 
-    // Generar horarios de 9:00 AM a 6:00 PM cada 30 minutos
-    const allSlots = [];
-    for (let hour = 9; hour <= 18; hour++) {
-        for (let minute = 0; minute < 60; minute += 30) {
-            if (hour === 18 && minute > 0) break; // No pasar de las 18:00
-            
-            const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-            allSlots.push(timeString);
-        }
-    }
-
-    console.log('⏰ Todos los horarios generados:', allSlots);
-
-    // Determinar horarios disponibles y no disponibles
-    let availableSlots = [];
-    let unavailableSlots = [];
-    
-    if (selectedDate === today) {
-        const now = new Date();
-        const currentHour = now.getHours();
-        const currentMinute = now.getMinutes();
-        const currentTimeInMinutes = currentHour * 60 + currentMinute;
+    try {
+        const availability = await scheduleManager.calculateAvailability(selectedDate, selectedServices);
+        const allSlots = scheduleManager.generateAllTimeSlots();
         
-        console.log('🕐 Hora actual:', currentHour + ':' + currentMinute, 'Minutos:', currentTimeInMinutes);
-        
-        // Separar slots disponibles y no disponibles
+        let availableSlots = [];
+        let unavailableSlots = [];
+
         allSlots.forEach(slot => {
-            const [hours, minutes] = slot.split(':');
-            const slotTimeInMinutes = parseInt(hours) * 60 + parseInt(minutes);
-            const isAvailable = slotTimeInMinutes > currentTimeInMinutes + 30;
-            
-            if (isAvailable) {
+            if (availability[slot].status === 'available') {
                 availableSlots.push(slot);
             } else {
                 unavailableSlots.push(slot);
             }
         });
-    } else {
-        // Si no es hoy, todos los horarios están disponibles
-        availableSlots = allSlots;
-        unavailableSlots = [];
+
+        const timeGrid = document.createElement('div');
+        timeGrid.className = 'time-slots-modern';
+        
+        availableSlots.forEach(slot => {
+            const slotElement = createTimeSlot(slot, 'available', 'Disponible');
+            timeGrid.appendChild(slotElement);
+        });
+
+        unavailableSlots.forEach(slot => {
+            const slotElement = createTimeSlot(slot, 'unavailable', 'Ocupado');
+            timeGrid.appendChild(slotElement);
+        });
+        
+        timeSlots.appendChild(timeGrid);
+
+    } catch (error) {
+        console.error('❌ Error generando horarios:', error);
+        timeSlots.innerHTML = `
+            <div class="time-slots-placeholder">
+                <div style="font-size: 2rem; margin-bottom: 10px;">❌</div>
+                <strong>Error al cargar horarios</strong>
+                <p style="margin-top: 5px; font-size: 0.9rem;">Intenta nuevamente</p>
+            </div>
+        `;
     }
-
-    console.log('✅ Horarios disponibles:', availableSlots);
-    console.log('❌ Horarios no disponibles:', unavailableSlots);
-
-    // Crear contenedor principal con clase específica
-    timeSlots.className = 'time-slots-container-modern';
-    
-    // Header con contador
-    const timeHeader = document.createElement('div');
-    timeHeader.className = 'time-slots-header';
-    timeHeader.innerHTML = `
-        <div class="time-slots-title">⏰ Selecciona una hora</div>
-        <div class="time-slots-count">${availableSlots.length} disponibles</div>
-    `;
-    timeSlots.appendChild(timeHeader);
-
-    // Contenedor de grids
-    const timeGrid = document.createElement('div');
-    timeGrid.className = 'time-slots-modern';
-    
-    // Crear botones para horarios disponibles
-    availableSlots.forEach(slot => {
-        const slotElement = createTimeSlot(slot, 'available', 'Disponible');
-        timeGrid.appendChild(slotElement);
-    });
-
-    // Crear botones para horarios no disponibles
-    unavailableSlots.forEach(slot => {
-        const slotElement = createTimeSlot(slot, 'unavailable', 'No disponible');
-        timeGrid.appendChild(slotElement);
-    });
-    
-    timeSlots.appendChild(timeGrid);
-
-    // Información de leyenda
-    const timeInfo = document.createElement('div');
-    timeInfo.className = 'time-slots-info';
-    timeInfo.innerHTML = `
-        <div class="time-info-item">
-            <div class="time-info-dot available"></div>
-            <span>Disponible</span>
-        </div>
-        <div class="time-info-item">
-            <div class="time-info-dot unavailable"></div>
-            <span>No disponible</span>
-        </div>
-        <div class="time-info-item">
-            <div class="time-info-dot selected"></div>
-            <span>Seleccionado</span>
-        </div>
-    `;
-    timeSlots.appendChild(timeInfo);
 }
 
 function createTimeSlot(time, status, statusText) {
@@ -760,20 +744,14 @@ function createTimeSlot(time, status, statusText) {
     
     if (status === 'available') {
         slotElement.addEventListener('click', function() {
-            // Remover selección anterior
             document.querySelectorAll('.time-slot.selected').forEach(s => {
                 s.classList.remove('selected');
             });
             
-            // Seleccionar nuevo slot
             this.classList.add('selected');
             selectedTime = time;
-            console.log('✅ Hora seleccionada:', selectedTime);
             
-            // Actualizar estado visual
             updateTimeSlotStatus(this, 'selected', 'Seleccionado');
-            
-            // Mostrar confirmación visual
             showNotification(`🕐 Hora seleccionada: ${selectedTime}`, 'success');
         });
     } else {
@@ -784,22 +762,16 @@ function createTimeSlot(time, status, statusText) {
 }
 
 function updateTimeSlotStatus(element, status, statusText) {
-    // Remover todas las clases de estado
     element.classList.remove('available', 'unavailable', 'selected');
-    
-    // Agregar nueva clase de estado
     element.classList.add(status);
     
-    // Actualizar texto de estado
     const statusSpan = element.querySelector('.time-slot-status');
     if (statusSpan) {
         statusSpan.textContent = statusText;
     }
 }
 
-// ========== NOTIFICACIONES ==========
 function showNotification(message, type = 'info') {
-    // Crear elemento de notificación
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.innerHTML = `
@@ -807,7 +779,6 @@ function showNotification(message, type = 'info') {
         <button class="notification-close">&times;</button>
     `;
     
-    // Estilos básicos para la notificación
     notification.style.cssText = `
         position: fixed;
         top: 20px;
@@ -825,7 +796,6 @@ function showNotification(message, type = 'info') {
         animation: slideInRight 0.3s ease;
     `;
     
-    // Agregar estilos de animación si no existen
     if (!document.querySelector('#notification-styles')) {
         const style = document.createElement('style');
         style.id = 'notification-styles';
@@ -844,7 +814,6 @@ function showNotification(message, type = 'info') {
     
     document.body.appendChild(notification);
     
-    // Auto-remover después de 4 segundos
     setTimeout(() => {
         if (notification.parentNode) {
             notification.style.animation = 'slideOutRight 0.3s ease';
@@ -852,13 +821,11 @@ function showNotification(message, type = 'info') {
         }
     }, 4000);
     
-    // Cerrar al hacer click
     notification.querySelector('.notification-close').addEventListener('click', () => {
         notification.remove();
     });
 }
 
-// ========== PRODUCTOS ==========
 async function loadProducts() {
     try {
         const response = await fetch('js/galeria.json');
@@ -884,22 +851,18 @@ async function loadProducts() {
                 </div>
             `;
             
-            // Agregar evento click para abrir visor de imágenes
             productCard.addEventListener('click', () => {
                 openProductViewer(index);
             });
             
             productsContainer.appendChild(productCard);
         });
-        
-        console.log('✅ Productos cargados:', data.productos.length);
     } catch (error) {
         console.error('❌ Error cargando productos:', error);
         showNotification('⚠️ Error cargando productos', 'error');
     }
 }
 
-// ========== GALERÍA CORREGIDA ==========
 async function loadGallery() {
     try {
         const galleryContainer = getElement('galleryContainer');
@@ -908,48 +871,15 @@ async function loadGallery() {
         
         galleryContainer.innerHTML = '';
         
-        // Array con las imágenes de la galería de trabajos - RUTA CORREGIDA
         const galeriaTrabajos = [
-            {
-                id: 1,
-                archivo: "imagen1.jpg",
-                descripcion: "Trabajo profesional de coloración"
-            },
-            {
-                id: 2,
-                archivo: "imagen2.jpg", 
-                descripcion: "Corte y peinado moderno"
-            },
-            {
-                id: 3,
-                archivo: "imagen3.jpg",
-                descripcion: "Extensiones de cabello"
-            },
-            {
-                id: 4,
-                archivo: "imagen4.jpg",
-                descripcion: "Tratamiento de keratina"
-            },
-            {
-                id: 5,
-                archivo: "imagen5.jpg",
-                descripcion: "Peinado para eventos"
-            },
-            {
-                id: 6,
-                archivo: "imagen6.jpg",
-                descripcion: "Coloración fantasía"
-            },
-            {
-                id: 7,
-                archivo: "imagen7.jpg",
-                descripcion: "Corte profesional"
-            },
-            {
-                id: 8,
-                archivo: "imagen8.jpg",
-                descripcion: "Maquillaje y estilismo"
-            }
+            { id: 1, archivo: "imagen1.jpg", descripcion: "Trabajo profesional de coloración" },
+            { id: 2, archivo: "imagen2.jpg", descripcion: "Corte y peinado moderno" },
+            { id: 3, archivo: "imagen3.jpg", descripcion: "Extensiones de cabello" },
+            { id: 4, archivo: "imagen4.jpg", descripcion: "Tratamiento de keratina" },
+            { id: 5, archivo: "imagen5.jpg", descripcion: "Peinado para eventos" },
+            { id: 6, archivo: "imagen6.jpg", descripcion: "Coloración fantasía" },
+            { id: 7, archivo: "imagen7.jpg", descripcion: "Corte profesional" },
+            { id: 8, archivo: "imagen8.jpg", descripcion: "Maquillaje y estilismo" }
         ];
         
         currentImages = galeriaTrabajos;
@@ -968,65 +898,29 @@ async function loadGallery() {
             galleryItem.addEventListener('click', () => openImageViewer(index));
             galleryContainer.appendChild(galleryItem);
         });
-        
-        console.log('✅ Galería cargada:', galeriaTrabajos.length, 'imágenes');
-        console.log('📁 Ruta utilizada: imagenes/Galería-Trabajo/');
     } catch (error) {
         console.error('❌ Error cargando galería:', error);
         showNotification('⚠️ Error cargando galería de trabajos', 'error');
-        
-        // Mostrar mensaje de error en la galería
-        const galleryContainer = getElement('galleryContainer');
-        if (galleryContainer) {
-            galleryContainer.innerHTML = `
-                <div class="gallery-error">
-                    <div class="error-icon">📷</div>
-                    <h3>Galería no disponible</h3>
-                    <p>No se pudieron cargar las imágenes de trabajos.</p>
-                    <p class="error-detail">Ruta esperada: imagenes/Galería-Trabajo/</p>
-                    <p class="error-detail">Error: ${error.message}</p>
-                </div>
-            `;
-        }
     }
 }
 
-// ========== SISTEMA DE ZOOM PARA IMÁGENES ==========
 function initImageZoom() {
-    console.log('🔍 Inicializando sistema de zoom para imágenes...');
-    
     const zoomInBtn = getElement('zoomIn');
     const zoomOutBtn = getElement('zoomOut');
     const resetZoomBtn = getElement('resetZoom');
     const closeImageViewerBtn = getElement('closeImageViewer');
     const viewerImage = getElement('viewerImage');
     
-    if (zoomInBtn) {
-        zoomInBtn.addEventListener('click', zoomIn);
-    }
-    
-    if (zoomOutBtn) {
-        zoomOutBtn.addEventListener('click', zoomOut);
-    }
-    
-    if (resetZoomBtn) {
-        resetZoomBtn.addEventListener('click', resetZoom);
-    }
-    
-    if (closeImageViewerBtn) {
-        closeImageViewerBtn.addEventListener('click', closeImageViewer);
-    }
+    if (zoomInBtn) zoomInBtn.addEventListener('click', zoomIn);
+    if (zoomOutBtn) zoomOutBtn.addEventListener('click', zoomOut);
+    if (resetZoomBtn) resetZoomBtn.addEventListener('click', resetZoom);
+    if (closeImageViewerBtn) closeImageViewerBtn.addEventListener('click', closeImageViewer);
     
     if (viewerImage) {
-        // Touch events para zoom en móviles
         viewerImage.addEventListener('touchstart', handleTouchStart, { passive: false });
         viewerImage.addEventListener('touchmove', handleTouchMove, { passive: false });
         viewerImage.addEventListener('touchend', handleTouchEnd);
-        
-        // Double click para zoom
         viewerImage.addEventListener('dblclick', toggleZoom);
-        
-        // Mouse wheel para zoom
         viewerImage.addEventListener('wheel', handleWheel, { passive: false });
     }
 }
@@ -1051,11 +945,7 @@ function resetZoom() {
 }
 
 function toggleZoom() {
-    if (zoomLevel === 1) {
-        zoomLevel = 2;
-    } else {
-        zoomLevel = 1;
-    }
+    zoomLevel = zoomLevel === 1 ? 2 : 1;
     applyZoom();
 }
 
@@ -1067,7 +957,6 @@ function applyZoom() {
     }
 }
 
-// Touch events para zoom en móviles
 function handleTouchStart(e) {
     if (e.touches.length === 2) {
         e.preventDefault();
@@ -1108,15 +997,12 @@ function handleTouchEnd(e) {
 function handleWheel(e) {
     e.preventDefault();
     if (e.deltaY < 0) {
-        // Scroll up - zoom in
         zoomIn();
     } else {
-        // Scroll down - zoom out
         zoomOut();
     }
 }
 
-// ========== VISOR DE IMÁGENES CORREGIDO ==========
 function openImageViewer(index) {
     currentImageIndex = index;
     const viewerModal = getElement('imageViewerModal');
@@ -1127,13 +1013,10 @@ function openImageViewer(index) {
     viewerImage.src = `imagenes/Galería-Trabajo/${currentImages[currentImageIndex].archivo}`;
     viewerImage.alt = currentImages[currentImageIndex].descripcion;
     viewerModal.style.display = 'block';
-    
-    // Resetear zoom al abrir
     resetZoom();
 }
 
 function openProductViewer(index) {
-    // Cargar productos para el visor
     fetch('js/galeria.json')
         .then(response => response.json())
         .then(data => {
@@ -1152,8 +1035,6 @@ function openProductViewer(index) {
             viewerImage.src = `imagenes/productos/${currentImages[currentImageIndex].archivo}`;
             viewerImage.alt = currentImages[currentImageIndex].descripcion;
             viewerModal.style.display = 'block';
-            
-            // Resetear zoom al abrir
             resetZoom();
         })
         .catch(error => {
@@ -1182,69 +1063,49 @@ function navigateImage(direction) {
     if (viewerImage) {
         viewerImage.src = `imagenes/Galería-Trabajo/${currentImages[currentImageIndex].archivo}`;
         viewerImage.alt = currentImages[currentImageIndex].descripcion;
-        
-        // Resetear zoom al cambiar imagen
         resetZoom();
     }
 }
 
-// ========== INICIALIZACIÓN DE FECHA MEJORADA ==========
 function initializeDateInput() {
     const dateInput = getElement('date');
     if (dateInput) {
         const today = new Date().toISOString().split('T')[0];
         dateInput.min = today;
-        dateInput.value = today; // Establecer hoy como valor por defecto
-        
-        console.log('📅 Input de fecha inicializado. Hoy:', today);
+        dateInput.value = today;
         
         dateInput.addEventListener('change', function() {
-            console.log('📅 Fecha seleccionada:', this.value);
-            selectedTime = null; // Resetear hora al cambiar fecha
+            selectedTime = null;
             
-            // Mostrar loading en horarios
             const timeSlots = getElement('timeSlots');
             if (timeSlots) {
                 timeSlots.innerHTML = `
                     <div class="time-slots-placeholder">
                         <div style="font-size: 2rem; margin-bottom: 10px;">⏳</div>
-                        <strong>Cargando horarios...</strong>
-                        <p style="margin-top: 5px; font-size: 0.9rem;">Generando disponibilidad para ${this.value}</p>
+                        <strong>Calculando disponibilidad...</strong>
+                        <p style="margin-top: 5px; font-size: 0.9rem;">Analizando horarios para ${this.value}</p>
                     </div>
                 `;
             }
             
-            // Generar horarios después de un pequeño delay
             setTimeout(() => {
                 generateTimeSlots();
             }, 500);
         });
         
-        // Generar horarios iniciales
         setTimeout(() => {
             generateTimeSlots();
         }, 1000);
-    } else {
-        console.error('❌ No se encontró el elemento date input');
     }
 }
 
-// ========== ENVÍO DE FORMULARIO CON VALIDACIÓN MEJORADA ==========
-function setupBookingForm() {
+async function setupBookingForm() {
     const bookingForm = getElement('bookingForm');
-    if (!bookingForm) {
-        console.error('❌ No se encontró el formulario de reservas');
-        return;
-    }
+    if (!bookingForm) return;
     
     bookingForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        console.log('📤 Enviando formulario...');
-        console.log('✅ Servicios seleccionados:', selectedServices.length);
-        console.log('🕐 Hora seleccionada:', selectedTime);
-        
-        // Verificar si las citas están pausadas
         if (isBookingPaused) {
             showNotification('⏸️ Las citas están temporalmente desactivadas. Por favor, intente más tarde.', 'warning');
             return;
@@ -1257,16 +1118,6 @@ function setupBookingForm() {
         
         if (!selectedTime) {
             showNotification('⚠️ Selecciona una hora para tu cita', 'warning');
-            
-            // Resaltar la sección de horarios
-            const timeSlots = getElement('timeSlots');
-            if (timeSlots) {
-                timeSlots.style.border = '2px solid #e74c3c';
-                timeSlots.style.borderRadius = '8px';
-                setTimeout(() => {
-                    timeSlots.style.border = '';
-                }, 3000);
-            }
             return;
         }
         
@@ -1275,28 +1126,28 @@ function setupBookingForm() {
         const name = formData.get('name');
         const phone = formData.get('phone');
         
-        console.log('📝 Datos del formulario:', { date, name, phone });
-        
-        // Validaciones básicas
         if (!date || !name || !phone) {
             showNotification('⚠️ Completa todos los campos requeridos', 'warning');
             return;
         }
         
-        // Validar formato de teléfono
         if (phone.length < 8) {
             showNotification('⚠️ Ingresa un número de teléfono válido', 'warning');
             return;
         }
         
         try {
-            // Calcular total y duración
+            const availabilityCheck = await scheduleManager.checkSpecificAvailability(date, selectedTime, selectedServices);
+            
+            if (!availabilityCheck.available) {
+                showNotification(`❌ ${availabilityCheck.reason}. Por favor, selecciona otro horario.`, 'error');
+                generateTimeSlots();
+                return;
+            }
+            
             const total = selectedServices.reduce((sum, service) => sum + service.price, 0);
             const duration = selectedServices.reduce((sum, service) => sum + service.duration, 0);
             
-            console.log('💾 Guardando cita en Firebase...');
-            
-            // Crear cita en Firebase
             const docRef = await addDoc(collection(db, "citas"), {
                 fecha: date,
                 hora: selectedTime,
@@ -1306,34 +1157,27 @@ function setupBookingForm() {
                 total: total,
                 duracion: duration,
                 estado: 'confirmada',
-                timestamp: new Date()
+                timestamp: new Date(),
+                codigo: generateBookingCode()
             });
             
-            console.log('✅ Cita guardada con ID:', docRef.id);
+            showCentralConfirmation(name, selectedTime, date);
             
-            // Mostrar modal de éxito
             closeBookingModal();
-            showSuccessModal();
             
-            // Resetear selección
             selectedServices = [];
             updateBookingPanel();
             
-            // Resetear formulario
             bookingForm.reset();
             selectedTime = null;
             
-            // Resetear fecha a hoy
             const dateInput = getElement('date');
             if (dateInput) {
                 const today = new Date().toISOString().split('T')[0];
                 dateInput.value = today;
             }
             
-            // Resetear horarios
             generateTimeSlots();
-            
-            console.log('🔄 Formulario reseteado');
             
         } catch (error) {
             console.error('❌ Error guardando cita:', error);
@@ -1342,21 +1186,188 @@ function setupBookingForm() {
     });
 }
 
-function showSuccessModal() {
-    const successModal = getElement('successModal');
-    if (successModal) {
-        successModal.style.display = 'block';
+function showCentralConfirmation(clientName, time, date) {
+    const confirmationOverlay = document.createElement('div');
+    confirmationOverlay.className = 'central-confirmation-overlay';
+    confirmationOverlay.innerHTML = `
+        <div class="central-confirmation-content">
+            <div class="confirmation-icon">✅</div>
+            <h2>¡Cita Confirmada!</h2>
+            <p class="confirmation-message">${clientName}, tu cita ha sido agendada exitosamente</p>
+            <div class="confirmation-details">
+                <div class="confirmation-detail">
+                    <span class="detail-icon">📅</span>
+                    <span>${date}</span>
+                </div>
+                <div class="confirmation-detail">
+                    <span class="detail-icon">⏰</span>
+                    <span>${time}</span>
+                </div>
+                <div class="confirmation-detail">
+                    <span class="detail-icon">📍</span>
+                    <span>Tellstrase 32, 8400 Winterthur</span>
+                </div>
+            </div>
+            <div class="confirmation-actions">
+                <button class="btn-confirmation-close">Entendido</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(confirmationOverlay);
+    
+    const styles = `
+        .central-confirmation-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .central-confirmation-content {
+            background: linear-gradient(135deg, #27ae60, #219653);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideInUp 0.5s ease;
+        }
+        
+        .confirmation-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: bounce 1s ease;
+        }
+        
+        .central-confirmation-content h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .confirmation-message {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            opacity: 0.9;
+        }
+        
+        .confirmation-details {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .confirmation-detail {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            justify-content: center;
+        }
+        
+        .confirmation-detail:last-child {
+            margin-bottom: 0;
+        }
+        
+        .detail-icon {
+            font-size: 1.2rem;
+        }
+        
+        .btn-confirmation-close {
+            background: white;
+            color: #27ae60;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn-confirmation-close:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideInUp {
+            from { 
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+    `;
+    
+    if (!document.querySelector('#confirmation-styles')) {
+        const styleSheet = document.createElement('style');
+        styleSheet.id = 'confirmation-styles';
+        styleSheet.textContent = styles;
+        document.head.appendChild(styleSheet);
     }
+    
+    confirmationOverlay.querySelector('.btn-confirmation-close').addEventListener('click', () => {
+        confirmationOverlay.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => {
+            if (confirmationOverlay.parentNode) {
+                confirmationOverlay.remove();
+            }
+        }, 300);
+    });
+    
+    confirmationOverlay.addEventListener('click', (e) => {
+        if (e.target === confirmationOverlay) {
+            confirmationOverlay.style.animation = 'fadeOut 0.3s ease';
+            setTimeout(() => {
+                if (confirmationOverlay.parentNode) {
+                    confirmationOverlay.remove();
+                }
+            }, 300);
+        }
+    });
 }
 
-function closeSuccessModal() {
-    const successModal = getElement('successModal');
-    if (successModal) {
-        successModal.style.display = 'none';
+function generateBookingCode() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let code = '';
+    for (let i = 0; i < 6; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
     }
+    return code;
 }
 
-// ========== ADMIN - CON CONTRASEÑA ==========
 function setupAdminModal() {
     const adminBtn = getElement('adminBtn');
     const adminModal = getElement('adminModal');
@@ -1374,97 +1385,14 @@ function setupAdminModal() {
     }
 }
 
-// ========== COMPORTAMIENTO CORTINA EN MÓVILES PARA ADMIN ==========
-function setupAdminScrollBehavior() {
-    const adminContent = document.querySelector('.admin-content');
-    const adminHeader = document.querySelector('.admin-header');
-    const adminTabs = document.querySelector('.admin-tabs');
-    
-    if (!adminContent || !adminHeader || !adminTabs) {
-        console.log('❌ Elementos admin no encontrados');
-        return;
-    }
-
-    let lastScrollTop = 0;
-    let scrollTimeout;
-    let isHidden = false;
-
-    adminContent.addEventListener('scroll', function() {
-        const scrollTop = adminContent.scrollTop;
-        
-        clearTimeout(scrollTimeout);
-        
-        if (scrollTop > lastScrollTop && scrollTop > 30 && !isHidden) {
-            // Scrolling down - hide header and tabs
-            adminHeader.style.transform = 'translateY(-100%)';
-            adminTabs.style.transform = 'translateY(-100%)';
-            adminHeader.style.transition = 'transform 0.3s ease';
-            adminTabs.style.transition = 'transform 0.3s ease';
-            isHidden = true;
-        } else if (scrollTop <= lastScrollTop && isHidden) {
-            // Scrolling up - show header and tabs
-            adminHeader.style.transform = 'translateY(0)';
-            adminTabs.style.transform = 'translateY(0)';
-            isHidden = false;
-        }
-        
-        lastScrollTop = scrollTop;
-        
-        // Auto-show after 3 seconds of no scrolling
-        scrollTimeout = setTimeout(() => {
-            if (isHidden) {
-                adminHeader.style.transform = 'translateY(0)';
-                adminTabs.style.transform = 'translateY(0)';
-                isHidden = false;
-            }
-        }, 3000);
-    });
-
-    // También manejar scroll en ventana para móviles
-    if (window.innerWidth <= 768) {
-        let lastWindowScroll = 0;
-        let windowScrollTimeout;
-        let windowHidden = false;
-        
-        window.addEventListener('scroll', function() {
-            const adminModal = document.getElementById('adminModal');
-            if (!adminModal || adminModal.style.display !== 'block') return;
-            
-            const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-            
-            clearTimeout(windowScrollTimeout);
-            
-            if (currentScroll > lastWindowScroll && currentScroll > 50 && !windowHidden) {
-                adminHeader.style.transform = 'translateY(-100%)';
-                adminTabs.style.transform = 'translateY(-100%)';
-                windowHidden = true;
-            } else if (currentScroll <= lastWindowScroll && windowHidden) {
-                adminHeader.style.transform = 'translateY(0)';
-                adminTabs.style.transform = 'translateY(0)';
-                windowHidden = false;
-            }
-            
-            lastWindowScroll = currentScroll;
-            
-            windowScrollTimeout = setTimeout(() => {
-                if (windowHidden) {
-                    adminHeader.style.transform = 'translateY(0)';
-                    adminTabs.style.transform = 'translateY(0)';
-                    windowHidden = false;
-                }
-            }, 3000);
-        });
-    }
-}
-
 function loadAdminContent() {
     const adminContent = getElement('adminContent');
     if (!adminContent) return;
     
     adminContent.innerHTML = `
         <div class="admin-header">
-            <h2>🔧 Panel de Administración</h2>
-            <p>Gestión de citas y servicios</p>
+            <h2>🔧 Panel de Administración Inteligente</h2>
+            <p>Gestión avanzada de citas y horarios</p>
             
             <div class="admin-global-controls">
                 <div class="control-group">
@@ -1481,16 +1409,18 @@ function loadAdminContent() {
         
         <div class="admin-tabs">
             <button class="tab-btn active" data-tab="citas">📅 Citas Programadas</button>
-            <button class="tab-btn" data-tab="estadisticas">📊 Estadísticas</button>
+            <button class="tab-btn" data-tab="estadisticas">📊 Estadísticas Avanzadas</button>
+            <button class="tab-btn" data-tab="horarios">⏰ Gestión de Horarios</button>
         </div>
         
         <div class="admin-content">
             <div id="citasTab" class="tab-content active">
                 <div class="citas-header">
-                    <h3>Citas Confirmadas</h3>
+                    <h3>Citas Confirmadas - Sistema Inteligente</h3>
                     <div class="citas-stats">
                         <span class="stat-item">Total: <strong id="totalCitas">0</strong></span>
                         <span class="stat-item">Hoy: <strong id="citasHoy">0</strong></span>
+                        <span class="stat-item">Capacidad: <strong id="capacidadDia">540</strong>min</span>
                     </div>
                 </div>
                 <div id="citasList" class="citas-list">
@@ -1499,7 +1429,7 @@ function loadAdminContent() {
             </div>
             
             <div id="estadisticasTab" class="tab-content">
-                <h3 style="color: var(--primary-color); margin-bottom: 20px; text-align: center;">📊 Estadísticas del Día</h3>
+                <h3 style="color: var(--primary-color); margin-bottom: 20px; text-align: center;">📊 Análisis de Rendimiento</h3>
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon">💰</div>
@@ -1512,22 +1442,50 @@ function loadAdminContent() {
                         <div class="stat-icon">⏰</div>
                         <div class="stat-info">
                             <span class="stat-value"><span id="tiempoTotal">0</span>min</span>
-                            <span class="stat-label">Tiempo Total</span>
+                            <span class="stat-label">Tiempo Ocupado</span>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">✅</div>
+                        <div class="stat-icon">📈</div>
                         <div class="stat-info">
-                            <span class="stat-value"><span id="citasCompletadas">0</span></span>
-                            <span class="stat-label">Citas Hoy</span>
+                            <span class="stat-value"><span id="eficiencia">0</span>%</span>
+                            <span class="stat-label">Eficiencia</span>
                         </div>
                     </div>
+                </div>
+                <div class="capacity-chart">
+                    <h4>Capacidad del Día</h4>
+                    <div class="capacity-bar">
+                        <div class="capacity-fill" id="capacityFill" style="width: 0%"></div>
+                    </div>
+                    <div class="capacity-stats">
+                        <span>Ocupado: <strong id="ocupadoHoy">0</strong>min</span>
+                        <span>Disponible: <strong id="disponibleHoy">540</strong>min</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="horariosTab" class="tab-content">
+                <h3 style="color: var(--primary-color); margin-bottom: 20px; text-align: center;">⏰ Configuración de Horarios</h3>
+                <div class="schedule-config">
+                    <div class="config-item">
+                        <label>Horario de Apertura:</label>
+                        <input type="time" id="openTime" value="09:00" class="time-input">
+                    </div>
+                    <div class="config-item">
+                        <label>Horario de Cierre:</label>
+                        <input type="time" id="closeTime" value="18:00" class="time-input">
+                    </div>
+                    <div class="config-item">
+                        <label>Duración Máxima Diaria (min):</label>
+                        <input type="number" id="maxDaily" value="540" class="number-input">
+                    </div>
+                    <button class="btn btn-success" id="saveScheduleConfig">💾 Guardar Configuración</button>
                 </div>
             </div>
         </div>
     `;
     
-    // Configurar botón de pausar/reanudar citas
     const toggleBookingBtn = getElement('toggleBookingBtn');
     if (toggleBookingBtn) {
         toggleBookingBtn.addEventListener('click', function() {
@@ -1537,19 +1495,36 @@ function loadAdminContent() {
                 isBookingPaused ? '⏸️ Citas pausadas - No se aceptan nuevas reservas' : '✅ Citas reanudadas - Ya puedes aceptar reservas',
                 isBookingPaused ? 'warning' : 'success'
             );
-            loadAdminContent(); // Recargar para actualizar la interfaz
+            loadAdminContent();
         });
     }
     
-    // Cargar citas y estadísticas
     loadCitas();
     loadEstadisticas();
-    
-    // Configurar tabs
     setupAdminTabs();
-    
-    // Configurar comportamiento de cortina
-    setTimeout(setupAdminScrollBehavior, 100);
+    setupScheduleConfig();
+}
+
+function setupScheduleConfig() {
+    const saveConfigBtn = getElement('saveScheduleConfig');
+    if (saveConfigBtn) {
+        saveConfigBtn.addEventListener('click', function() {
+            const openTime = getElement('openTime').value;
+            const closeTime = getElement('closeTime').value;
+            const maxDaily = parseInt(getElement('maxDaily').value);
+            
+            scheduleManager.workDayStart = scheduleManager.timeToMinutes(openTime);
+            scheduleManager.workDayEnd = scheduleManager.timeToMinutes(closeTime);
+            scheduleManager.maxDailyCapacity = maxDaily;
+            
+            showNotification('✅ Configuración de horarios guardada correctamente', 'success');
+            
+            const bookingModal = getElement('bookingModal');
+            if (bookingModal && bookingModal.style.display === 'block') {
+                generateTimeSlots();
+            }
+        });
+    }
 }
 
 function setupAdminTabs() {
@@ -1558,11 +1533,9 @@ function setupAdminTabs() {
     
     tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            // Remover active de todos
             tabBtns.forEach(b => b.classList.remove('active'));
             tabContents.forEach(c => c.classList.remove('active'));
             
-            // Activar tab seleccionado
             btn.classList.add('active');
             const tabId = btn.getAttribute('data-tab') + 'Tab';
             document.getElementById(tabId).classList.add('active');
@@ -1592,7 +1565,6 @@ function loadCitas() {
             const cita = doc.data();
             totalCitas++;
             
-            // Contar citas de hoy
             if (cita.fecha === today) {
                 citasHoy++;
             }
@@ -1604,6 +1576,7 @@ function loadCitas() {
                     <div class="cita-cliente">
                         <h4>👤 ${cita.nombre}</h4>
                         <span class="cita-telefono">📞 ${cita.telefono}</span>
+                        ${cita.codigo ? `<span class="cita-codigo">🔑 ${cita.codigo}</span>` : ''}
                     </div>
                     <div class="cita-estado-badge ${cita.estado}">
                         ${cita.estado === 'confirmada' ? '✅ Confirmada' : '❌ Cancelada'}
@@ -1634,7 +1607,6 @@ function loadCitas() {
             citasList.appendChild(citaElement);
         });
 
-        // Actualizar contadores
         const totalCitasElement = getElement('totalCitas');
         const citasHoyElement = getElement('citasHoy');
         if (totalCitasElement) totalCitasElement.textContent = totalCitas;
@@ -1654,7 +1626,6 @@ function loadEstadisticas() {
         snapshot.forEach((doc) => {
             const cita = doc.data();
             
-            // Solo contar citas de hoy y confirmadas
             if (cita.fecha === today && cita.estado === 'confirmada') {
                 ingresosHoy += cita.total;
                 tiempoTotal += cita.duracion;
@@ -1662,23 +1633,38 @@ function loadEstadisticas() {
             }
         });
 
-        // Actualizar estadísticas
         const ingresosHoyElement = getElement('ingresosHoy');
         const tiempoTotalElement = getElement('tiempoTotal');
         const citasCompletadasElement = getElement('citasCompletadas');
+        const eficienciaElement = getElement('eficiencia');
+        const ocupadoHoyElement = getElement('ocupadoHoy');
+        const disponibleHoyElement = getElement('disponibleHoy');
+        const capacityFill = getElement('capacityFill');
         
         if (ingresosHoyElement) ingresosHoyElement.textContent = ingresosHoy;
         if (tiempoTotalElement) tiempoTotalElement.textContent = tiempoTotal;
         if (citasCompletadasElement) citasCompletadasElement.textContent = citasCompletadas;
+        
+        const eficiencia = Math.round((tiempoTotal / 540) * 100);
+        const disponible = 540 - tiempoTotal;
+        
+        if (eficienciaElement) eficienciaElement.textContent = eficiencia;
+        if (ocupadoHoyElement) ocupadoHoyElement.textContent = tiempoTotal;
+        if (disponibleHoyElement) disponibleHoyElement.textContent = disponible;
+        if (capacityFill) capacityFill.style.width = `${eficiencia}%`;
     });
 }
 
-// ========== FUNCIONES ADMIN MEJORADAS ==========
 async function cancelarCita(citaId) {
     if (confirm('¿Estás seguro de cancelar esta cita? El horario quedará disponible para otros clientes.')) {
         try {
             await deleteDoc(doc(db, "citas", citaId));
             showNotification('✅ Cita cancelada - El horario ahora está disponible', 'success');
+            
+            const bookingModal = getElement('bookingModal');
+            if (bookingModal && bookingModal.style.display === 'block') {
+                generateTimeSlots();
+            }
         } catch (error) {
             console.error('Error cancelando cita:', error);
             showNotification('❌ Error cancelando cita', 'error');
@@ -1686,9 +1672,7 @@ async function cancelarCita(citaId) {
     }
 }
 
-// ========== EVENT LISTENERS GLOBALES ==========
 function setupGlobalEventListeners() {
-    // Cerrar modales al hacer click fuera
     document.addEventListener('click', function(e) {
         const modals = document.querySelectorAll('.modal');
         modals.forEach(modal => {
@@ -1698,47 +1682,34 @@ function setupGlobalEventListeners() {
         });
     });
     
-    // Cerrar modales con botón X
     document.querySelectorAll('.close').forEach(closeBtn => {
         closeBtn.addEventListener('click', function() {
             this.closest('.modal').style.display = 'none';
         });
     });
     
-    // Cerrar modal de éxito
     const closeSuccessBtn = getElement('closeSuccessModal');
     if (closeSuccessBtn) {
         closeSuccessBtn.addEventListener('click', closeSuccessModal);
     }
     
-    // Navegación de imágenes
     const prevImageBtn = getElement('prevImage');
     const nextImageBtn = getElement('nextImage');
     
-    if (prevImageBtn) {
-        prevImageBtn.addEventListener('click', () => navigateImage(-1));
-    }
-    if (nextImageBtn) {
-        nextImageBtn.addEventListener('click', () => navigateImage(1));
-    }
+    if (prevImageBtn) prevImageBtn.addEventListener('click', () => navigateImage(-1));
+    if (nextImageBtn) nextImageBtn.addEventListener('click', () => navigateImage(1));
 }
 
-// ========== INICIALIZACIÓN DE NAVEGACIÓN CORREGIDA ==========
 function initNavigation() {
-    console.log('📍 Inicializando navegación corregida...');
-    
-    // Navegación principal
     const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             const targetSection = this.getAttribute('data-section');
-            console.log('🔄 Navegando a:', targetSection);
             switchSection(targetSection);
         });
     });
     
-    // Botones de citas
     const bookingButtons = [
         getElement('bookingBtn'),
         getElement('heroBookingBtn'), 
@@ -1755,7 +1726,6 @@ function initNavigation() {
         }
     });
     
-    // Botón admin
     const adminBtn = getElement('adminBtn');
     if (adminBtn) {
         adminBtn.addEventListener('click', function(e) {
@@ -1772,41 +1742,27 @@ function initNavigation() {
     }
 }
 
-// ========== INICIALIZACIÓN PRINCIPAL CORREGIDA ==========
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Inicializando aplicación corregida...');
-    
-    // Cargar estado de pausa desde localStorage
     const savedPauseState = localStorage.getItem('isBookingPaused');
     if (savedPauseState !== null) {
         isBookingPaused = savedPauseState === 'true';
     }
     
-    // Inicializar efectos del header
     initHeaderScroll();
     initMobileMenu();
-    
-    // Inicializar sistema de portales Y navegación
     initPortalNavigation();
     initNavigation();
-    
-    // Inicializar sistema de citas inteligente
     initSmartBooking();
-    
-    // Inicializar sistema de zoom
     initImageZoom();
     
-    // Cargar contenido
     loadServices();
     loadProducts();
     loadGallery();
     initializeDateInput();
     
-    // Configurar eventos
     setupGlobalEventListeners();
     setupBookingForm();
     
-    // Botón de confirmar cita en panel
     const insertarCitaBtn = getElement('insertarCitaBtn');
     if (insertarCitaBtn) {
         insertarCitaBtn.addEventListener('click', function(e) {
@@ -1814,13 +1770,8 @@ document.addEventListener('DOMContentLoaded', function() {
             openBookingModal();
         });
     }
-    
-    console.log('✅ Aplicación corregida inicializada correctamente');
-    console.log('📊 Estado de citas:', isBookingPaused ? '⏸️ PAUSADAS' : '✅ ACTIVAS');
-    console.log('🎯 Portal actual:', currentSection);
 });
 
-// ========== EXPORTAR FUNCIONES PARA HTML ==========
 window.openBookingModal = openBookingModal;
 window.closeBookingModal = closeBookingModal;
 window.openImageViewer = openImageViewer;

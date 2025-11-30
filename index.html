@@ -192,12 +192,12 @@
         </section>
     </main>
 
-    <!-- Booking Modal - COMPLETAMENTE REDISEÑADO PARA MÓVILES -->
+    <!-- Booking Modal - SISTEMA INTELIGENTE -->
     <div id="bookingModal" class="modal">
         <div class="modal-content modern-booking-modal">
             <div class="modern-modal-header">
-                <div class="modal-icon">📅</div>
-                <h2>Confirmar Cita</h2>
+                <div class="modal-icon">🤖</div>
+                <h2>Sistema Inteligente de Citas</h2>
                 <span class="close">&times;</span>
             </div>
             
@@ -217,13 +217,13 @@
                             <strong>$<span id="previewTotalPrice">0</span></strong>
                         </div>
                         <div class="total-line">
-                            <span>Duración:</span>
+                            <span>Duración Total:</span>
                             <span class="duration"><span id="previewTotalDuration">0</span> min</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Formulario compacto -->
+                <!-- Formulario inteligente -->
                 <form id="bookingForm" class="modern-booking-form">
                     <div class="form-grid">
                         <div class="form-group modern-form-group">
@@ -237,19 +237,30 @@
                         <div class="form-group modern-form-group time-group">
                             <label class="modern-label">
                                 <span class="label-icon">⏰</span>
-                                Hora
+                                Horarios Disponibles
                             </label>
                             <div id="timeSlots" class="time-slots-container-modern">
-                                <!-- Los botones de horas se cargarán aquí dinámicamente -->
+                                <!-- Los horarios se cargan aquí dinámicamente con IA -->
                             </div>
                         </div>
+                    </div>
+
+                    <!-- NUEVO: Campo de hora personalizada para evitar superposición -->
+                    <div class="form-group modern-form-group custom-time-group">
+                        <label for="customTime" class="modern-label">
+                            <span class="label-icon">🕒</span>
+                            ¿Necesitas otra hora?
+                        </label>
+                        <input type="time" id="customTime" name="customTime" class="modern-input time-input" 
+                               min="09:00" max="18:00" step="900">
+                        <small class="time-note">Selecciona entre 9:00 AM y 6:00 PM</small>
                     </div>
 
                     <div class="form-grid">
                         <div class="form-group modern-form-group">
                             <label for="name" class="modern-label">
                                 <span class="label-icon">👤</span>
-                                Nombre
+                                Nombre Completo
                             </label>
                             <input type="text" id="name" name="name" required class="modern-input" placeholder="Tu nombre completo">
                         </div>
@@ -263,12 +274,23 @@
                         </div>
                     </div>
 
-                    <!-- BOTÓN DE CONFIRMAR FIJO EN LA PARTE INFERIOR - MEJORADO -->
+                    <!-- Información del sistema -->
+                    <div class="system-info">
+                        <div class="info-item">
+                            <span class="info-icon">🤖</span>
+                            <div class="info-text">
+                                <strong>Sistema Inteligente Activado</strong>
+                                <span>Evita conflictos de horarios automáticamente</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BOTÓN DE CONFIRMAR -->
                     <div class="form-actions">
                         <button type="submit" class="btn-modern-confirm">
                             <span class="btn-icon">✅</span>
-                            Confirmar Cita
-                            <span class="btn-subtext">Toca aquí para reservar</span>
+                            Confirmar Cita Inteligente
+                            <span class="btn-subtext">Sistema anti-conflictos activado</span>
                         </button>
                     </div>
                 </form>
