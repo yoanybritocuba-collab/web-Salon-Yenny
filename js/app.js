@@ -858,6 +858,7 @@ function showNotification(message, type = 'info') {
     });
 }
 
+// ========== CARGAR PRODUCTOS ==========
 async function loadProducts() {
     try {
         const response = await fetch('js/galeria.json');
@@ -895,33 +896,31 @@ async function loadProducts() {
     }
 }
 
+// ========== CARGAR GALERÍA DESDE JSON ==========
 async function loadGallery() {
     try {
+        const response = await fetch('js/galeria.json');
+        const data = await response.json();
         const galleryContainer = getElement('galleryContainer');
         
         if (!galleryContainer) return;
         
         galleryContainer.innerHTML = '';
         
-        const galeriaTrabajos = [
-            { id: 1, archivo: "imagen1.jpg", descripcion: "Trabajo profesional de coloración" },
-            { id: 2, archivo: "imagen2.jpg", descripcion: "Corte y peinado moderno" },
-            { id: 3, archivo: "imagen3.jpg", descripcion: "Extensiones de cabello" },
-            { id: 4, archivo: "imagen4.jpg", descripcion: "Tratamiento de keratina" },
-            { id: 5, archivo: "imagen5.jpg", descripcion: "Peinado para eventos" },
-            { id: 6, archivo: "imagen6.jpg", descripcion: "Coloración fantasía" },
-            { id: 7, archivo: "imagen7.jpg", descripcion: "Corte profesional" },
-            { id: 8, archivo: "imagen8.jpg", descripcion: "Maquillaje y estilismo" }
-        ];
+        // Asignamos las imágenes de la galería a currentImages para el visor
+        currentImages = data.galeria.map(item => ({
+            id: item.id,
+            archivo: item.archivo,
+            descripcion: item.descripcion,
+            ruta: `imagenes/Galería/${item.archivo}`
+        }));
         
-        currentImages = galeriaTrabajos;
-        
-        galeriaTrabajos.forEach((image, index) => {
+        currentImages.forEach((image, index) => {
             const galleryItem = document.createElement('div');
             galleryItem.className = 'gallery-item';
             galleryItem.innerHTML = `
-                <img src="imagenes/Galería-Trabajo/${image.archivo}" alt="${image.descripcion}" class="gallery-image"
-                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkdhbGVyXHUwMGVkYSBkZSBUcmFiYWpvczwvdGV4dD48L3N2Zz4='">
+                <img src="${image.ruta}" alt="${image.descripcion}" class="gallery-image"
+                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkdhbGVyXHUwMGVkYTwvdGV4dD48L3N2Zz4='">
                 <div class="gallery-overlay">
                     <div class="gallery-text">${image.descripcion}</div>
                 </div>
@@ -1035,19 +1034,20 @@ function handleWheel(e) {
     }
 }
 
+// ========== ABRIR VISOR DE IMAGEN ==========
 function openImageViewer(index) {
-    currentImageIndex = index;
     const viewerModal = getElement('imageViewerModal');
     const viewerImage = getElement('viewerImage');
     
     if (!viewerModal || !viewerImage) return;
     
-    viewerImage.src = `imagenes/Galería-Trabajo/${currentImages[currentImageIndex].archivo}`;
-    viewerImage.alt = currentImages[currentImageIndex].descripcion;
+    viewerImage.src = currentImages[index].ruta;
+    viewerImage.alt = currentImages[index].descripcion;
     viewerModal.style.display = 'block';
     resetZoom();
 }
 
+// ========== ABRIR VISOR DE PRODUCTO ==========
 function openProductViewer(index) {
     fetch('js/galeria.json')
         .then(response => response.json())
@@ -1055,7 +1055,8 @@ function openProductViewer(index) {
             currentImages = data.productos.map((product, idx) => ({
                 id: idx + 1,
                 archivo: product.imagen,
-                descripcion: product.nombre
+                descripcion: product.nombre,
+                ruta: `imagenes/productos/${product.imagen}`
             }));
             
             currentImageIndex = index;
@@ -1064,7 +1065,7 @@ function openProductViewer(index) {
             
             if (!viewerModal || !viewerImage) return;
             
-            viewerImage.src = `imagenes/productos/${currentImages[currentImageIndex].archivo}`;
+            viewerImage.src = currentImages[currentImageIndex].ruta;
             viewerImage.alt = currentImages[currentImageIndex].descripcion;
             viewerModal.style.display = 'block';
             resetZoom();
@@ -1082,6 +1083,7 @@ function closeImageViewer() {
     }
 }
 
+// ========== NAVEGAR ENTRE IMÁGENES ==========
 function navigateImage(direction) {
     currentImageIndex += direction;
     
@@ -1093,7 +1095,7 @@ function navigateImage(direction) {
     
     const viewerImage = getElement('viewerImage');
     if (viewerImage) {
-        viewerImage.src = `imagenes/Galería-Trabajo/${currentImages[currentImageIndex].archivo}`;
+        viewerImage.src = currentImages[currentImageIndex].ruta;
         viewerImage.alt = currentImages[currentImageIndex].descripcion;
         resetZoom();
     }

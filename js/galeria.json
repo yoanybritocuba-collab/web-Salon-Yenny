@@ -2,84 +2,94 @@
   "productos": [
     {
       "id": 1,
-      "nombre": "Shampoo Profesional",
-      "descripcion": "Shampoo para cabello tratado",
-      "precio": 25,
-      "imagen": "imagen1.jpg"
+      "nombre": "Crema Tratamiento",
+      "descripcion": "Crema para tratamiento capilar intensivo",
+      "precio": 35,
+      "imagen": "Crema-Tratamiento.jpg"
     },
     {
       "id": 2,
-      "nombre": "Acondicionador Repair",
-      "descripcion": "Acondicionador reconstructor",
-      "precio": 28,
-      "imagen": "imagen2.jpg"
+      "nombre": "Champú Profesional",
+      "descripcion": "Champú para uso profesional",
+      "precio": 25,
+      "imagen": "Champú-profecional.jpg"
     },
     {
       "id": 3,
-      "nombre": "Mascarilla Keratina",
-      "descripcion": "Tratamiento intensivo con keratina",
-      "precio": 35,
-      "imagen": "imagen3.jpg"
+      "nombre": "Crema Tratamiento 2",
+      "descripcion": "Crema para tratamiento capilar",
+      "precio": 30,
+      "imagen": "Cema-Tratamiento2.jpg"
     },
     {
       "id": 4,
-      "nombre": "Serum Brillante",
-      "descripcion": "Serum para brillo y suavidad",
-      "precio": 22,
-      "imagen": "imagen4.jpg"
+      "nombre": "Extensiones 1",
+      "descripcion": "Extensiones de cabello de alta calidad",
+      "precio": 150,
+      "imagen": "extensiones1.jpg"
     },
     {
       "id": 5,
-      "nombre": "Spray Protector Térmico",
-      "descripcion": "Protección para herramientas de calor",
-      "precio": 18,
-      "imagen": "imagen5.jpg"
+      "nombre": "Extensiones 2",
+      "descripcion": "Extensiones de cabello naturales",
+      "precio": 180,
+      "imagen": "extensiones2.jpg"
     },
     {
       "id": 6,
-      "nombre": "Gel Fijador Max",
-      "descripcion": "Fijación profesional máxima",
-      "precio": 20,
-      "imagen": "imagen6.jpg"
+      "nombre": "Extensiones 3",
+      "descripcion": "Extensiones de cabello sintéticas",
+      "precio": 120,
+      "imagen": "extensiones3.jpg"
     },
     {
       "id": 7,
-      "nombre": "Crema Peinado",
-      "descripcion": "Crema para peinado y control",
-      "precio": 24,
-      "imagen": "imagen7.jpg"
+      "nombre": "Extensiones 4",
+      "descripcion": "Extensiones de cabello premium",
+      "precio": 200,
+      "imagen": "extensiones4.jpg"
     }
   ],
   "galeria": [
     {
       "id": 1,
-      "archivo": "trabajo1.jpg",
-      "descripcion": "Corte y coloración profesional"
+      "archivo": "Botox-capilar.jpg",
+      "descripcion": "Tratamiento de Botox Capilar"
     },
     {
       "id": 2,
-      "archivo": "trabajo2.jpg",
-      "descripcion": "Peinado para evento especial"
+      "archivo": "Color.jpg",
+      "descripcion": "Coloración Profesional"
     },
     {
       "id": 3,
-      "archivo": "trabajo3.jpg",
-      "descripcion": "Tratamiento de keratina"
+      "archivo": "Cortes.jpg",
+      "descripcion": "Cortes de Estilo"
     },
     {
       "id": 4,
-      "archivo": "trabajo4.jpg",
-      "descripcion": "Extensiones completas"
+      "archivo": "Keratina.jpg",
+      "descripcion": "Tratamiento de Keratina"
     },
     {
       "id": 5,
-      "archivo": "trabajo5.jpg",
-      "descripcion": "Coloración fantasía"
+      "archivo": "Peinados.jpg",
+      "descripcion": "Peinados para Ocasiones Especiales"
     },
     {
       "id": 6,
-      "archivo": "trabajo6.jpg",
-      "descripcion": "Corte moderno"
+      "archivo": "Extenciones.jpg",
+      "descripcion": "Extensiones de Cabello"
+    },
+    {
+      "id": 7,
+      "archivo": "Rolos .jpg",
+      "descripcion": "Peinado con Rolos"
+    },
+    {
+      "id": 8,
+      "archivo": "Tratamiento.jpg",
+      "descripcion": "Tratamiento Capilar"
     }
   ]
 }
