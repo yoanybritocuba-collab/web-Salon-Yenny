@@ -171,8 +171,7 @@
 
 input[type="date"],
 input[type="tel"],
-input[type="text"],
-input[type="time"] {
+input[type="text"] {
     min-height: 44px;
 }
 
@@ -363,36 +362,6 @@ input[type="time"] {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-}
-
-.custom-time-group {
-    grid-column: 1 / -1;
-    margin-top: 10px;
-}
-
-.time-input {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    padding: 12px;
-    color: white;
-    font-size: 0.85rem;
-    transition: all 0.3s ease;
-    width: 100%;
-    min-height: 44px;
-}
-
-.time-input:focus {
-    outline: none;
-    border-color: #E75480;
-    background: rgba(255, 255, 255, 0.15);
-}
-
-.time-note {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.7rem;
-    margin-top: 4px;
-    display: block;
 }
 
 .form-actions {
@@ -768,8 +737,7 @@ input[type="time"] {
         min-height: 55px;
     }
     
-    .modern-input,
-    .time-input {
+    .modern-input {
         padding: 14px;
         font-size: 16px;
         min-height: 50px;
@@ -777,10 +745,6 @@ input[type="time"] {
     
     .time-slots-container-modern {
         max-height: 180px;
-    }
-    
-    .custom-time-group {
-        margin-top: 8px;
     }
 }
 
@@ -854,13 +818,8 @@ input[type="time"] {
         font-size: 1.2rem;
     }
     
-    .modern-input,
-    .time-input {
+    .modern-input {
         font-size: 16px;
-    }
-    
-    .custom-time-group {
-        margin-top: 5px;
     }
 }
 
@@ -922,7 +881,6 @@ input[type="time"] {
     input[type="date"],
     input[type="tel"],
     input[type="text"],
-    input[type="time"],
     select,
     textarea {
         font-size: 16px;
@@ -968,8 +926,7 @@ input[type="time"] {
         border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
     
-    .modern-input,
-    .time-input {
+    .modern-input {
         font-size: 16px !important;
         min-height: 50px;
         padding: 14px 12px;
