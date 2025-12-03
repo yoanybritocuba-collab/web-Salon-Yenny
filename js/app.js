@@ -9,6 +9,16 @@ let lastScrollTop = 0;
 let currentSection = 'inicio';
 let zoomLevel = 1;
 
+// Variables para el carrusel
+let carouselTrack = null;
+let carouselItems = [];
+let isDragging = false;
+let startPos = 0;
+let currentTranslate = 0;
+let prevTranslate = 0;
+let animationID = 0;
+let currentSlide = 0;
+
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
@@ -39,14 +49,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ========== SERVICIOS CON RUTAS CORREGIDAS ==========
+// ========== SERVICIOS CON RUTAS CORREGIDAS Y ACTUALIZADAS ==========
 const services = [
     {
         id: 1,
         name: "Lavado normal",
         price: 55,
         duration: 30,
-        image: "imagenes/servicios/lavado solo.png",
+        image: "imagenes/servicios/lavado-solo.png",
         description: "Lavado y secado profesional",
         category: "basico"
     },
@@ -55,7 +65,7 @@ const services = [
         name: "Lavado con línea",
         price: 70,
         duration: 60,
-        image: "imagenes/servicios/lavado con linea.png",
+        image: "imagenes/servicios/lavado-con-linea.png",
         description: "Lavado con corte de puntas",
         category: "basico"
     },
@@ -64,7 +74,7 @@ const services = [
         name: "Lavado con rolos",
         price: 75,
         duration: 90,
-        image: "imagenes/servicios/lavado con rolos.png",
+        image: "imagenes/servicios/lavado-con-rolos.png",
         description: "Lavado con peinado con rolos",
         category: "avanzado"
     },
@@ -82,7 +92,7 @@ const services = [
         name: "Botox capilar",
         price: 150,
         duration: 120,
-        image: "imagenes/servicios/botox capilar.png",
+        image: "imagenes/servicios/botox-capilar.png",
         description: "Tratamiento botox capilar",
         category: "tratamiento"
     },
@@ -109,7 +119,7 @@ const services = [
         name: "Extensiones x línea",
         price: 20,
         duration: 40,
-        image: "imagenes/servicios/extensiones por lineas.png",
+        image: "imagenes/servicios/extensiones-por-lineas.png",
         description: "Extensiones por línea",
         category: "extensiones"
     },
@@ -118,7 +128,7 @@ const services = [
         name: "Extensiones completas",
         price: 200,
         duration: 180,
-        image: "imagenes/servicios/extensiones completas.png",
+        image: "imagenes/servicios/extensiones-completas.png",
         description: "Extensiones completas",
         category: "extensiones"
     }
@@ -510,77 +520,6 @@ function toggleServiceSelection(service, card, bookBtn) {
         showNotification(`🗑️ ${service.name} removido`, 'info');
         bookBtn.style.background = 'linear-gradient(135deg, #E75480, #D147A3)';
     }
-    updateBookingPanel();
-}
-
-function updateBookingPanel() {
-    const selectedServicesPanel = getElement('selectedServicesPanel');
-    const panelTotalPrice = getElement('panelTotalPrice');
-    const panelTotalDuration = getElement('panelTotalDuration');
-    const insertarCitaBtn = getElement('insertarCitaBtn');
-    
-    if (!selectedServicesPanel || !panelTotalPrice || !panelTotalDuration || !insertarCitaBtn) return;
-    
-    selectedServicesPanel.innerHTML = '';
-    
-    if (selectedServices.length === 0) {
-        selectedServicesPanel.innerHTML = '<div class="empty-selection"><span>👆 Selecciona servicios</span></div>';
-        insertarCitaBtn.disabled = true;
-        insertarCitaBtn.innerHTML = '<span class="btn-icon">📅</span> Confirmar Cita';
-        panelTotalPrice.textContent = '0';
-        panelTotalDuration.textContent = '0';
-    } else {
-        let totalPrice = 0;
-        let totalDuration = 0;
-
-        selectedServices.forEach(service => {
-            totalPrice += service.price;
-            totalDuration += service.duration;
-            
-            const serviceItem = document.createElement('div');
-            serviceItem.className = 'panel-service-item';
-            serviceItem.innerHTML = `
-                <div class="panel-service-main">
-                    <span class="panel-service-name">${service.name}</span>
-                    <button class="remove-service" data-id="${service.id}">×</button>
-                </div>
-                <div class="panel-service-details">
-                    <span class="price">$${service.price}</span>
-                    <span class="duration">${service.duration}min</span>
-                </div>
-            `;
-            selectedServicesPanel.appendChild(serviceItem);
-        });
-
-        selectedServicesPanel.querySelectorAll('.remove-service').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const serviceId = parseInt(btn.getAttribute('data-id'));
-                const service = services.find(s => s.id === serviceId);
-                const card = document.querySelector(`.service-card[data-service-id="${serviceId}"]`);
-                const bookBtn = card?.querySelector('.service-book-btn');
-                
-                if (card && bookBtn) {
-                    card.classList.remove('selected');
-                    bookBtn.classList.remove('added');
-                    bookBtn.innerHTML = '<span class="btn-icon">➕</span> Agregar';
-                    bookBtn.style.background = 'linear-gradient(135deg, #E75480, #D147A3)';
-                }
-                
-                selectedServices = selectedServices.filter(s => s.id !== serviceId);
-                updateBookingPanel();
-                showNotification(`🗑️ ${service.name} removido`, 'info');
-            });
-        });
-
-        panelTotalPrice.textContent = totalPrice;
-        panelTotalDuration.textContent = totalDuration;
-        insertarCitaBtn.disabled = false;
-        insertarCitaBtn.innerHTML = `
-            <span class="btn-icon">✅</span>
-            Confirmar Cita (${totalDuration}min)
-        `;
-    }
 }
 
 function initMobileKeyboardFix() {
@@ -858,7 +797,190 @@ function showNotification(message, type = 'info') {
     });
 }
 
-// ========== CARGAR PRODUCTOS ==========
+// ========== CARRUSEL DE IMÁGENES ==========
+function initCarousel() {
+    carouselTrack = getElement('carouselTrack');
+    
+    if (!carouselTrack) return;
+    
+    // Configurar eventos táctiles
+    carouselTrack.addEventListener('touchstart', touchStart);
+    carouselTrack.addEventListener('touchmove', touchMove);
+    carouselTrack.addEventListener('touchend', touchEnd);
+    
+    // Configurar eventos del mouse
+    carouselTrack.addEventListener('mousedown', mouseDown);
+    carouselTrack.addEventListener('mousemove', mouseMove);
+    carouselTrack.addEventListener('mouseup', mouseUp);
+    carouselTrack.addEventListener('mouseleave', mouseLeave);
+    
+    // Configurar botones de navegación
+    const prevBtn = getElement('prevImage');
+    const nextBtn = getElement('nextImage');
+    
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => navigateCarousel(-1));
+    }
+    
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => navigateCarousel(1));
+    }
+}
+
+function touchStart(e) {
+    e.preventDefault();
+    startPos = e.touches[0].clientX;
+    isDragging = true;
+    carouselTrack.classList.add('touch-active');
+    cancelAnimationFrame(animationID);
+}
+
+function touchMove(e) {
+    if (!isDragging) return;
+    e.preventDefault();
+    const currentPosition = e.touches[0].clientX;
+    const diff = currentPosition - startPos;
+    setPosition(currentTranslate + diff);
+}
+
+function touchEnd() {
+    isDragging = false;
+    carouselTrack.classList.remove('touch-active');
+    const movedBy = currentTranslate - prevTranslate;
+    
+    if (movedBy < -100 && currentSlide < currentImages.length - 1) {
+        currentSlide += 1;
+    }
+    
+    if (movedBy > 100 && currentSlide > 0) {
+        currentSlide -= 1;
+    }
+    
+    setSlidePosition();
+}
+
+function mouseDown(e) {
+    e.preventDefault();
+    startPos = e.clientX;
+    isDragging = true;
+    carouselTrack.classList.add('touch-active');
+    cancelAnimationFrame(animationID);
+}
+
+function mouseMove(e) {
+    if (!isDragging) return;
+    e.preventDefault();
+    const currentPosition = e.clientX;
+    const diff = currentPosition - startPos;
+    setPosition(currentTranslate + diff);
+}
+
+function mouseUp() {
+    isDragging = false;
+    carouselTrack.classList.remove('touch-active');
+    const movedBy = currentTranslate - prevTranslate;
+    
+    if (movedBy < -100 && currentSlide < currentImages.length - 1) {
+        currentSlide += 1;
+    }
+    
+    if (movedBy > 100 && currentSlide > 0) {
+        currentSlide -= 1;
+    }
+    
+    setSlidePosition();
+}
+
+function mouseLeave() {
+    if (isDragging) {
+        isDragging = false;
+        carouselTrack.classList.remove('touch-active');
+        setSlidePosition();
+    }
+}
+
+function setPosition(position) {
+    currentTranslate = position;
+    carouselTrack.style.transform = `translateX(${currentTranslate}px)`;
+}
+
+function setSlidePosition() {
+    const slideWidth = carouselTrack.clientWidth;
+    currentTranslate = currentSlide * -slideWidth;
+    prevTranslate = currentTranslate;
+    
+    carouselTrack.style.transform = `translateX(${currentTranslate}px)`;
+    updateCarouselClasses();
+    updateIndicators();
+    updateImageInfo();
+}
+
+function navigateCarousel(direction) {
+    const newSlide = currentSlide + direction;
+    
+    if (newSlide >= 0 && newSlide < currentImages.length) {
+        currentSlide = newSlide;
+        setSlidePosition();
+        
+        // Añadir animación
+        carouselItems.forEach((item, index) => {
+            if (index === currentSlide) {
+                item.classList.add('slide-in-left');
+                setTimeout(() => item.classList.remove('slide-in-left'), 500);
+            }
+        });
+    }
+}
+
+function updateCarouselClasses() {
+    if (!carouselItems.length) return;
+    
+    carouselItems.forEach((item, index) => {
+        item.classList.remove('active', 'prev', 'next', 'far-prev', 'far-next');
+        
+        if (index === currentSlide) {
+            item.classList.add('active');
+        } else if (index === currentSlide - 1) {
+            item.classList.add('prev');
+        } else if (index === currentSlide + 1) {
+            item.classList.add('next');
+        } else if (index === currentSlide - 2) {
+            item.classList.add('far-prev');
+        } else if (index === currentSlide + 2) {
+            item.classList.add('far-next');
+        }
+    });
+}
+
+function updateIndicators() {
+    const indicatorsContainer = getElement('carouselIndicators');
+    if (!indicatorsContainer) return;
+    
+    indicatorsContainer.innerHTML = '';
+    
+    currentImages.forEach((_, index) => {
+        const indicator = document.createElement('div');
+        indicator.className = `carousel-indicator ${index === currentSlide ? 'active' : ''}`;
+        indicator.addEventListener('click', () => {
+            currentSlide = index;
+            setSlidePosition();
+        });
+        indicatorsContainer.appendChild(indicator);
+    });
+}
+
+function updateImageInfo() {
+    const imageInfo = getElement('imageInfo');
+    if (!imageInfo || !currentImages[currentSlide]) return;
+    
+    const currentImage = currentImages[currentSlide];
+    imageInfo.innerHTML = `
+        <h3>${currentImage.descripcion || currentImage.nombre || 'Imagen'}</h3>
+        ${currentImage.precio ? `<p>Precio: $${currentImage.precio}</p>` : ''}
+        ${currentImage.descripcion && !currentImage.precio ? `<p>${currentImage.descripcion}</p>` : ''}
+    `;
+}
+
 async function loadProducts() {
     try {
         const response = await fetch('js/galeria.json');
@@ -885,7 +1007,7 @@ async function loadProducts() {
             `;
             
             productCard.addEventListener('click', () => {
-                openProductViewer(index);
+                openProductCarousel(index);
             });
             
             productsContainer.appendChild(productCard);
@@ -896,37 +1018,39 @@ async function loadProducts() {
     }
 }
 
-// ========== CARGAR GALERÍA DESDE JSON ==========
 async function loadGallery() {
     try {
-        const response = await fetch('js/galeria.json');
-        const data = await response.json();
         const galleryContainer = getElement('galleryContainer');
         
         if (!galleryContainer) return;
         
         galleryContainer.innerHTML = '';
         
-        // Asignamos las imágenes de la galería a currentImages para el visor
-        currentImages = data.galeria.map(item => ({
-            id: item.id,
-            archivo: item.archivo,
-            descripcion: item.descripcion,
-            ruta: `imagenes/Galería/${item.archivo}`
-        }));
+        const galeriaTrabajos = [
+            { id: 1, archivo: "imagen1.jpg", descripcion: "Trabajo profesional de coloración" },
+            { id: 2, archivo: "imagen2.jpg", descripcion: "Corte y peinado moderno" },
+            { id: 3, archivo: "imagen3.jpg", descripcion: "Extensiones de cabello" },
+            { id: 4, archivo: "imagen4.jpg", descripcion: "Tratamiento de keratina" },
+            { id: 5, archivo: "imagen5.jpg", descripcion: "Peinado para eventos" },
+            { id: 6, archivo: "imagen6.jpg", descripcion: "Coloración fantasía" },
+            { id: 7, archivo: "imagen7.jpg", descripcion: "Corte profesional" },
+            { id: 8, archivo: "imagen8.jpg", descripcion: "Maquillaje y estilismo" }
+        ];
         
-        currentImages.forEach((image, index) => {
+        currentImages = galeriaTrabajos;
+        
+        galeriaTrabajos.forEach((image, index) => {
             const galleryItem = document.createElement('div');
             galleryItem.className = 'gallery-item';
             galleryItem.innerHTML = `
-                <img src="${image.ruta}" alt="${image.descripcion}" class="gallery-image"
-                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkdhbGVyXHUwMGVkYTwvdGV4dD48L3N2Zz4='">
+                <img src="imagenes/Galería-Trabajo/${image.archivo}" alt="${image.descripcion}" class="gallery-image"
+                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkdhbGVyXHUwMGVkYSBkZSBUcmFiYWpvczwvdGV4dD48L3N2Zz4='">
                 <div class="gallery-overlay">
                     <div class="gallery-text">${image.descripcion}</div>
                 </div>
             `;
             
-            galleryItem.addEventListener('click', () => openImageViewer(index));
+            galleryItem.addEventListener('click', () => openGalleryCarousel(index));
             galleryContainer.appendChild(galleryItem);
         });
     } catch (error) {
@@ -935,144 +1059,93 @@ async function loadGallery() {
     }
 }
 
-function initImageZoom() {
-    const zoomInBtn = getElement('zoomIn');
-    const zoomOutBtn = getElement('zoomOut');
-    const resetZoomBtn = getElement('resetZoom');
-    const closeImageViewerBtn = getElement('closeImageViewer');
-    const viewerImage = getElement('viewerImage');
-    
-    if (zoomInBtn) zoomInBtn.addEventListener('click', zoomIn);
-    if (zoomOutBtn) zoomOutBtn.addEventListener('click', zoomOut);
-    if (resetZoomBtn) resetZoomBtn.addEventListener('click', resetZoom);
-    if (closeImageViewerBtn) closeImageViewerBtn.addEventListener('click', closeImageViewer);
-    
-    if (viewerImage) {
-        viewerImage.addEventListener('touchstart', handleTouchStart, { passive: false });
-        viewerImage.addEventListener('touchmove', handleTouchMove, { passive: false });
-        viewerImage.addEventListener('touchend', handleTouchEnd);
-        viewerImage.addEventListener('dblclick', toggleZoom);
-        viewerImage.addEventListener('wheel', handleWheel, { passive: false });
-    }
-}
-
-function zoomIn() {
-    if (zoomLevel < 3) {
-        zoomLevel += 0.25;
-        applyZoom();
-    }
-}
-
-function zoomOut() {
-    if (zoomLevel > 0.5) {
-        zoomLevel -= 0.25;
-        applyZoom();
-    }
-}
-
-function resetZoom() {
-    zoomLevel = 1;
-    applyZoom();
-}
-
-function toggleZoom() {
-    zoomLevel = zoomLevel === 1 ? 2 : 1;
-    applyZoom();
-}
-
-function applyZoom() {
-    const viewerImage = getElement('viewerImage');
-    if (viewerImage) {
-        viewerImage.style.transform = `scale(${zoomLevel})`;
-        viewerImage.style.transition = 'transform 0.3s ease';
-    }
-}
-
-function handleTouchStart(e) {
-    if (e.touches.length === 2) {
-        e.preventDefault();
-        const touch1 = e.touches[0];
-        const touch2 = e.touches[1];
-        const distance = Math.hypot(
-            touch2.clientX - touch1.clientX,
-            touch2.clientY - touch1.clientY
-        );
-        this.startDistance = distance;
-        this.startZoom = zoomLevel;
-    }
-}
-
-function handleTouchMove(e) {
-    if (e.touches.length === 2) {
-        e.preventDefault();
-        const touch1 = e.touches[0];
-        const touch2 = e.touches[1];
-        const distance = Math.hypot(
-            touch2.clientX - touch1.clientX,
-            touch2.clientY - touch1.clientY
-        );
-        
-        if (this.startDistance) {
-            const scale = distance / this.startDistance;
-            zoomLevel = Math.max(0.5, Math.min(3, this.startZoom * scale));
-            applyZoom();
-        }
-    }
-}
-
-function handleTouchEnd(e) {
-    this.startDistance = null;
-    this.startZoom = null;
-}
-
-function handleWheel(e) {
-    e.preventDefault();
-    if (e.deltaY < 0) {
-        zoomIn();
-    } else {
-        zoomOut();
-    }
-}
-
-// ========== ABRIR VISOR DE IMAGEN ==========
-function openImageViewer(index) {
+function openGalleryCarousel(index) {
     const viewerModal = getElement('imageViewerModal');
-    const viewerImage = getElement('viewerImage');
+    const carouselTrack = getElement('carouselTrack');
     
-    if (!viewerModal || !viewerImage) return;
+    if (!viewerModal || !carouselTrack) return;
     
-    viewerImage.src = currentImages[index].ruta;
-    viewerImage.alt = currentImages[index].descripcion;
+    currentSlide = index;
+    carouselTrack.innerHTML = '';
+    carouselItems = [];
+    
+    currentImages.forEach((image, idx) => {
+        const carouselItem = document.createElement('div');
+        carouselItem.className = 'carousel-item';
+        if (idx === currentSlide) carouselItem.classList.add('active');
+        
+        const img = document.createElement('img');
+        img.src = `imagenes/Galería-Trabajo/${image.archivo}`;
+        img.alt = image.descripcion;
+        img.loading = 'lazy';
+        
+        img.onerror = function() {
+            this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkdhbGVyXHUwMGVkYSBkZSBUcmFiYWpvczwvdGV4dD48L3N2Zz4=';
+        };
+        
+        carouselItem.appendChild(img);
+        carouselTrack.appendChild(carouselItem);
+        carouselItems.push(carouselItem);
+    });
+    
     viewerModal.style.display = 'block';
-    resetZoom();
+    setTimeout(() => {
+        setSlidePosition();
+        updateIndicators();
+        updateImageInfo();
+    }, 50);
 }
 
-// ========== ABRIR VISOR DE PRODUCTO ==========
-function openProductViewer(index) {
+function openProductCarousel(index) {
     fetch('js/galeria.json')
         .then(response => response.json())
         .then(data => {
+            const viewerModal = getElement('imageViewerModal');
+            const carouselTrack = getElement('carouselTrack');
+            
+            if (!viewerModal || !carouselTrack) return;
+            
             currentImages = data.productos.map((product, idx) => ({
                 id: idx + 1,
                 archivo: product.imagen,
                 descripcion: product.nombre,
-                ruta: `imagenes/productos/${product.imagen}`
+                precio: product.precio,
+                nombre: product.nombre
             }));
             
-            currentImageIndex = index;
-            const viewerModal = getElement('imageViewerModal');
-            const viewerImage = getElement('viewerImage');
+            currentSlide = index;
+            carouselTrack.innerHTML = '';
+            carouselItems = [];
             
-            if (!viewerModal || !viewerImage) return;
+            currentImages.forEach((product, idx) => {
+                const carouselItem = document.createElement('div');
+                carouselItem.className = 'carousel-item';
+                if (idx === currentSlide) carouselItem.classList.add('active');
+                
+                const img = document.createElement('img');
+                img.src = `imagenes/productos/${product.archivo}`;
+                img.alt = product.descripcion;
+                img.loading = 'lazy';
+                
+                img.onerror = function() {
+                    this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlByb2R1Y3RvPC90ZXh0Pjwvc3ZnPg==';
+                };
+                
+                carouselItem.appendChild(img);
+                carouselTrack.appendChild(carouselItem);
+                carouselItems.push(carouselItem);
+            });
             
-            viewerImage.src = currentImages[currentImageIndex].ruta;
-            viewerImage.alt = currentImages[currentImageIndex].descripcion;
             viewerModal.style.display = 'block';
-            resetZoom();
+            setTimeout(() => {
+                setSlidePosition();
+                updateIndicators();
+                updateImageInfo();
+            }, 50);
         })
         .catch(error => {
-            console.error('Error cargando productos para visor:', error);
-            showNotification('❌ Error al cargar la imagen', 'error');
+            console.error('Error cargando productos para carrusel:', error);
+            showNotification('❌ Error al cargar las imágenes', 'error');
         });
 }
 
@@ -1080,24 +1153,6 @@ function closeImageViewer() {
     const viewerModal = getElement('imageViewerModal');
     if (viewerModal) {
         viewerModal.style.display = 'none';
-    }
-}
-
-// ========== NAVEGAR ENTRE IMÁGENES ==========
-function navigateImage(direction) {
-    currentImageIndex += direction;
-    
-    if (currentImageIndex < 0) {
-        currentImageIndex = currentImages.length - 1;
-    } else if (currentImageIndex >= currentImages.length) {
-        currentImageIndex = 0;
-    }
-    
-    const viewerImage = getElement('viewerImage');
-    if (viewerImage) {
-        viewerImage.src = currentImages[currentImageIndex].ruta;
-        viewerImage.alt = currentImages[currentImageIndex].descripcion;
-        resetZoom();
     }
 }
 
@@ -1200,7 +1255,6 @@ async function setupBookingForm() {
             closeBookingModal();
             
             selectedServices = [];
-            updateBookingPanel();
             
             bookingForm.reset();
             selectedTime = null;
@@ -1724,8 +1778,8 @@ function setupGlobalEventListeners() {
     const prevImageBtn = getElement('prevImage');
     const nextImageBtn = getElement('nextImage');
     
-    if (prevImageBtn) prevImageBtn.addEventListener('click', () => navigateImage(-1));
-    if (nextImageBtn) nextImageBtn.addEventListener('click', () => navigateImage(1));
+    if (prevImageBtn) prevImageBtn.addEventListener('click', () => navigateCarousel(-1));
+    if (nextImageBtn) nextImageBtn.addEventListener('click', () => navigateCarousel(1));
 }
 
 function closeSuccessModal() {
@@ -1748,8 +1802,7 @@ function initNavigation() {
     const bookingButtons = [
         getElement('bookingBtn'),
         getElement('heroBookingBtn'), 
-        getElement('bigBookingBtn'),
-        getElement('insertarCitaBtn')
+        getElement('bigBookingBtn')
     ];
     
     bookingButtons.forEach(btn => {
@@ -1783,7 +1836,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initPortalNavigation();
     initNavigation();
     initSmartBooking();
-    initImageZoom();
+    initCarousel();
     
     loadServices();
     loadProducts();
@@ -1793,22 +1846,15 @@ document.addEventListener('DOMContentLoaded', function() {
     setupGlobalEventListeners();
     setupBookingForm();
     setupAdminModal();
-    
-    const insertarCitaBtn = getElement('insertarCitaBtn');
-    if (insertarCitaBtn) {
-        insertarCitaBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            openBookingModal();
-        });
-    }
 });
 
 // ========== FUNCIONES GLOBALES ==========
 window.openBookingModal = openBookingModal;
 window.closeBookingModal = closeBookingModal;
-window.openImageViewer = openImageViewer;
+window.openGalleryCarousel = openGalleryCarousel;
+window.openProductCarousel = openProductCarousel;
 window.closeImageViewer = closeImageViewer;
-window.navigateImage = navigateImage;
+window.navigateCarousel = navigateCarousel;
 window.cancelarCita = cancelarCita;
 window.switchSection = switchSection;
 window.scrollToServices = scrollToServices;

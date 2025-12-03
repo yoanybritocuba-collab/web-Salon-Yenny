@@ -142,41 +142,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Columna derecha: Panel de cita compacto -->
-                        <div class="booking-panel" id="bookingPanel">
-                            <div class="booking-panel-content">
-                                <div class="panel-header">
-                                    <h3>📅 Tu Cita</h3>
-                                    <p>Servicios seleccionados</p>
-                                </div>
-                                
-                                <div class="selected-services-panel">
-                                    <h4>Servicios Elegidos:</h4>
-                                    <div id="selectedServicesPanel" class="services-panel-list">
-                                        <div class="empty-selection">
-                                            <span>👆 Selecciona servicios</span>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="panel-total">
-                                        <div class="total-item">
-                                            <span>Total:</span>
-                                            <strong>$<span id="panelTotalPrice">0</span></strong>
-                                        </div>
-                                        <div class="total-item">
-                                            <span>Tiempo:</span>
-                                            <span><span id="panelTotalDuration">0</span>min</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <button class="btn btn-fuchsia btn-large btn-panel" id="insertarCitaBtn" disabled>
-                                    <span class="btn-icon">✅</span>
-                                    Confirmar Cita
-                                </button>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -194,13 +159,13 @@
             </div>
         </section>
 
-        <!-- Gallery Section - PORTAL GALERÍA CORREGIDA -->
+        <!-- Gallery Section - PORTAL GALERÍA -->
         <section id="galeria" class="section-portal">
             <div class="gallery">
                 <div class="container">
                     <h2 class="section-title">Galería de Trabajos</h2>
                     <div class="gallery-grid" id="galleryContainer">
-                        <!-- Las imágenes de galería se cargan dinámicamente desde JSON -->
+                        <!-- Las imágenes de galería se cargan dinámicamente -->
                     </div>
                 </div>
             </div>
@@ -400,22 +365,22 @@
         </div>
     </div>
 
-    <!-- Image Viewer Modal Mejorado -->
+    <!-- Image Viewer Modal Carrusel -->
     <div id="imageViewerModal" class="modal image-viewer-modal">
-        <div class="modal-content image-viewer-content">
+        <div class="modal-content carousel-content">
             <span class="close image-viewer-close">&times;</span>
-            <div class="image-viewer-container">
-                <img id="viewerImage" src="" alt="Imagen ampliada" class="zoomable-image">
-                <div class="image-viewer-controls">
-                    <button class="btn btn-outline" id="prevImage">‹ Anterior</button>
-                    <button class="btn btn-outline" id="closeImageViewer">Cerrar</button>
-                    <button class="btn btn-outline" id="nextImage">Siguiente ›</button>
+            <div class="carousel-container">
+                <div class="carousel-track" id="carouselTrack">
+                    <!-- Las imágenes se cargarán dinámicamente aquí -->
                 </div>
-                <div class="zoom-controls">
-                    <button class="zoom-btn" id="zoomIn">+</button>
-                    <button class="zoom-btn" id="zoomOut">-</button>
-                    <button class="zoom-btn" id="resetZoom">↺</button>
-                </div>
+            </div>
+            <div class="carousel-controls">
+                <button class="carousel-btn prev-btn" id="prevImage">‹</button>
+                <div class="carousel-indicators" id="carouselIndicators"></div>
+                <button class="carousel-btn next-btn" id="nextImage">›</button>
+            </div>
+            <div class="image-info" id="imageInfo">
+                <!-- La información de la imagen se cargará aquí -->
             </div>
         </div>
     </div>
