@@ -55,6 +55,37 @@
         .btn-active {
             background: linear-gradient(135deg, #27ae60, #219653) !important;
         }
+
+        /* Ajustes específicos para el modal admin */
+        .admin-modal .modal-content {
+            max-height: 90vh !important;
+            overflow: hidden !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+
+        .admin-modal-content {
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100% !important;
+            padding: 0 !important;
+        }
+
+        .admin-auth, #adminContent {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* Asegurar que el modal admin se vea bien en móviles */
+        @media (max-width: 768px) {
+            .admin-modal .modal-content {
+                max-height: 100vh !important;
+                border-radius: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -365,7 +396,7 @@
         </div>
     </div>
 
-    <!-- Admin Modal CORREGIDO CON AUTENTICACIÓN INTEGRADA -->
+    <!-- Admin Modal CORREGIDO - AHORA COMPACTO Y RESPONSIVE -->
     <div id="adminModal" class="modal admin-modal">
         <div class="modal-content admin-modal-content">
             <span class="close">&times;</span>

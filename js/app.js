@@ -55,7 +55,7 @@ const db = getFirestore(app);
 // Referencia a la configuración del sistema
 const configRef = doc(db, "config", "booking");
 
-// ========== SERVICIOS CON RUTAS CORREGIDAS Y ACTUALIZADAS ==========
+// ========== SERVICIOS CON RUTAS CORREGIDAS ==========
 const services = [
     {
         id: 1,
@@ -230,6 +230,25 @@ class ScheduleManager {
     }
 
     async checkSpecificAvailability(selectedDate, selectedTime, selectedServices) {
+        // 🔴 PRIMERO VERIFICAR SI LAS CITAS ESTÁN PAUSADAS
+        try {
+            const configDoc = await getDoc(configRef);
+            if (configDoc.exists()) {
+                const configData = configDoc.data();
+                if (configData.isPaused) {
+                    return { 
+                        available: false, 
+                        reason: configData.resumeDate 
+                            ? `Citas pausadas hasta ${configData.resumeDate}` 
+                            : 'Citas temporalmente desactivadas' 
+                    };
+                }
+            }
+        } catch (error) {
+            console.error('Error verificando configuración:', error);
+        }
+        
+        // Si las citas no están pausadas, continuar con la verificación normal
         const totalDuration = selectedServices.reduce((sum, service) => sum + service.duration, 0);
         const timeStart = this.timeToMinutes(selectedTime);
         const timeEnd = timeStart + totalDuration;
@@ -285,6 +304,15 @@ async function initBookingConfig() {
                 const data = doc.data();
                 isBookingPaused = data.isPaused || false;
                 bookingResumeDate = data.resumeDate || '';
+                
+                // 🔴 CERRAR EL MODAL DE CITAS SI ESTÁ ABIERTO Y SE PAUSAN
+                if (isBookingPaused) {
+                    const bookingModal = getElement('bookingModal');
+                    if (bookingModal && bookingModal.style.display === 'block') {
+                        closeBookingModal();
+                        showNotification('⏸️ Las citas han sido pausadas temporalmente', 'warning');
+                    }
+                }
                 
                 // Actualizar todos los botones de citas
                 updateBookingButtons();
@@ -654,6 +682,7 @@ function removeService(index) {
     }
 }
 
+// ========== FUNCIÓN MEJORADA PARA CARGAR SERVICIOS ==========
 function loadServices() {
     const servicesContainer = getElement('servicesContainer');
     if (!servicesContainer) return;
@@ -667,7 +696,7 @@ function loadServices() {
         serviceCard.innerHTML = `
             <div class="service-image-container">
                 <img src="${service.image}" alt="${service.name}" class="service-image"
-                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlNlcnZpY2lvPC90ZXh0Pjwvc3ZnPg=='">
+                     onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlNlcnZpY2lvPC90ZXh0Pjwvc3ZnPg=='">
                 <div class="service-overlay">
                     <span class="service-price">$${service.price}</span>
                     <span class="service-duration">${service.duration}min</span>
@@ -776,6 +805,27 @@ async function openBookingModal() {
     updateBookingPreview();
     modal.style.display = 'block';
     
+    // 🔴 BLOQUEAR FORMULARIO SI LAS CITAS ESTÁN PAUSADAS
+    const bookingForm = getElement('bookingForm');
+    if (bookingForm) {
+        bookingForm.style.opacity = isBookingPaused ? '0.5' : '1';
+        bookingForm.style.pointerEvents = isBookingPaused ? 'none' : 'auto';
+        
+        // Mostrar mensaje de bloqueo
+        const timeSlots = getElement('timeSlots');
+        if (timeSlots && isBookingPaused) {
+            timeSlots.innerHTML = `
+                <div class="time-slots-placeholder" style="color: #e74c3c;">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">⏸️</div>
+                    <strong>CITAS PAUSADAS</strong>
+                    <p style="margin-top: 5px; font-size: 0.9rem;">
+                        ${bookingResumeDate ? `Reanudación: ${bookingResumeDate}` : 'No hay citas disponibles temporalmente'}
+                    </p>
+                </div>
+            `;
+        }
+    }
+    
     const dateInput = getElement('date');
     if (dateInput) {
         const today = new Date().toISOString().split('T')[0];
@@ -784,7 +834,7 @@ async function openBookingModal() {
     }
     
     const timeSlots = getElement('timeSlots');
-    if (timeSlots) {
+    if (timeSlots && !isBookingPaused) {
         timeSlots.innerHTML = `
             <div class="time-slots-placeholder">
                 <div style="font-size: 2rem; margin-bottom: 10px;">⏳</div>
@@ -794,9 +844,11 @@ async function openBookingModal() {
         `;
     }
     
-    setTimeout(() => {
-        generateTimeSlots();
-    }, 300);
+    if (!isBookingPaused) {
+        setTimeout(() => {
+            generateTimeSlots();
+        }, 300);
+    }
     
     setTimeout(initMobileKeyboardFix, 100);
 }
@@ -1183,9 +1235,13 @@ function updateImageInfo() {
     `;
 }
 
+// ========== FUNCIÓN MEJORADA PARA CARGAR PRODUCTOS ==========
 async function loadProducts() {
     try {
         const response = await fetch('js/galeria.json');
+        if (!response.ok) {
+            throw new Error('No se pudo cargar galeria.json');
+        }
         const data = await response.json();
         const productsContainer = getElement('productsContainer');
         
@@ -1193,13 +1249,26 @@ async function loadProducts() {
         
         productsContainer.innerHTML = '';
         
+        // Verificar que hay productos
+        if (!data.productos || !Array.isArray(data.productos)) {
+            productsContainer.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #666;">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">📦</div>
+                    <h3>No hay productos disponibles</h3>
+                    <p>Pronto agregaremos nuestros productos exclusivos</p>
+                </div>
+            `;
+            return;
+        }
+        
         data.productos.forEach((product, index) => {
             const productCard = document.createElement('div');
             productCard.className = 'product-card';
             productCard.innerHTML = `
                 <div class="product-image-container">
-                    <img src="imagenes/productos/${product.imagen}" alt="${product.nombre}" class="product-image"
-                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlByb2R1Y3RvPC90ZXh0Pjwvc3ZnPg=='">
+                    <img src="imagenes/productos/${product.imagen}" alt="${product.nombre}" 
+                         class="product-image" loading="lazy"
+                         onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlByb2R1Y3RvPC90ZXh0Pjwvc3ZnPg=='">
                 </div>
                 <div class="product-content">
                     <h3>${product.nombre}</h3>
@@ -1216,10 +1285,20 @@ async function loadProducts() {
         });
     } catch (error) {
         console.error('❌ Error cargando productos:', error);
-        showNotification('⚠️ Error cargando productos', 'error');
+        const productsContainer = getElement('productsContainer');
+        if (productsContainer) {
+            productsContainer.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #e74c3c;">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">❌</div>
+                    <h3>Error al cargar productos</h3>
+                    <p>No se pudieron cargar los productos. Intenta recargar la página.</p>
+                </div>
+            `;
+        }
     }
 }
 
+// ========== FUNCIÓN MEJORADA PARA CARGAR GALERÍA ==========
 async function loadGallery() {
     try {
         const galleryContainer = getElement('galleryContainer');
@@ -1228,6 +1307,7 @@ async function loadGallery() {
         
         galleryContainer.innerHTML = '';
         
+        // Array de imágenes de galería - ajustado a tu estructura
         const galeriaTrabajos = [
             { id: 1, archivo: "imagen1.jpg", descripcion: "Trabajo profesional de coloración" },
             { id: 2, archivo: "imagen2.jpg", descripcion: "Corte y peinado moderno" },
@@ -1245,8 +1325,9 @@ async function loadGallery() {
             const galleryItem = document.createElement('div');
             galleryItem.className = 'gallery-item';
             galleryItem.innerHTML = `
-                <img src="imagenes/Galería-Trabajo/${image.archivo}" alt="${image.descripcion}" class="gallery-image"
-                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkdhbGVyXHUwMGVkYSBkZSBUcmFiYWpvczwvdGV4dD48L3N2Zz4='">
+                <img src="imagenes/Galería-Trabajo/${image.archivo}" alt="${image.descripcion}" 
+                     class="gallery-image" loading="lazy"
+                     onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkdhbGVyXHUwMGVkYSBkZSBUcmFiYWpvczwvdGV4dD48L3N2Zz4='">
                 <div class="gallery-overlay">
                     <div class="gallery-text">${image.descripcion}</div>
                 </div>
@@ -1257,10 +1338,20 @@ async function loadGallery() {
         });
     } catch (error) {
         console.error('❌ Error cargando galería:', error);
-        showNotification('⚠️ Error cargando galería de trabajos', 'error');
+        const galleryContainer = getElement('galleryContainer');
+        if (galleryContainer) {
+            galleryContainer.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #e74c3c;">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">❌</div>
+                    <h3>Error al cargar galería</h3>
+                    <p>No se pudieron cargar las imágenes. Intenta recargar la página.</p>
+                </div>
+            `;
+        }
     }
 }
 
+// ========== FUNCIÓN MEJORADA PARA ABRIR GALERÍA ==========
 function openGalleryCarousel(index) {
     const viewerModal = getElement('imageViewerModal');
     const carouselTrack = getElement('carouselTrack');
@@ -1280,6 +1371,8 @@ function openGalleryCarousel(index) {
         img.src = `imagenes/Galería-Trabajo/${image.archivo}`;
         img.alt = image.descripcion;
         img.loading = 'lazy';
+        img.style.maxHeight = '70vh';
+        img.style.objectFit = 'contain';
         
         img.onerror = function() {
             this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkdhbGVyXHUwMGVkYSBkZSBUcmFiYWpvczwvdGV4dD48L3N2Zz4=';
@@ -1298,9 +1391,15 @@ function openGalleryCarousel(index) {
     }, 50);
 }
 
+// ========== FUNCIÓN MEJORADA PARA ABRIR PRODUCTOS ==========
 function openProductCarousel(index) {
     fetch('js/galeria.json')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al cargar productos');
+            }
+            return response.json();
+        })
         .then(data => {
             const viewerModal = getElement('imageViewerModal');
             const carouselTrack = getElement('carouselTrack');
@@ -1328,6 +1427,8 @@ function openProductCarousel(index) {
                 img.src = `imagenes/productos/${product.archivo}`;
                 img.alt = product.descripcion;
                 img.loading = 'lazy';
+                img.style.maxHeight = '70vh';
+                img.style.objectFit = 'contain';
                 
                 img.onerror = function() {
                     this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlByb2R1Y3RvPC90ZXh0Pjwvc3ZnPg==';
@@ -1432,6 +1533,21 @@ async function setupBookingForm() {
         }
         
         try {
+            // 🔴 VERIFICACIÓN DOBLE: PRIMERO SI LAS CITAS ESTÁN PAUSADAS
+            const configDoc = await getDoc(configRef);
+            if (configDoc.exists()) {
+                const configData = configDoc.data();
+                if (configData.isPaused) {
+                    let message = '⏸️ Las citas están temporalmente desactivadas.';
+                    if (configData.resumeDate) {
+                        message = `⏸️ No hay citas disponibles hasta el ${configData.resumeDate}.`;
+                    }
+                    showNotification(message, 'warning');
+                    closeBookingModal();
+                    return;
+                }
+            }
+            
             const availabilityCheck = await scheduleManager.checkSpecificAvailability(date, selectedTime, selectedServices);
             
             if (!availabilityCheck.available) {
@@ -1748,7 +1864,7 @@ function setupAdminModal() {
     }
 }
 
-// ========== PANEL DE ADMINISTRACIÓN MEJORADO ==========
+// ========== PANEL DE ADMINISTRACIÓN COMPACTO ==========
 async function loadAdminContent() {
     const adminContent = getElement('adminContent');
     if (!adminContent) return;
@@ -1758,86 +1874,102 @@ async function loadAdminContent() {
         const configData = configDoc.exists() ? configDoc.data() : { isPaused: false, resumeDate: '' };
         
         adminContent.innerHTML = `
-            <div class="admin-header">
-                <h2>🔧 Panel de Administración</h2>
-                <p>Gestión de citas y horarios</p>
-                
-                <div class="admin-global-controls">
-                    <div class="control-group">
-                        <h4>Control General de Citas</h4>
-                        <button class="btn ${configData.isPaused ? 'btn-success' : 'btn-warning'}" id="toggleBookingBtn">
-                            ${configData.isPaused ? '▶️ Reanudar Citas' : '⏸️ Pausar Citas'}
-                        </button>
-                        
-                        <div class="resume-date-control" ${!configData.isPaused ? 'style="display: none;"' : ''}>
-                            <label for="resumeDateInput">Fecha de Reanudación:</label>
-                            <input type="date" id="resumeDateInput" value="${configData.resumeDate || ''}" class="modern-input">
-                            <button class="btn btn-sm" id="saveResumeDateBtn">💾 Guardar Fecha</button>
+            <div class="admin-content-container">
+                <div class="admin-header" id="adminHeader">
+                    <h2>🔧 Panel Admin</h2>
+                    <p>Gestión de citas y horarios</p>
+                    
+                    <div class="admin-global-controls">
+                        <div class="control-group">
+                            <button class="btn ${configData.isPaused ? 'btn-success' : 'btn-warning'}" id="toggleBookingBtn">
+                                ${configData.isPaused ? '▶️ Reanudar' : '⏸️ Pausar'}
+                            </button>
+                            
+                            <div class="resume-date-control" ${!configData.isPaused ? 'style="display: none;"' : ''}>
+                                <label for="resumeDateInput">Reanudación:</label>
+                                <input type="date" id="resumeDateInput" value="${configData.resumeDate || ''}" class="modern-input">
+                                <button class="btn btn-sm" id="saveResumeDateBtn">💾 Guardar</button>
+                            </div>
+                            
+                            <p class="status-indicator ${configData.isPaused ? 'paused' : 'active'}">
+                                <strong>${configData.isPaused ? '⏸️ CITAS PAUSADAS' : '✅ CITAS ACTIVAS'}</strong>
+                                ${configData.isPaused && configData.resumeDate ? `<br><small>Reanuda: ${configData.resumeDate}</small>` : ''}
+                            </p>
                         </div>
-                        
-                        <p class="status-indicator ${configData.isPaused ? 'paused' : 'active'}">
-                            Estado: <strong>${configData.isPaused ? '⏸️ CITAS PAUSADAS' : '✅ CITAS ACTIVAS'}</strong>
-                            ${configData.isPaused && configData.resumeDate ? `<br><small>Reanudación: ${configData.resumeDate}</small>` : ''}
-                        </p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="admin-tabs">
-                <button class="tab-btn active" data-tab="citas">📅 Citas (<span id="citasCount">0</span>)</button>
-                <button class="tab-btn" data-tab="estadisticas">📊 Estadísticas</button>
-            </div>
-            
-            <div class="admin-content">
-                <div id="citasTab" class="tab-content active">
-                    <div class="citas-header">
-                        <h3>Citas Confirmadas</h3>
-                        <div class="citas-stats">
-                            <span class="stat-item">Total: <strong id="totalCitas">0</strong></span>
-                            <span class="stat-item">Hoy: <strong id="citasHoy">0</strong></span>
-                            <span class="stat-item">Pendientes: <strong id="citasPendientes">0</strong></span>
-                        </div>
-                    </div>
-                    <div id="citasList" class="citas-list">
-                        Cargando citas...
                     </div>
                 </div>
                 
-                <div id="estadisticasTab" class="tab-content">
-                    <h3>Estadísticas</h3>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-icon">💰</div>
-                            <div class="stat-info">
-                                <span class="stat-value">$<span id="ingresosHoy">0</span></span>
-                                <span class="stat-label">Ingresos Hoy</span>
+                <div class="admin-tabs">
+                    <button class="tab-btn active" data-tab="citas">📅 Citas (<span id="citasCount">0</span>)</button>
+                    <button class="tab-btn" data-tab="estadisticas">📊 Stats</button>
+                </div>
+                
+                <div class="admin-content">
+                    <div id="citasTab" class="tab-content active">
+                        <div class="citas-header">
+                            <h3>Citas Confirmadas</h3>
+                            <div class="citas-stats">
+                                <span class="stat-item">Total: <strong id="totalCitas">0</strong></span>
+                                <span class="stat-item">Hoy: <strong id="citasHoy">0</strong></span>
+                                <span class="stat-item">Pend: <strong id="citasPendientes">0</strong></span>
                             </div>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">⏰</div>
-                            <div class="stat-info">
-                                <span class="stat-value"><span id="tiempoTotal">0</span>min</span>
-                                <span class="stat-label">Tiempo Ocupado</span>
+                        <div class="citas-list-container">
+                            <div id="citasList" class="citas-list">
+                                Cargando citas...
                             </div>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">👥</div>
-                            <div class="stat-info">
-                                <span class="stat-value"><span id="clientesHoy">0</span></span>
-                                <span class="stat-label">Clientes Hoy</span>
+                    </div>
+                    
+                    <div id="estadisticasTab" class="tab-content">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon">💰</div>
+                                <div class="stat-info">
+                                    <span class="stat-value">$<span id="ingresosHoy">0</span></span>
+                                    <span class="stat-label">Hoy</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">📊</div>
-                            <div class="stat-info">
-                                <span class="stat-value">$<span id="ingresosTotales">0</span></span>
-                                <span class="stat-label">Ingresos Totales</span>
+                            <div class="stat-card">
+                                <div class="stat-icon">⏰</div>
+                                <div class="stat-info">
+                                    <span class="stat-value"><span id="tiempoTotal">0</span>m</span>
+                                    <span class="stat-label">Tiempo</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">👥</div>
+                                <div class="stat-info">
+                                    <span class="stat-value"><span id="clientesHoy">0</span></span>
+                                    <span class="stat-label">Clientes</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📊</div>
+                                <div class="stat-info">
+                                    <span class="stat-value">$<span id="ingresosTotales">0</span></span>
+                                    <span class="stat-label">Total</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         `;
+        
+        // Configurar scroll para hacer compacto el header
+        const adminContentContainer = adminContent.querySelector('.admin-content-container');
+        const adminHeader = getElement('adminHeader');
+        
+        if (adminContentContainer && adminHeader) {
+            adminContentContainer.addEventListener('scroll', function() {
+                if (this.scrollTop > 50) {
+                    adminHeader.classList.add('compact');
+                } else {
+                    adminHeader.classList.remove('compact');
+                }
+            });
+        }
         
         // Configurar eventos del panel admin
         setupAdminControls();
@@ -1847,7 +1979,7 @@ async function loadAdminContent() {
         
     } catch (error) {
         console.error('Error cargando contenido admin:', error);
-        adminContent.innerHTML = '<p class="error">❌ Error cargando el panel de administración</p>';
+        adminContent.innerHTML = '<div style="padding: 20px; text-align: center; color: #e74c3c;">❌ Error cargando el panel</div>';
     }
 }
 
@@ -2148,8 +2280,10 @@ function initNavigation() {
     });
 }
 
-// ========== INICIALIZACIÓN PRINCIPAL CORREGIDA ==========
+// ========== INICIALIZACIÓN PRINCIPAL MEJORADA ==========
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Iniciando aplicación...');
+    
     // Inicializar configuración de Firebase
     initBookingConfig();
     
@@ -2161,14 +2295,22 @@ document.addEventListener('DOMContentLoaded', function() {
     initCarousel();
     initFloatingServices();
     
-    loadServices();
-    loadProducts();
-    loadGallery();
-    initializeDateInput();
+    // Cargar contenido con manejo de errores
+    try {
+        loadServices();
+        loadProducts();
+        loadGallery();
+        initializeDateInput();
+    } catch (error) {
+        console.error('❌ Error cargando contenido:', error);
+        showNotification('⚠️ Error cargando algunos elementos', 'warning');
+    }
     
     setupGlobalEventListeners();
     setupBookingForm();
     setupAdminModal();
+    
+    console.log('✅ Aplicación cargada correctamente');
 });
 
 // ========== FUNCIONES GLOBALES ==========
