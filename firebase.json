@@ -1,16 +1,14 @@
-{
+﻿{
   "hosting": {
-    "public": ".",
-    "ignore": [
+    "public": ".",               // Despliega todo el directorio actual
+    "ignore": [                  // Archivos que Firebase NO debe subir
       "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
+      "**/.*",                   // Oculta archivos que comienzan con punto (como .git)
+      "**/node_modules/**"       // Excluye las dependencias de Node.js
     ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
+    "rewrites": [ {              // Regla esencial para una SPA (Single Page Application)[citation:1]
+      "source": "**",            // Captura todas las rutas de la URL
+      "destination": "/index.html" // Sirve siempre el archivo index.html
+    } ]
   }
 }

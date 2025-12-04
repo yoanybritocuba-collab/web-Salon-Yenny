@@ -969,3 +969,253 @@ body.modal-open {
         transform: translateY(-5px);
     }
 }
+
+/* ========== RECUADRO FLOTANTE DE SERVICIOS SELECCIONADOS ========== */
+.floating-services {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 320px;
+    max-height: 400px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+    flex-direction: column;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.floating-services-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.floating-services-header h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.close-floating {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.close-floating:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.floating-services-list {
+    padding: 15px;
+    overflow-y: auto;
+    max-height: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+
+.floating-services-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.floating-services-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+}
+
+.floating-services-list::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 2px;
+}
+
+.floating-service-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.floating-service-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-1px);
+}
+
+.floating-service-info h5 {
+    margin: 0 0 5px 0;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.floating-service-info p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8rem;
+}
+
+.remove-service {
+    background: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.remove-service:hover {
+    background: rgba(231, 76, 60, 0.4);
+    transform: scale(1.1);
+}
+
+.no-services {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9rem;
+    padding: 20px 0;
+}
+
+.floating-services-actions {
+    padding: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+}
+
+.btn-book-now {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #E75480, #D147A3);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-book-now:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(231, 84, 128, 0.4);
+}
+
+.btn-book-now:active {
+    transform: translateY(0);
+}
+
+.floating-total {
+    font-size: 0.8rem;
+    opacity: 0.9;
+    font-weight: normal;
+    margin-left: auto;
+}
+
+/* Botón de citas pausado */
+.btn-paused {
+    background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
+    cursor: not-allowed !important;
+    opacity: 0.8;
+}
+
+.btn-paused:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Botón de citas activo */
+.btn-active {
+    background: linear-gradient(135deg, #27ae60, #219653) !important;
+}
+
+/* Responsive para el recuadro flotante */
+@media (max-width: 768px) {
+    .floating-services {
+        width: calc(100% - 40px);
+        right: 20px;
+        left: 20px;
+        bottom: 20px;
+        max-height: 300px;
+    }
+    
+    .floating-services-list {
+        max-height: 180px;
+    }
+}
+
+@media (max-width: 480px) {
+    .floating-services {
+        width: calc(100% - 30px);
+        right: 15px;
+        left: 15px;
+        bottom: 15px;
+    }
+    
+    .floating-service-item {
+        padding: 10px;
+    }
+    
+    .floating-service-info h5 {
+        font-size: 0.85rem;
+    }
+    
+    .floating-service-info p {
+        font-size: 0.75rem;
+    }
+    
+    .remove-service {
+        width: 28px;
+        height: 28px;
+        font-size: 1.1rem;
+    }
+    
+    .btn-book-now {
+        padding: 12px;
+        font-size: 0.85rem;
+    }
+}

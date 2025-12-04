@@ -5,6 +5,7 @@ let currentAppointments = [];
 let selectedTime = null;
 let selectedServices = [];
 let isBookingPaused = false;
+let bookingResumeDate = '';
 let lastScrollTop = 0;
 let currentSection = 'inicio';
 let zoomLevel = 1;
@@ -32,7 +33,9 @@ import {
     query,
     orderBy,
     where,
-    getDocs
+    getDocs,
+    getDoc,
+    setDoc
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 // Your web app's Firebase configuration
@@ -48,6 +51,9 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+// Referencia a la configuración del sistema
+const configRef = doc(db, "config", "booking");
 
 // ========== SERVICIOS CON RUTAS CORREGIDAS Y ACTUALIZADAS ==========
 const services = [
@@ -259,6 +265,80 @@ function getElement(id) {
     return element;
 }
 
+// ========== SISTEMA DE CONFIGURACIÓN EN TIEMPO REAL ==========
+async function initBookingConfig() {
+    try {
+        const docSnap = await getDoc(configRef);
+        
+        if (!docSnap.exists()) {
+            // Crear configuración inicial
+            await setDoc(configRef, {
+                isPaused: false,
+                resumeDate: '',
+                lastUpdated: new Date()
+            });
+        }
+        
+        // Escuchar cambios en tiempo real
+        onSnapshot(configRef, (doc) => {
+            if (doc.exists()) {
+                const data = doc.data();
+                isBookingPaused = data.isPaused || false;
+                bookingResumeDate = data.resumeDate || '';
+                
+                // Actualizar todos los botones de citas
+                updateBookingButtons();
+                
+                // Actualizar panel admin si está abierto
+                const adminContent = getElement('adminContent');
+                if (adminContent && adminContent.style.display !== 'none') {
+                    updateAdminControls();
+                }
+            }
+        });
+        
+    } catch (error) {
+        console.error('Error inicializando configuración:', error);
+        showNotification('⚠️ Error de conexión con el servidor', 'error');
+    }
+}
+
+// ========== ACTUALIZACIÓN DE BOTONES DE CITAS ==========
+function updateBookingButtons() {
+    const bookingButtons = [
+        getElement('bookingBtn'),
+        getElement('heroBookingBtn'),
+        getElement('bigBookingBtn'),
+        getElement('floatingBookBtn')
+    ];
+    
+    bookingButtons.forEach(btn => {
+        if (btn) {
+            if (isBookingPaused) {
+                btn.classList.remove('btn-fuchsia', 'btn-active');
+                btn.classList.add('btn-paused');
+                
+                let message = '⏸️ CITAS PAUSADAS';
+                if (bookingResumeDate) {
+                    message = `⏸️ NO HAY CITAS HASTA ${bookingResumeDate}`;
+                }
+                
+                btn.innerHTML = `<span class="btn-icon">⏸️</span> ${message}`;
+                btn.disabled = true;
+                btn.style.cursor = 'not-allowed';
+            } else {
+                btn.classList.remove('btn-paused');
+                btn.classList.add('btn-fuchsia', 'btn-active');
+                
+                const originalText = btn.getAttribute('data-original-text') || 'Reservar Cita';
+                btn.innerHTML = `<span class="btn-icon">📅</span> ${originalText}`;
+                btn.disabled = false;
+                btn.style.cursor = 'pointer';
+            }
+        }
+    });
+}
+
 // ========== SISTEMA DE PORTALES SEPARADOS ==========
 function initPortalNavigation() {
     const navLinks = document.querySelectorAll('.nav-link');
@@ -427,24 +507,43 @@ function initSmartBooking() {
     const bigBookingContainer = getElement('bigBookingContainer');
     
     if (bookingBtn) {
+        bookingBtn.setAttribute('data-original-text', 'HACER TU CITA AQUI');
         bookingBtn.addEventListener('click', handleBookingButtonClick);
     }
     
     if (heroBookingBtn) {
+        heroBookingBtn.setAttribute('data-original-text', 'Reservar Cita');
         heroBookingBtn.addEventListener('click', handleBookingButtonClick);
     }
     
     if (bigBookingBtn) {
+        bigBookingBtn.setAttribute('data-original-text', 'Realizar tu cita aquí');
         bigBookingBtn.addEventListener('click', function() {
             if (bigBookingContainer) {
                 bigBookingContainer.style.display = 'none';
             }
-            openBookingModal();
+            handleBookingButtonClick();
         });
+    }
+    
+    // Botón en el recuadro flotante
+    const floatingBookBtn = getElement('floatingBookBtn');
+    if (floatingBookBtn) {
+        floatingBookBtn.setAttribute('data-original-text', 'Reservar Ahora');
+        floatingBookBtn.addEventListener('click', handleBookingButtonClick);
     }
 }
 
 function handleBookingButtonClick() {
+    if (isBookingPaused) {
+        let message = '⏸️ Las citas están temporalmente desactivadas.';
+        if (bookingResumeDate) {
+            message = `⏸️ No hay citas disponibles hasta el ${bookingResumeDate}.`;
+        }
+        showNotification(message, 'warning');
+        return;
+    }
+    
     const bigBookingContainer = getElement('bigBookingContainer');
     if (bigBookingContainer) {
         bigBookingContainer.style.display = 'none';
@@ -456,6 +555,102 @@ function handleBookingButtonClick() {
         showNotification('👆 Selecciona los servicios que deseas reservar', 'info');
     } else {
         openBookingModal();
+    }
+}
+
+// ========== NUEVO SISTEMA DE SERVICIOS FLOTANTE ==========
+function initFloatingServices() {
+    const closeFloatingBtn = document.querySelector('.close-floating');
+    if (closeFloatingBtn) {
+        closeFloatingBtn.addEventListener('click', () => {
+            const floatingServices = getElement('floatingServices');
+            if (floatingServices) {
+                floatingServices.style.display = 'none';
+            }
+        });
+    }
+    
+    // Mostrar/ocultar recuadro flotante según servicios seleccionados
+    updateFloatingServices();
+}
+
+function updateFloatingServices() {
+    const floatingServices = getElement('floatingServices');
+    const floatingServicesList = getElement('floatingServicesList');
+    
+    if (!floatingServices || !floatingServicesList) return;
+    
+    floatingServicesList.innerHTML = '';
+    
+    if (selectedServices.length === 0) {
+        floatingServices.style.display = 'none';
+        return;
+    }
+    
+    // Mostrar recuadro flotante
+    floatingServices.style.display = 'flex';
+    
+    let totalPrice = 0;
+    let totalDuration = 0;
+    
+    selectedServices.forEach((service, index) => {
+        totalPrice += service.price;
+        totalDuration += service.duration;
+        
+        const serviceItem = document.createElement('div');
+        serviceItem.className = 'floating-service-item';
+        serviceItem.innerHTML = `
+            <div class="floating-service-info">
+                <h5>${service.name}</h5>
+                <p>$${service.price} • ${service.duration}min</p>
+            </div>
+            <button class="remove-service" data-index="${index}">×</button>
+        `;
+        floatingServicesList.appendChild(serviceItem);
+        
+        // Añadir evento para eliminar servicio
+        const removeBtn = serviceItem.querySelector('.remove-service');
+        removeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            removeService(index);
+        });
+    });
+    
+    // Actualizar botón flotante
+    const floatingBookBtn = getElement('floatingBookBtn');
+    if (floatingBookBtn) {
+        floatingBookBtn.innerHTML = `
+            <span class="btn-icon">📅</span> 
+            Reservar Ahora 
+            <span class="floating-total">(${selectedServices.length} servicios - $${totalPrice})</span>
+        `;
+    }
+}
+
+function removeService(index) {
+    if (index >= 0 && index < selectedServices.length) {
+        const removedService = selectedServices[index];
+        selectedServices.splice(index, 1);
+        
+        // Actualizar tarjetas de servicios
+        const serviceCard = document.querySelector(`[data-service-id="${removedService.id}"]`);
+        if (serviceCard) {
+            serviceCard.classList.remove('selected');
+            const bookBtn = serviceCard.querySelector('.service-book-btn');
+            if (bookBtn) {
+                bookBtn.classList.remove('added');
+                bookBtn.innerHTML = '<span class="btn-icon">➕</span> Agregar';
+                bookBtn.style.background = 'linear-gradient(135deg, #E75480, #D147A3)';
+            }
+        }
+        
+        // Actualizar recuadro flotante
+        updateFloatingServices();
+        
+        // Actualizar vista previa en modal (si está abierto)
+        updateBookingPreview();
+        
+        showNotification(`🗑️ ${removedService.name} removido`, 'info');
     }
 }
 
@@ -520,6 +715,9 @@ function toggleServiceSelection(service, card, bookBtn) {
         showNotification(`🗑️ ${service.name} removido`, 'info');
         bookBtn.style.background = 'linear-gradient(135deg, #E75480, #D147A3)';
     }
+    
+    // Actualizar recuadro flotante
+    updateFloatingServices();
 }
 
 function initMobileKeyboardFix() {
@@ -559,7 +757,11 @@ function initMobileKeyboardFix() {
 
 async function openBookingModal() {
     if (isBookingPaused) {
-        showNotification('⏸️ Las citas están temporalmente desactivadas. Por favor, intente más tarde.', 'warning');
+        let message = '⏸️ Las citas están temporalmente desactivadas. Por favor, intente más tarde.';
+        if (bookingResumeDate) {
+            message = `⏸️ No hay citas disponibles hasta el ${bookingResumeDate}.`;
+        }
+        showNotification(message, 'warning');
         return;
     }
     
@@ -640,7 +842,7 @@ function updateBookingPreview() {
     servicesCount.textContent = `${selectedServices.length} servicio${selectedServices.length !== 1 ? 's' : ''}`;
 }
 
-// ========== GENERACIÓN DE HORARIOS INTELIGENTE - CORREGIDO ==========
+// ========== GENERACIÓN DE HORARIOS INTELIGENTE ==========
 async function generateTimeSlots() {
     const timeSlots = getElement('timeSlots');
     const dateInput = getElement('date');
@@ -1196,7 +1398,11 @@ async function setupBookingForm() {
         e.preventDefault();
         
         if (isBookingPaused) {
-            showNotification('⏸️ Las citas están temporalmente desactivadas. Por favor, intente más tarde.', 'warning');
+            let message = '⏸️ Las citas están temporalmente desactivadas. Por favor, intente más tarde.';
+            if (bookingResumeDate) {
+                message = `⏸️ No hay citas disponibles hasta el ${bookingResumeDate}.`;
+            }
+            showNotification(message, 'warning');
             return;
         }
         
@@ -1254,8 +1460,11 @@ async function setupBookingForm() {
             
             closeBookingModal();
             
+            // Limpiar servicios seleccionados
             selectedServices = [];
+            updateFloatingServices();
             
+            // Resetear formulario
             bookingForm.reset();
             selectedTime = null;
             
@@ -1539,85 +1748,190 @@ function setupAdminModal() {
     }
 }
 
-function loadAdminContent() {
+// ========== PANEL DE ADMINISTRACIÓN MEJORADO ==========
+async function loadAdminContent() {
     const adminContent = getElement('adminContent');
     if (!adminContent) return;
     
-    adminContent.innerHTML = `
-        <div class="admin-header">
-            <h2>🔧 Panel de Administración</h2>
-            <p>Gestión de citas y horarios</p>
-            
-            <div class="admin-global-controls">
-                <div class="control-group">
-                    <h4>Control General de Citas</h4>
-                    <button class="btn ${isBookingPaused ? 'btn-success' : 'btn-warning'}" id="toggleBookingBtn">
-                        ${isBookingPaused ? '▶️ Reanudar Citas' : '⏸️ Pausar Citas'}
-                    </button>
-                    <p class="status-indicator ${isBookingPaused ? 'paused' : 'active'}">
-                        Estado: <strong>${isBookingPaused ? '⏸️ CITAS PAUSADAS' : '✅ CITAS ACTIVAS'}</strong>
-                    </p>
-                </div>
-            </div>
-        </div>
+    try {
+        const configDoc = await getDoc(configRef);
+        const configData = configDoc.exists() ? configDoc.data() : { isPaused: false, resumeDate: '' };
         
-        <div class="admin-tabs">
-            <button class="tab-btn active" data-tab="citas">📅 Citas</button>
-            <button class="tab-btn" data-tab="estadisticas">📊 Estadísticas</button>
-        </div>
-        
-        <div class="admin-content">
-            <div id="citasTab" class="tab-content active">
-                <div class="citas-header">
-                    <h3>Citas Confirmadas</h3>
-                    <div class="citas-stats">
-                        <span class="stat-item">Total: <strong id="totalCitas">0</strong></span>
-                        <span class="stat-item">Hoy: <strong id="citasHoy">0</strong></span>
+        adminContent.innerHTML = `
+            <div class="admin-header">
+                <h2>🔧 Panel de Administración</h2>
+                <p>Gestión de citas y horarios</p>
+                
+                <div class="admin-global-controls">
+                    <div class="control-group">
+                        <h4>Control General de Citas</h4>
+                        <button class="btn ${configData.isPaused ? 'btn-success' : 'btn-warning'}" id="toggleBookingBtn">
+                            ${configData.isPaused ? '▶️ Reanudar Citas' : '⏸️ Pausar Citas'}
+                        </button>
+                        
+                        <div class="resume-date-control" ${!configData.isPaused ? 'style="display: none;"' : ''}>
+                            <label for="resumeDateInput">Fecha de Reanudación:</label>
+                            <input type="date" id="resumeDateInput" value="${configData.resumeDate || ''}" class="modern-input">
+                            <button class="btn btn-sm" id="saveResumeDateBtn">💾 Guardar Fecha</button>
+                        </div>
+                        
+                        <p class="status-indicator ${configData.isPaused ? 'paused' : 'active'}">
+                            Estado: <strong>${configData.isPaused ? '⏸️ CITAS PAUSADAS' : '✅ CITAS ACTIVAS'}</strong>
+                            ${configData.isPaused && configData.resumeDate ? `<br><small>Reanudación: ${configData.resumeDate}</small>` : ''}
+                        </p>
                     </div>
-                </div>
-                <div id="citasList" class="citas-list">
-                    Cargando citas...
                 </div>
             </div>
             
-            <div id="estadisticasTab" class="tab-content">
-                <h3>Estadísticas</h3>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon">💰</div>
-                        <div class="stat-info">
-                            <span class="stat-value">$<span id="ingresosHoy">0</span></span>
-                            <span class="stat-label">Ingresos Hoy</span>
+            <div class="admin-tabs">
+                <button class="tab-btn active" data-tab="citas">📅 Citas (<span id="citasCount">0</span>)</button>
+                <button class="tab-btn" data-tab="estadisticas">📊 Estadísticas</button>
+            </div>
+            
+            <div class="admin-content">
+                <div id="citasTab" class="tab-content active">
+                    <div class="citas-header">
+                        <h3>Citas Confirmadas</h3>
+                        <div class="citas-stats">
+                            <span class="stat-item">Total: <strong id="totalCitas">0</strong></span>
+                            <span class="stat-item">Hoy: <strong id="citasHoy">0</strong></span>
+                            <span class="stat-item">Pendientes: <strong id="citasPendientes">0</strong></span>
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">⏰</div>
-                        <div class="stat-info">
-                            <span class="stat-value"><span id="tiempoTotal">0</span>min</span>
-                            <span class="stat-label">Tiempo Ocupado</span>
+                    <div id="citasList" class="citas-list">
+                        Cargando citas...
+                    </div>
+                </div>
+                
+                <div id="estadisticasTab" class="tab-content">
+                    <h3>Estadísticas</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">💰</div>
+                            <div class="stat-info">
+                                <span class="stat-value">$<span id="ingresosHoy">0</span></span>
+                                <span class="stat-label">Ingresos Hoy</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">⏰</div>
+                            <div class="stat-info">
+                                <span class="stat-value"><span id="tiempoTotal">0</span>min</span>
+                                <span class="stat-label">Tiempo Ocupado</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">👥</div>
+                            <div class="stat-info">
+                                <span class="stat-value"><span id="clientesHoy">0</span></span>
+                                <span class="stat-label">Clientes Hoy</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📊</div>
+                            <div class="stat-info">
+                                <span class="stat-value">$<span id="ingresosTotales">0</span></span>
+                                <span class="stat-label">Ingresos Totales</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    `;
-    
+        `;
+        
+        // Configurar eventos del panel admin
+        setupAdminControls();
+        loadCitas();
+        loadEstadisticas();
+        setupAdminTabs();
+        
+    } catch (error) {
+        console.error('Error cargando contenido admin:', error);
+        adminContent.innerHTML = '<p class="error">❌ Error cargando el panel de administración</p>';
+    }
+}
+
+function setupAdminControls() {
+    // Botón de pausar/reanudar citas
     const toggleBookingBtn = getElement('toggleBookingBtn');
     if (toggleBookingBtn) {
-        toggleBookingBtn.addEventListener('click', function() {
-            isBookingPaused = !isBookingPaused;
-            localStorage.setItem('isBookingPaused', isBookingPaused);
-            showNotification(
-                isBookingPaused ? '⏸️ Citas pausadas' : '✅ Citas reanudadas',
-                isBookingPaused ? 'warning' : 'success'
-            );
-            loadAdminContent();
+        toggleBookingBtn.addEventListener('click', async function() {
+            try {
+                const configDoc = await getDoc(configRef);
+                const currentData = configDoc.exists() ? configDoc.data() : { isPaused: false, resumeDate: '' };
+                
+                const newIsPaused = !currentData.isPaused;
+                
+                await updateDoc(configRef, {
+                    isPaused: newIsPaused,
+                    lastUpdated: new Date()
+                });
+                
+                showNotification(
+                    newIsPaused ? '⏸️ Citas pausadas' : '✅ Citas reanudadas',
+                    newIsPaused ? 'warning' : 'success'
+                );
+                
+                // Si se reanudan, eliminar la fecha de reanudación
+                if (!newIsPaused) {
+                    await updateDoc(configRef, {
+                        resumeDate: '',
+                        lastUpdated: new Date()
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Error actualizando estado:', error);
+                showNotification('❌ Error actualizando el estado', 'error');
+            }
         });
     }
     
-    loadCitas();
-    loadEstadisticas();
-    setupAdminTabs();
+    // Botón para guardar fecha de reanudación
+    const saveResumeDateBtn = getElement('saveResumeDateBtn');
+    if (saveResumeDateBtn) {
+        saveResumeDateBtn.addEventListener('click', async function() {
+            const resumeDateInput = getElement('resumeDateInput');
+            if (!resumeDateInput || !resumeDateInput.value) {
+                showNotification('⚠️ Selecciona una fecha válida', 'warning');
+                return;
+            }
+            
+            try {
+                await updateDoc(configRef, {
+                    resumeDate: resumeDateInput.value,
+                    lastUpdated: new Date()
+                });
+                
+                showNotification('✅ Fecha de reanudación guardada', 'success');
+            } catch (error) {
+                console.error('Error guardando fecha:', error);
+                showNotification('❌ Error guardando la fecha', 'error');
+            }
+        });
+    }
+    
+    // Mostrar/ocultar control de fecha según estado
+    const configObserver = onSnapshot(configRef, (doc) => {
+        if (doc.exists()) {
+            const data = doc.data();
+            const resumeDateControl = document.querySelector('.resume-date-control');
+            const statusIndicator = document.querySelector('.status-indicator');
+            
+            if (resumeDateControl) {
+                resumeDateControl.style.display = data.isPaused ? 'block' : 'none';
+            }
+            
+            if (statusIndicator) {
+                statusIndicator.className = `status-indicator ${data.isPaused ? 'paused' : 'active'}`;
+                let statusHTML = `Estado: <strong>${data.isPaused ? '⏸️ CITAS PAUSADAS' : '✅ CITAS ACTIVAS'}</strong>`;
+                if (data.isPaused && data.resumeDate) {
+                    statusHTML += `<br><small>Reanudación: ${data.resumeDate}</small>`;
+                }
+                statusIndicator.innerHTML = statusHTML;
+            }
+        }
+    });
 }
 
 function setupAdminTabs() {
@@ -1647,11 +1961,13 @@ function loadCitas() {
         
         if (snapshot.empty) {
             citasList.innerHTML = '<div class="no-citas"><p>📭 No hay citas programadas</p></div>';
+            updateCitasCount(0, 0, 0);
             return;
         }
         
         let totalCitas = 0;
         let citasHoy = 0;
+        let citasPendientes = 0;
         const today = new Date().toISOString().split('T')[0];
         
         snapshot.forEach((doc) => {
@@ -1660,6 +1976,10 @@ function loadCitas() {
             
             if (cita.fecha === today) {
                 citasHoy++;
+            }
+            
+            if (cita.estado === 'confirmada') {
+                citasPendientes++;
             }
             
             const citaElement = document.createElement('div');
@@ -1700,11 +2020,20 @@ function loadCitas() {
             citasList.appendChild(citaElement);
         });
 
-        const totalCitasElement = getElement('totalCitas');
-        const citasHoyElement = getElement('citasHoy');
-        if (totalCitasElement) totalCitasElement.textContent = totalCitas;
-        if (citasHoyElement) citasHoyElement.textContent = citasHoy;
+        updateCitasCount(totalCitas, citasHoy, citasPendientes);
     });
+}
+
+function updateCitasCount(total, hoy, pendientes) {
+    const totalCitasElement = getElement('totalCitas');
+    const citasHoyElement = getElement('citasHoy');
+    const citasPendientesElement = getElement('citasPendientes');
+    const citasCountElement = getElement('citasCount');
+    
+    if (totalCitasElement) totalCitasElement.textContent = total;
+    if (citasHoyElement) citasHoyElement.textContent = hoy;
+    if (citasPendientesElement) citasPendientesElement.textContent = pendientes;
+    if (citasCountElement) citasCountElement.textContent = total;
 }
 
 function loadEstadisticas() {
@@ -1713,24 +2042,34 @@ function loadEstadisticas() {
     onSnapshot(q, (snapshot) => {
         let ingresosHoy = 0;
         let tiempoTotal = 0;
-        let citasCompletadas = 0;
+        let clientesHoy = 0;
+        let ingresosTotales = 0;
         const today = new Date().toISOString().split('T')[0];
+        const clientesSet = new Set();
         
         snapshot.forEach((doc) => {
             const cita = doc.data();
             
+            ingresosTotales += cita.total;
+            
             if (cita.fecha === today && cita.estado === 'confirmada') {
                 ingresosHoy += cita.total;
                 tiempoTotal += cita.duracion;
-                citasCompletadas++;
+                clientesSet.add(cita.telefono);
             }
         });
+        
+        clientesHoy = clientesSet.size;
 
         const ingresosHoyElement = getElement('ingresosHoy');
         const tiempoTotalElement = getElement('tiempoTotal');
+        const clientesHoyElement = getElement('clientesHoy');
+        const ingresosTotalesElement = getElement('ingresosTotales');
         
         if (ingresosHoyElement) ingresosHoyElement.textContent = ingresosHoy;
         if (tiempoTotalElement) tiempoTotalElement.textContent = tiempoTotal;
+        if (clientesHoyElement) clientesHoyElement.textContent = clientesHoy;
+        if (ingresosTotalesElement) ingresosTotalesElement.textContent = ingresosTotales;
     });
 }
 
@@ -1748,6 +2087,15 @@ async function cancelarCita(citaId) {
             console.error('Error cancelando cita:', error);
             showNotification('❌ Error cancelando cita', 'error');
         }
+    }
+}
+
+function updateAdminControls() {
+    // Esta función se llama cuando cambia la configuración
+    const toggleBookingBtn = getElement('toggleBookingBtn');
+    if (toggleBookingBtn) {
+        toggleBookingBtn.textContent = isBookingPaused ? '▶️ Reanudar Citas' : '⏸️ Pausar Citas';
+        toggleBookingBtn.className = `btn ${isBookingPaused ? 'btn-success' : 'btn-warning'}`;
     }
 }
 
@@ -1798,38 +2146,12 @@ function initNavigation() {
             switchSection(targetSection);
         });
     });
-    
-    const bookingButtons = [
-        getElement('bookingBtn'),
-        getElement('heroBookingBtn'), 
-        getElement('bigBookingBtn')
-    ];
-    
-    bookingButtons.forEach(btn => {
-        if (btn) {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                handleBookingButtonClick();
-            });
-        }
-    });
-    
-    // Configuración mejorada del botón admin
-    const adminBtn = getElement('adminBtn');
-    if (adminBtn) {
-        adminBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            openAdminModal();
-        });
-    }
 }
 
 // ========== INICIALIZACIÓN PRINCIPAL CORREGIDA ==========
 document.addEventListener('DOMContentLoaded', function() {
-    const savedPauseState = localStorage.getItem('isBookingPaused');
-    if (savedPauseState !== null) {
-        isBookingPaused = savedPauseState === 'true';
-    }
+    // Inicializar configuración de Firebase
+    initBookingConfig();
     
     initHeaderScroll();
     initMobileMenu();
@@ -1837,6 +2159,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initNavigation();
     initSmartBooking();
     initCarousel();
+    initFloatingServices();
     
     loadServices();
     loadProducts();
@@ -1859,3 +2182,4 @@ window.cancelarCita = cancelarCita;
 window.switchSection = switchSection;
 window.scrollToServices = scrollToServices;
 window.openAdminModal = openAdminModal;
+window.removeService = removeService;

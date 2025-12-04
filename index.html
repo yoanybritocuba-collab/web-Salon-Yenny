@@ -44,6 +44,17 @@
                 display: block;
             }
         }
+        
+        /* Botón de citas pausado */
+        .btn-paused {
+            background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
+            cursor: not-allowed !important;
+            opacity: 0.8;
+        }
+        
+        .btn-active {
+            background: linear-gradient(135deg, #27ae60, #219653) !important;
+        }
     </style>
 </head>
 <body>
@@ -100,7 +111,7 @@
                     <div class="hero-content">
                         <h2 class="hero-title">Transforma tu Belleza</h2>
                         <p class="hero-subtitle">Servicios profesionales de estética con tecnología avanzada</p>
-                        <button class="btn btn-fuchsia btn-hero" id="heroBookingBtn">
+                        <button class="btn btn-fuchsia btn-hero btn-active" id="heroBookingBtn">
                             <span class="btn-icon">📅</span>
                             Reservar Cita
                         </button>
@@ -115,7 +126,7 @@
                 <div class="container">
                     <!-- Botón grande "Realizar tu cita aquí" - AHORA SE OCULTA AL CLIC -->
                     <div class="big-booking-btn-container" id="bigBookingContainer">
-                        <button class="btn btn-fuchsia btn-large btn-big-booking" id="bigBookingBtn">
+                        <button class="btn btn-fuchsia btn-large btn-big-booking btn-active" id="bigBookingBtn">
                             <span class="btn-icon">📅</span>
                             Realizar tu cita aquí
                         </button>
@@ -205,6 +216,24 @@
         </section>
     </main>
 
+    <!-- Recuadro flotante de servicios seleccionados -->
+    <div id="floatingServices" class="floating-services">
+        <div class="floating-services-header">
+            <h4>🛒 Servicios Seleccionados</h4>
+            <button class="close-floating">&times;</button>
+        </div>
+        <div class="floating-services-list" id="floatingServicesList">
+            <!-- Los servicios seleccionados aparecerán aquí -->
+            <div class="no-services">No hay servicios seleccionados</div>
+        </div>
+        <div class="floating-services-actions">
+            <button class="btn-book-now btn-active" id="floatingBookBtn">
+                <span class="btn-icon">📅</span> 
+                Reservar Ahora
+            </button>
+        </div>
+    </div>
+
     <!-- Booking Modal - SISTEMA INTELIGENTE -->
     <div id="bookingModal" class="modal">
         <div class="modal-content modern-booking-modal">
@@ -250,7 +279,7 @@
                         <div class="form-group modern-form-group time-group">
                             <label class="modern-label">
                                 <span class="label-icon">⏰</span>
-                                Horarios Disponibles
+                                Horarios Disponibles (9:00 - 18:00)
                             </label>
                             <div id="timeSlots" class="time-slots-container-modern">
                                 <!-- Los horarios se cargan aquí dinámicamente con IA -->
