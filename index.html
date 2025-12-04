@@ -7,34 +7,111 @@
     <link rel="stylesheet" href="css/main.css">
     <!-- Fuente Dancing Script para el nombre -->
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <!-- Animate.css para efectos profesionales -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
-        /* Estilos para los enlaces de contacto */
+        /* FONDO GLOBAL - CORREGIDO DEFINITIVO */
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-image: url('imagenes/FL/fondo.jpg');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            position: relative;
+        }
+        
+        /* Capa oscura para mejor contraste */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
+
+        /* Estilos para los enlaces de contacto - MEJORADO */
         .contact-link {
-            color: inherit;
+            color: white !important;
             text-decoration: none;
             transition: all 0.3s ease;
             border-bottom: 1px solid transparent;
             padding: 2px 0;
+            font-weight: 500;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         }
 
         .contact-link:hover {
-            color: var(--primary-color);
-            border-bottom: 1px solid var(--primary-color);
-            transform: translateY(-1px);
+            color: #FFD700 !important;
+            border-bottom: 1px solid #FFD700;
+            transform: translateY(-2px);
         }
 
         .contact-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 12px;
+            margin-bottom: 18px;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .contact-item:hover {
+            background: rgba(231, 84, 128, 0.8);
+            transform: translateX(10px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
 
         .contact-item p {
             margin: 0;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
         }
 
-        /* Estilos para el botón admin en móvil */
+        .contact-icon {
+            color: #FFD700;
+            font-weight: bold;
+            font-size: 1.4rem;
+            min-width: 35px;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Efectos de animación para el contenido */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+        
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Botones con animación */
+        .btn-fuchsia {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
         .admin-mobile-item {
             display: none;
         }
@@ -43,9 +120,18 @@
             .admin-mobile-item {
                 display: block;
             }
+            
+            .contact-item {
+                background: rgba(0, 0, 0, 0.7);
+                padding: 12px 15px;
+                margin: 10px 0;
+            }
+            
+            body {
+                background-attachment: scroll;
+            }
         }
         
-        /* Botón de citas pausado */
         .btn-paused {
             background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
             cursor: not-allowed !important;
@@ -56,7 +142,6 @@
             background: linear-gradient(135deg, #27ae60, #219653) !important;
         }
 
-        /* Ajustes específicos para el modal admin */
         .admin-modal .modal-content {
             max-height: 90vh !important;
             overflow: hidden !important;
@@ -76,7 +161,6 @@
             overflow-y: auto;
         }
 
-        /* Asegurar que el modal admin se vea bien en móviles */
         @media (max-width: 768px) {
             .admin-modal .modal-content {
                 max-height: 100vh !important;
@@ -89,60 +173,52 @@
     </style>
 </head>
 <body>
-
     <!-- Header Mejorado - Negro con ocultamiento -->
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <!-- Logo y nombre con nueva estructura - LOGO A LA IZQUIERDA -->
                 <div class="brand-section">
                     <div class="logo-container">
                         <img src="imagenes/FL/logo.png" alt="YennyHair-Salón Logo" class="logo-image-small">
                         <div class="logo-text">
-                            <h1 class="logo-title">YennyHair-Salón</h1>
-                            <p class="logo-subtitle">BELLEZA PROFESIONAL</p>
+                            <h1 class="logo-title animate__animated animate__fadeInDown">YennyHair-Salón</h1>
+                            <p class="logo-subtitle animate__animated animate__fadeInUp">BELLEZA PROFESIONAL</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Navegación compacta -->
                 <nav class="nav-compact">
                     <ul>
                         <li><a href="#inicio" class="nav-link active" data-section="inicio">Inicio</a></li>
                         <li><a href="#servicios" class="nav-link" data-section="servicios">Servicios</a></li>
                         <li><a href="#productos" class="nav-link" data-section="productos">Productos</a></li>
                         <li><a href="#galeria" class="nav-link" data-section="galeria">Galería</a></li>
-                        <!-- Elemento admin en menú móvil -->
                         <li class="admin-mobile-item">
                             <a href="#" class="nav-link" id="adminMobileBtn">Panel Admin</a>
                         </li>
                     </ul>
                 </nav>
 
-                <!-- Botón menú móvil -->
                 <button class="mobile-menu-toggle" id="mobileMenuToggle">
                     ☰
                 </button>
 
-                <!-- Botones reorganizados -->
                 <div class="header-actions">
-                    <button id="bookingBtn" class="btn btn-fuchsia btn-compact">HACER TU CITA AQUI</button>
+                    <button id="bookingBtn" class="btn btn-fuchsia btn-compact animate__animated animate__pulse animate__infinite">HACER TU CITA AQUI</button>
                     <button id="adminBtn" class="btn btn-outline btn-compact">Admin</button>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Main Content con secciones separadas -->
     <main id="main-content">
-        <!-- Hero Section - PORTAL INICIO -->
         <section id="inicio" class="section-portal section-active">
             <div class="hero">
                 <div class="container">
-                    <div class="hero-content">
-                        <h2 class="hero-title">Transforma tu Belleza</h2>
-                        <p class="hero-subtitle">Servicios profesionales de estética con tecnología avanzada</p>
-                        <button class="btn btn-fuchsia btn-hero btn-active" id="heroBookingBtn">
+                    <div class="hero-content animate__animated animate__fadeIn">
+                        <h2 class="hero-title animate__animated animate__fadeInDown">Transforma tu Belleza</h2>
+                        <p class="hero-subtitle animate__animated animate__fadeInUp animate__delay-1s">Servicios profesionales de estética con tecnología avanzada</p>
+                        <button class="btn btn-fuchsia btn-hero btn-active animate__animated animate__bounceIn animate__delay-2s" id="heroBookingBtn">
                             <span class="btn-icon">📅</span>
                             Reservar Cita
                         </button>
@@ -151,19 +227,16 @@
             </div>
         </section>
 
-        <!-- Services Section - PORTAL SERVICIOS -->
         <section id="servicios" class="section-portal">
             <div class="services">
                 <div class="container">
-                    <!-- Botón grande "Realizar tu cita aquí" - AHORA SE OCULTA AL CLIC -->
                     <div class="big-booking-btn-container" id="bigBookingContainer">
-                        <button class="btn btn-fuchsia btn-large btn-big-booking btn-active" id="bigBookingBtn">
+                        <button class="btn btn-fuchsia btn-large btn-big-booking btn-active animate__animated animate__pulse animate__slow" id="bigBookingBtn">
                             <span class="btn-icon">📅</span>
                             Realizar tu cita aquí
                         </button>
                     </div>
 
-                    <!-- Indicador con flecha -->
                     <div class="services-indicator" id="servicesIndicator" style="display: none;">
                         <div class="indicator-content">
                             <span class="indicator-icon">👇</span>
@@ -175,9 +248,8 @@
                     </div>
                     
                     <div class="services-layout">
-                        <!-- Columna izquierda: Servicios con scroll -->
                         <div class="services-column">
-                            <h2 class="section-title">Nuestros Servicios</h2>
+                            <h2 class="section-title animate-on-scroll">Nuestros Servicios</h2>
                             <div class="services-scroll-container">
                                 <div class="services-grid" id="servicesContainer">
                                     <!-- Los servicios se cargarán dinámicamente aquí -->
@@ -189,11 +261,10 @@
             </div>
         </section>
 
-        <!-- Products Section - PORTAL PRODUCTOS -->
         <section id="productos" class="section-portal">
             <div class="products">
                 <div class="container">
-                    <h2 class="section-title">Productos Exclusivos</h2>
+                    <h2 class="section-title animate-on-scroll">Productos Exclusivos</h2>
                     <div class="products-grid" id="productsContainer">
                         <!-- Los productos se cargan dinámicamente -->
                     </div>
@@ -201,11 +272,10 @@
             </div>
         </section>
 
-        <!-- Gallery Section - PORTAL GALERÍA -->
         <section id="galeria" class="section-portal">
             <div class="gallery">
                 <div class="container">
-                    <h2 class="section-title">Galería de Trabajos</h2>
+                    <h2 class="section-title animate-on-scroll">Galería de Trabajos</h2>
                     <div class="gallery-grid" id="galleryContainer">
                         <!-- Las imágenes de galería se cargan dinámicamente -->
                     </div>
@@ -213,31 +283,30 @@
             </div>
         </section>
 
-        <!-- Contact Section MODIFICADA CON ENLACES FUNCIONALES -->
         <section id="contacto" class="contact">
             <div class="container">
-                <h2 class="section-title">Contáctanos</h2>
+                <h2 class="section-title animate-on-scroll">Contáctanos</h2>
                 <div class="contact-content">
                     <div class="contact-info">
-                        <div class="contact-item">
+                        <div class="contact-item animate__animated animate__fadeInLeft">
                             <span class="contact-icon">📍</span>
                             <a href="https://maps.google.com/?q=Tellstrase 32, 8400 Winterthur" target="_blank" class="contact-link">
                                 Tellstrase 32, 8400 Winterthur
                             </a>
                         </div>
-                        <div class="contact-item">
+                        <div class="contact-item animate__animated animate__fadeInLeft animate__delay-1s">
                             <span class="contact-icon">📞</span>
                             <a href="tel:+41793923464" class="contact-link">
                                 +41 79 392 34 64
                             </a>
                         </div>
-                        <div class="contact-item">
+                        <div class="contact-item animate__animated animate__fadeInLeft animate__delay-2s">
                             <span class="contact-icon">✉️</span>
                             <a href="mailto:yennyarileidy@outlook.es" class="contact-link">
                                 yennyarileidy@outlook.es
                             </a>
                         </div>
-                        <div class="contact-item">
+                        <div class="contact-item animate__animated animate__fadeInLeft animate__delay-3s">
                             <span class="contact-icon">🕒</span>
                             <p>Lun-Sáb: 9:00-18:00 | Dom: Cerrado</p>
                         </div>
@@ -254,7 +323,6 @@
             <button class="close-floating">&times;</button>
         </div>
         <div class="floating-services-list" id="floatingServicesList">
-            <!-- Los servicios seleccionados aparecerán aquí -->
             <div class="no-services">No hay servicios seleccionados</div>
         </div>
         <div class="floating-services-actions">
@@ -479,5 +547,50 @@
 
     <!-- JavaScript -->
     <script type="module" src="js/app.js"></script>
+    <script>
+        // JavaScript para animaciones al hacer scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            // Efecto de animación al hacer scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            // Observar todos los elementos con clase animate-on-scroll
+            document.querySelectorAll('.animate-on-scroll').forEach(el => {
+                observer.observe(el);
+            });
+            
+            // Verificar si la imagen de fondo existe
+            const img = new Image();
+            img.onload = function() {
+                console.log('✅ Imagen de fondo cargada correctamente');
+                document.body.style.backgroundImage = "url('imagenes/FL/fondo.jpg')";
+            };
+            img.onerror = function() {
+                console.log('❌ No se pudo cargar la imagen de fondo');
+                // Intentar rutas alternativas
+                const altPaths = [
+                    'imagenes/fl/fondo.jpg',
+                    './imagenes/FL/fondo.jpg',
+                    '../imagenes/FL/fondo.jpg'
+                ];
+                
+                for (let i = 0; i < altPaths.length; i++) {
+                    const testImg = new Image();
+                    testImg.src = altPaths[i];
+                    testImg.onload = function() {
+                        document.body.style.backgroundImage = `url('${altPaths[i]}')`;
+                        console.log(`✅ Imagen cargada desde: ${altPaths[i]}`);
+                        break;
+                    };
+                }
+            };
+            img.src = 'imagenes/FL/fondo.jpg';
+        });
+    </script>
 </body>
 </html>
