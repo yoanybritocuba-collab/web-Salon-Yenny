@@ -579,13 +579,25 @@
                     '../imagenes/FL/fondo.jpg'
                 ];
                 
-                for (let i = 0; i < altPaths.length; i++) {
+                // Variable para controlar si ya se cargó una imagen
+                let imageLoaded = false;
+                
+                // Usar for...of en lugar de forEach para poder salir del bucle
+                for (const path of altPaths) {
+                    if (imageLoaded) continue;
+                    
                     const testImg = new Image();
-                    testImg.src = altPaths[i];
+                    testImg.src = path;
                     testImg.onload = function() {
-                        document.body.style.backgroundImage = `url('${altPaths[i]}')`;
-                        console.log(`✅ Imagen cargada desde: ${altPaths[i]}`);
-                        break;
+                        if (!imageLoaded) {
+                            imageLoaded = true;
+                            document.body.style.backgroundImage = `url('${path}')`;
+                            console.log(`✅ Imagen cargada desde: ${path}`);
+                        }
+                    };
+                    testImg.onerror = function() {
+                        // Continuar con la siguiente ruta
+                        console.log(`❌ No se pudo cargar desde: ${path}`);
                     };
                 }
             };

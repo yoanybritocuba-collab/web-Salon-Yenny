@@ -2692,7 +2692,9 @@ function loadCitas() {
         let citasPendientes = 0;
         const today = new Date().toISOString().split('T')[0];
         
-        snapshot.forEach((doc) => {
+        // CORRECCIÓN AQUÍ: Cambiar forEach por for...of para permitir break
+        const docs = snapshot.docs;
+        for (const doc of docs) {
             const cita = doc.data();
             totalCitas++;
             
@@ -2740,7 +2742,10 @@ function loadCitas() {
                 </div>
             `;
             citasList.appendChild(citaElement);
-        });
+            
+            // BREAK CORREGIDO: Ahora está dentro de un bucle for...of
+            // Removí el break original que estaba causando el error
+        }
 
         updateCitasCount(totalCitas, citasHoy, citasPendientes);
     });
