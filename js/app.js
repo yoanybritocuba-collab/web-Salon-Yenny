@@ -10,6 +10,11 @@ let lastScrollTop = 0;
 let currentSection = 'inicio';
 let zoomLevel = 1;
 
+// Variables para el control del botón "atrás" del móvil
+let backButtonPressCount = 0;
+let backButtonTimeout = null;
+let isBackButtonEnabled = true;
+
 // Variables para el carrusel
 let carouselTrack = null;
 let carouselItems = [];
@@ -54,6 +59,315 @@ const db = getFirestore(app);
 
 // Referencia a la configuración del sistema
 const configRef = doc(db, "config", "booking");
+
+// ========== SISTEMA DE CONTROL DEL BOTÓN "ATRÁS" DEL MÓVIL ==========
+function initBackButtonControl() {
+    // Agregar un estado inicial al historial
+    history.pushState({ page: "main", section: "inicio" }, "", "");
+    
+    // Variable para controlar si estamos en el panel admin
+    let isInAdminPanel = false;
+    let adminBackButton = null;
+
+    // Escuchar cambios en el estado del historial
+    window.addEventListener("popstate", function(e) {
+        // Si el usuario está en el panel admin, verificar si hay botón de retorno
+        if (isInAdminPanel) {
+            const adminBackBtn = document.querySelector('.admin-back-to-home');
+            if (adminBackBtn) {
+                // Simular clic en el botón de retorno
+                adminBackBtn.click();
+                e.preventDefault();
+                history.pushState({ page: "main", section: "inicio" }, "", "");
+                return;
+            }
+        }
+
+        // Control del botón físico "atrás" del móvil
+        if (isBackButtonEnabled) {
+            if (backButtonPressCount < 2) {
+                e.preventDefault();
+                
+                backButtonPressCount++;
+                
+                // Mostrar feedback visual
+                showBackButtonFeedback(backButtonPressCount);
+                
+                // Navegar a inicio si no está ahí
+                if (currentSection !== 'inicio') {
+                    switchSection('inicio');
+                } else {
+                    // Si ya está en inicio, mostrar mensaje
+                    showBackButtonMessage(backButtonPressCount);
+                }
+                
+                // Prevenir la salida
+                history.pushState({ page: "main", section: currentSection }, "", "");
+                
+                // Reiniciar contador después de 3 segundos
+                clearTimeout(backButtonTimeout);
+                backButtonTimeout = setTimeout(() => {
+                    backButtonPressCount = 0;
+                    hideBackButtonFeedback();
+                }, 3000);
+                
+            } else {
+                // Tercera vez - Mostrar mensaje final
+                showExitMessage();
+                // Permitir salida natural
+                return;
+            }
+        }
+    });
+
+    // Crear botón de retorno para panel admin
+    function createAdminBackButton() {
+        const backButton = document.createElement('button');
+        backButton.className = 'admin-back-to-home';
+        backButton.innerHTML = `
+            <span class="back-icon">←</span>
+            <span class="back-text">Volver al Inicio</span>
+        `;
+        backButton.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 10001;
+            background: linear-gradient(135deg, #E75480, #D147A3);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 24px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(231, 84, 128, 0.3);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateX(-20px);
+            animation: slideInRight 0.5s ease 0.3s forwards;
+        `;
+        
+        backButton.addEventListener('click', function() {
+            const adminModal = getElement('adminModal');
+            if (adminModal) {
+                adminModal.style.display = 'none';
+                isInAdminPanel = false;
+                switchSection('inicio');
+            }
+        });
+        
+        backButton.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateX(0) scale(1.05)';
+            this.style.boxShadow = '0 6px 20px rgba(231, 84, 128, 0.4)';
+        });
+        
+        backButton.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateX(0)';
+            this.style.boxShadow = '0 4px 15px rgba(231, 84, 128, 0.3)';
+        });
+        
+        return backButton;
+    }
+
+    // Observar cambios en el DOM para detectar cuando se abre el panel admin
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList') {
+                const adminModal = getElement('adminModal');
+                if (adminModal && adminModal.style.display === 'block') {
+                    isInAdminPanel = true;
+                    
+                    // Agregar botón de retorno si no existe
+                    if (!adminBackButton) {
+                        adminBackButton = createAdminBackButton();
+                        document.body.appendChild(adminBackButton);
+                        
+                        // Animar entrada
+                        setTimeout(() => {
+                            adminBackButton.style.opacity = '1';
+                            adminBackButton.style.transform = 'translateX(0)';
+                        }, 100);
+                    }
+                } else {
+                    isInAdminPanel = false;
+                    
+                    // Remover botón de retorno
+                    if (adminBackButton && adminBackButton.parentNode) {
+                        adminBackButton.style.opacity = '0';
+                        adminBackButton.style.transform = 'translateX(-20px)';
+                        setTimeout(() => {
+                            if (adminBackButton.parentNode) {
+                                adminBackButton.parentNode.removeChild(adminBackButton);
+                                adminBackButton = null;
+                            }
+                        }, 300);
+                    }
+                }
+            }
+        });
+    });
+
+    // Observar cambios en el modal de admin
+    const adminModal = getElement('adminModal');
+    if (adminModal) {
+        observer.observe(adminModal, { attributes: true, attributeFilter: ['style'] });
+    }
+
+    // Agregar estilos CSS para las animaciones
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        .back-button-feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 15px;
+            z-index: 10000;
+            font-size: 2rem;
+            font-weight: bold;
+            animation: fadeIn 0.3s ease, bounce 0.5s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .back-button-message {
+            font-size: 1rem;
+            opacity: 0.9;
+            text-align: center;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+function showBackButtonFeedback(count) {
+    // Remover feedback anterior si existe
+    const existingFeedback = document.querySelector('.back-button-feedback');
+    if (existingFeedback) {
+        existingFeedback.remove();
+    }
+    
+    const feedback = document.createElement('div');
+    feedback.className = 'back-button-feedback';
+    
+    let message = '';
+    let remaining = 3 - count;
+    
+    if (remaining === 2) {
+        message = 'Presiona 2 veces más para salir';
+    } else if (remaining === 1) {
+        message = 'Presiona 1 vez más para salir';
+    }
+    
+    feedback.innerHTML = `
+        <div style="font-size: 3rem;">${count}</div>
+        <div class="back-button-message">${message}</div>
+    `;
+    
+    document.body.appendChild(feedback);
+    
+    setTimeout(() => {
+        if (feedback.parentNode) {
+            feedback.style.opacity = '0';
+            feedback.style.transform = 'translate(-50%, -50%) scale(0.9)';
+            setTimeout(() => {
+                if (feedback.parentNode) {
+                    feedback.remove();
+                }
+            }, 300);
+        }
+    }, 1500);
+}
+
+function hideBackButtonFeedback() {
+    const feedback = document.querySelector('.back-button-feedback');
+    if (feedback) {
+        feedback.style.opacity = '0';
+        feedback.style.transform = 'translate(-50%, -50%) scale(0.9)';
+        setTimeout(() => {
+            if (feedback.parentNode) {
+                feedback.remove();
+            }
+        }, 300);
+    }
+}
+
+function showBackButtonMessage(count) {
+    const remaining = 3 - count;
+    const messages = [
+        '',
+        'Presiona 2 veces más para salir',
+        'Presiona 1 vez más para salir'
+    ];
+    
+    if (messages[count]) {
+        showNotification(`⬅️ ${messages[count]}`, 'warning', 2000);
+    }
+}
+
+function showExitMessage() {
+    const exitMessage = document.createElement('div');
+    exitMessage.className = 'back-button-feedback';
+    exitMessage.innerHTML = `
+        <div style="font-size: 3rem; color: #e74c3c;">⚠️</div>
+        <div class="back-button-message" style="color: #e74c3c;">
+            <strong>Saliendo...</strong><br>
+            ¡Gracias por visitarnos!
+        </div>
+    `;
+    
+    document.body.appendChild(exitMessage);
+    
+    setTimeout(() => {
+        if (exitMessage.parentNode) {
+            exitMessage.style.opacity = '0';
+            exitMessage.style.transform = 'translate(-50%, -50%) scale(0.9)';
+            setTimeout(() => {
+                if (exitMessage.parentNode) {
+                    exitMessage.remove();
+                }
+                // Aquí podrías redirigir o cerrar la pestaña
+                // window.location.href = 'about:blank';
+            }, 300);
+        }
+    }, 2000);
+}
 
 // ========== SERVICIOS CON RUTAS CORREGIDAS ==========
 const services = [
@@ -2286,6 +2600,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Inicializar configuración de Firebase
     initBookingConfig();
+    
+    // Inicializar control del botón atrás del móvil
+    initBackButtonControl();
     
     initHeaderScroll();
     initMobileMenu();

@@ -79,11 +79,29 @@
   font-weight: 500;
   transition: color 0.3s;
   white-space: nowrap;
+  position: relative;
+  text-decoration: none;
 }
 
 .nav-link:hover,
 .nav-link.active {
   color: var(--primary-color);
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
 }
 
 /* Botón menú móvil */
@@ -96,6 +114,11 @@
   cursor: pointer;
   padding: 0.5rem;
   z-index: 1002;
+  transition: transform 0.3s ease;
+}
+
+.mobile-menu-toggle.active {
+  transform: rotate(90deg);
 }
 
 /* Acciones del header */
@@ -154,45 +177,101 @@
     margin-left: auto;
   }
   
-  /* Menú móvil desplegable */
+  /* Menú móvil desplegable - NUEVO ESTILO FLOTANTE A LA DERECHA */
   .nav-compact.mobile-open {
-    display: block;
+    display: block !important;
     position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: var(--header-bg);
-    padding: 1rem;
+    top: 70px; /* Justo debajo del botón sandwich */
+    right: 20px; /* Alineado al lado derecho */
+    left: auto; /* Anular left:0 */
+    width: auto; /* Ancho automático basado en contenido */
+    min-width: 180px;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 0;
     z-index: 1001;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    animation: slideDownFade 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    transform-origin: top right;
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  
+  /* Animación para el menú desplegable */
+  @keyframes slideDownFade {
+    0% {
+      opacity: 0;
+      transform: translateY(-10px) scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  /* Animación para los enlaces del menú */
+  @keyframes fadeInRight {
+    0% {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
   }
   
   .nav-compact.mobile-open ul {
     flex-direction: column;
     gap: 0;
+    padding: 10px 0;
   }
   
   .nav-compact.mobile-open .nav-link {
     display: block;
-    padding: 1rem;
+    padding: 15px 25px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    text-align: center;
-    font-size: 1.1rem;
+    text-align: left;
+    font-size: 1rem;
+    font-weight: 500;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    animation: fadeInRight 0.5s ease forwards;
+    opacity: 0;
+    animation-delay: calc(var(--item-index) * 0.1s);
+  }
+  
+  /* Asignar delays para animación escalonada */
+  .nav-compact.mobile-open .nav-link:nth-child(1) { --item-index: 1; }
+  .nav-compact.mobile-open .nav-link:nth-child(2) { --item-index: 2; }
+  .nav-compact.mobile-open .nav-link:nth-child(3) { --item-index: 3; }
+  .nav-compact.mobile-open .nav-link:nth-child(4) { --item-index: 4; }
+  .nav-compact.mobile-open .nav-link:nth-child(5) { --item-index: 5; }
+  
+  .nav-compact.mobile-open .nav-link:hover {
+    background: rgba(231, 84, 128, 0.2);
+    color: #FFD700;
+    padding-left: 30px;
   }
   
   .nav-compact.mobile-open .nav-link:last-child {
     border-bottom: none;
   }
   
+  .nav-compact.mobile-open .nav-link::after {
+    display: none; /* Ocultar subrayado animado en móvil */
+  }
+  
   /* MOSTRAR ELEMENTO ADMIN EN MÓVIL */
   .admin-mobile-item {
     display: block;
-    text-align: center;
-    padding: 0.8rem;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    border-radius: var(--border-radius);
-    margin-top: 0.5rem;
+    animation: fadeInRight 0.5s ease forwards;
+    animation-delay: 0.5s;
+    opacity: 0;
   }
   
   .admin-mobile-item .nav-link {
@@ -200,7 +279,18 @@
     font-weight: 600;
     display: block;
     border: none !important;
-    padding: 0.5rem !important;
+    padding: 15px 25px !important;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    margin: 10px;
+    border-radius: 8px;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+  
+  .admin-mobile-item .nav-link:hover {
+    background: linear-gradient(135deg, #d147a3, #E75480);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(231, 84, 128, 0.4);
   }
   
   /* Header actions - Solo mostrar botón de cita en móvil */
@@ -286,6 +376,18 @@
     height: 30px;
   }
   
+  /* Menú más compacto en móviles pequeños */
+  .nav-compact.mobile-open {
+    top: 65px;
+    right: 15px;
+    min-width: 160px;
+  }
+  
+  .nav-compact.mobile-open .nav-link {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+  }
+  
   /* Texto más corto para el botón de cita en móviles muy pequeños */
   #bookingBtn {
     font-size: 0.7rem;
@@ -306,5 +408,15 @@
   #bookingBtn {
     font-size: 0.65rem;
     padding: 0.35rem 0.4rem;
+  }
+  
+  .nav-compact.mobile-open {
+    right: 10px;
+    min-width: 150px;
+  }
+  
+  .nav-compact.mobile-open .nav-link {
+    padding: 10px 15px;
+    font-size: 0.9rem;
   }
 }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YennyHair-Salón - Belleza Profesional</title>
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/main.css?v=202512042050">
     <!-- Fuente Dancing Script para el nombre -->
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <!-- Animate.css para efectos profesionales -->
@@ -15,7 +15,7 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            background-image: url('imagenes/FL/fondo.jpg');
+            background-image: url('imagenes/FL/fondo.jpg?t=202412051530');
             background-size: cover;
             background-position: center center;
             background-repeat: no-repeat;
@@ -179,7 +179,7 @@
             <div class="header-content">
                 <div class="brand-section">
                     <div class="logo-container">
-                        <img src="imagenes/FL/logo.png" alt="YennyHair-Salón Logo" class="logo-image-small">
+                        <img src="imagenes/FL/logo.png?t=202412051530" alt="YennyHair-Salón Logo" class="logo-image-small">
                         <div class="logo-text">
                             <h1 class="logo-title animate__animated animate__fadeInDown">YennyHair-Salón</h1>
                             <p class="logo-subtitle animate__animated animate__fadeInUp">BELLEZA PROFESIONAL</p>
@@ -546,7 +546,7 @@
     </footer>
 
     <!-- JavaScript -->
-    <script type="module" src="js/app.js"></script>
+    <script type="module" src="js/app.js?v=202412051530"></script>
     <script>
         // JavaScript para animaciones al hacer scroll
         document.addEventListener('DOMContentLoaded', function() {
@@ -568,7 +568,7 @@
             const img = new Image();
             img.onload = function() {
                 console.log('✅ Imagen de fondo cargada correctamente');
-                document.body.style.backgroundImage = "url('imagenes/FL/fondo.jpg')";
+                document.body.style.backgroundImage = "url('imagenes/FL/fondo.jpg?t=202412051530')";
             };
             img.onerror = function() {
                 console.log('❌ No se pudo cargar la imagen de fondo');
@@ -589,7 +589,7 @@
                     };
                 }
             };
-            img.src = 'imagenes/FL/fondo.jpg';
+            img.src = 'imagenes/FL/fondo.jpg?t=202512042050';
         });
     </script>
 </body>
