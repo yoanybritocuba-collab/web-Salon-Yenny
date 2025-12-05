@@ -25,6 +25,13 @@ let prevTranslate = 0;
 let animationID = 0;
 let currentSlide = 0;
 
+// Variables para el contador de citas (NUEVO)
+let appointmentListeners = [];
+let appointmentsUnsubscribe = null;
+let statsUnsubscribe = null;
+let todayCitasCount = 0;
+let totalCitasCount = 0;
+
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
@@ -40,7 +47,8 @@ import {
     where,
     getDocs,
     getDoc,
-    setDoc
+    setDoc,
+    Timestamp
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 // Your web app's Firebase configuration
@@ -60,30 +68,146 @@ const db = getFirestore(app);
 // Referencia a la configuración del sistema
 const configRef = doc(db, "config", "booking");
 
+// ========== FUNCIÓN PARA LIMPIAR LISTENERS (NUEVO) ==========
+function cleanUpListeners() {
+    // Limpiar todos los listeners de citas
+    appointmentListeners.forEach(listener => {
+        if (listener && typeof listener === 'function') {
+            listener();
+        }
+    });
+    appointmentListeners = [];
+    
+    // Limpiar unsubscribe específicos
+    if (appointmentsUnsubscribe && typeof appointmentsUnsubscribe === 'function') {
+        appointmentsUnsubscribe();
+        appointmentsUnsubscribe = null;
+    }
+    
+    if (statsUnsubscribe && typeof statsUnsubscribe === 'function') {
+        statsUnsubscribe();
+        statsUnsubscribe = null;
+    }
+}
+
 // ========== SISTEMA DE CONTROL DEL BOTÓN "ATRÁS" DEL MÓVIL ==========
 function initBackButtonControl() {
+    console.log("🔄 Inicializando control del botón atrás...");
+    
     // Agregar un estado inicial al historial
-    history.pushState({ page: "main", section: "inicio" }, "", "");
+    if (history.state === null) {
+        history.replaceState({ page: "main", section: "inicio" }, "", "");
+    }
     
     // Variable para controlar si estamos en el panel admin
     let isInAdminPanel = false;
     let adminBackButton = null;
 
-    // Escuchar cambios en el estado del historial
-    window.addEventListener("popstate", function(e) {
-        // Si el usuario está en el panel admin, verificar si hay botón de retorno
-        if (isInAdminPanel) {
-            const adminBackBtn = document.querySelector('.admin-back-to-home');
-            if (adminBackBtn) {
-                // Simular clic en el botón de retorno
-                adminBackBtn.click();
-                e.preventDefault();
-                history.pushState({ page: "main", section: "inicio" }, "", "");
-                return;
+    // Crear botón de retorno simplificado para todos los dispositivos
+    function createAdminBackButton() {
+        console.log("🔄 Creando botón de retorno para admin...");
+        
+        // Verificar si ya existe un botón
+        const existingBtn = document.querySelector('.admin-back-to-home, .admin-back-simple');
+        if (existingBtn) {
+            existingBtn.remove();
+        }
+        
+        const isMobile = window.innerWidth <= 768;
+        const backButton = document.createElement('button');
+        
+        if (isMobile) {
+            // Para móviles: botón simple "<"
+            backButton.className = 'admin-back-simple';
+            backButton.innerHTML = '←';
+            backButton.title = 'Volver al Inicio';
+            backButton.setAttribute('aria-label', 'Volver al inicio');
+        } else {
+            // Para desktop: botón con texto
+            backButton.className = 'admin-back-to-home';
+            backButton.innerHTML = `
+                <span class="back-icon">←</span>
+                <span class="back-text">Volver al Inicio</span>
+            `;
+            backButton.setAttribute('aria-label', 'Volver al inicio');
+        }
+        
+        backButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log("👆 Botón de retorno clickeado");
+            
+            const adminModal = getElement('adminModal');
+            if (adminModal && adminModal.style.display === 'block') {
+                adminModal.style.display = 'none';
+                adminModal.classList.remove('show');
+                isInAdminPanel = false;
+                
+                // Limpiar formulario de autenticación
+                const adminAuth = getElement('adminAuth');
+                const adminContent = getElement('adminContent');
+                const adminPasswordInput = getElement('adminPasswordInput');
+                
+                if (adminAuth) adminAuth.style.display = 'block';
+                if (adminContent) adminContent.style.display = 'none';
+                if (adminPasswordInput) adminPasswordInput.value = '';
             }
+            
+            // Ir al inicio
+            switchSection('inicio');
+            
+            // Mostrar confirmación
+            showNotification('🏠 Volviendo al inicio', 'info');
+            
+            // Remover el botón después de usarlo
+            if (backButton.parentNode) {
+                backButton.remove();
+            }
+        });
+        
+        return backButton;
+    }
+
+    // Escuchar cambios en el estado del historial (botón físico "atrás")
+    window.addEventListener("popstate", function(e) {
+        console.log("📱 Popstate detectado", e.state);
+        
+        // Si el usuario está en el panel admin
+        if (isInAdminPanel) {
+            console.log("🔙 Cerrando panel admin desde botón físico atrás");
+            
+            // Prevenir comportamiento por defecto
+            e.preventDefault();
+            
+            const adminModal = getElement('adminModal');
+            if (adminModal) {
+                adminModal.style.display = 'none';
+                adminModal.classList.remove('show');
+                isInAdminPanel = false;
+                
+                // Limpiar formulario de autenticación
+                const adminAuth = getElement('adminAuth');
+                const adminContent = getElement('adminContent');
+                const adminPasswordInput = getElement('adminPasswordInput');
+                
+                if (adminAuth) adminAuth.style.display = 'block';
+                if (adminContent) adminContent.style.display = 'none';
+                if (adminPasswordInput) adminPasswordInput.value = '';
+            }
+            
+            // Ir al inicio
+            switchSection('inicio');
+            
+            // Mostrar confirmación
+            showNotification('🏠 Volviendo al inicio', 'info');
+            
+            // Actualizar historial
+            history.replaceState({ page: "main", section: "inicio" }, "", "");
+            
+            return;
         }
 
-        // Control del botón físico "atrás" del móvil
+        // Control del botón físico "atrás" del móvil para navegación general
         if (isBackButtonEnabled) {
             if (backButtonPressCount < 2) {
                 e.preventDefault();
@@ -114,92 +238,63 @@ function initBackButtonControl() {
             } else {
                 // Tercera vez - Mostrar mensaje final
                 showExitMessage();
-                // Permitir salida natural
+                // Permitir salida natural después del mensaje
+                setTimeout(() => {
+                    // No hacemos nada, dejamos que el navegador maneje la salida
+                }, 2000);
                 return;
             }
         }
     });
 
-    // Crear botón de retorno para panel admin
-    function createAdminBackButton() {
-        const backButton = document.createElement('button');
-        backButton.className = 'admin-back-to-home';
-        backButton.innerHTML = `
-            <span class="back-icon">←</span>
-            <span class="back-text">Volver al Inicio</span>
-        `;
-        backButton.style.cssText = `
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 10001;
-            background: linear-gradient(135deg, #E75480, #D147A3);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 12px 24px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(231, 84, 128, 0.3);
-            transition: all 0.3s ease;
-            opacity: 0;
-            transform: translateX(-20px);
-            animation: slideInRight 0.5s ease 0.3s forwards;
-        `;
-        
-        backButton.addEventListener('click', function() {
-            const adminModal = getElement('adminModal');
-            if (adminModal) {
-                adminModal.style.display = 'none';
-                isInAdminPanel = false;
-                switchSection('inicio');
-            }
-        });
-        
-        backButton.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateX(0) scale(1.05)';
-            this.style.boxShadow = '0 6px 20px rgba(231, 84, 128, 0.4)';
-        });
-        
-        backButton.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateX(0)';
-            this.style.boxShadow = '0 4px 15px rgba(231, 84, 128, 0.3)';
-        });
-        
-        return backButton;
-    }
-
     // Observar cambios en el DOM para detectar cuando se abre el panel admin
     const observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
-            if (mutation.type === 'childList') {
+            if (mutation.type === 'childList' || mutation.type === 'attributes') {
                 const adminModal = getElement('adminModal');
-                if (adminModal && adminModal.style.display === 'block') {
+                const adminContent = getElement('adminContent');
+                
+                // Verificar si el panel admin está visible
+                const isAdminVisible = adminModal && 
+                    adminModal.style.display === 'block' &&
+                    adminContent && 
+                    adminContent.style.display !== 'none';
+                
+                if (isAdminVisible && !isInAdminPanel) {
+                    console.log("👁️‍🗨️ Panel admin abierto - agregando botón de retorno");
                     isInAdminPanel = true;
                     
                     // Agregar botón de retorno si no existe
-                    if (!adminBackButton) {
+                    if (!adminBackButton || !document.body.contains(adminBackButton)) {
                         adminBackButton = createAdminBackButton();
                         document.body.appendChild(adminBackButton);
                         
-                        // Animar entrada
+                        // Forzar visibilidad inmediata
                         setTimeout(() => {
-                            adminBackButton.style.opacity = '1';
-                            adminBackButton.style.transform = 'translateX(0)';
-                        }, 100);
+                            if (adminBackButton) {
+                                adminBackButton.style.opacity = '1';
+                                adminBackButton.style.visibility = 'visible';
+                                adminBackButton.style.display = 'flex';
+                            }
+                        }, 10);
                     }
-                } else {
+                    
+                    // Actualizar historial para capturar el botón atrás
+                    history.pushState({ page: "admin", section: "panel" }, "", "");
+                    
+                } else if (!isAdminVisible && isInAdminPanel) {
+                    console.log("👁️‍🗨️ Panel admin cerrado - removiendo botón de retorno");
                     isInAdminPanel = false;
+                    
+                    // Limpiar listeners cuando se cierra el panel (NUEVO)
+                    cleanUpListeners();
                     
                     // Remover botón de retorno
                     if (adminBackButton && adminBackButton.parentNode) {
                         adminBackButton.style.opacity = '0';
-                        adminBackButton.style.transform = 'translateX(-20px)';
+                        adminBackButton.style.visibility = 'hidden';
                         setTimeout(() => {
-                            if (adminBackButton.parentNode) {
+                            if (adminBackButton && adminBackButton.parentNode) {
                                 adminBackButton.parentNode.removeChild(adminBackButton);
                                 adminBackButton = null;
                             }
@@ -210,72 +305,124 @@ function initBackButtonControl() {
         });
     });
 
-    // Observar cambios en el modal de admin
+    // Observar cambios en el modal de admin y su contenido
     const adminModal = getElement('adminModal');
+    const adminContent = getElement('adminContent');
+    
     if (adminModal) {
-        observer.observe(adminModal, { attributes: true, attributeFilter: ['style'] });
+        observer.observe(adminModal, { 
+            attributes: true, 
+            attributeFilter: ['style', 'class'],
+            childList: true,
+            subtree: true
+        });
+    }
+    
+    if (adminContent) {
+        observer.observe(adminContent, { 
+            attributes: true, 
+            attributeFilter: ['style'],
+            childList: true
+        });
     }
 
-    // Agregar estilos CSS para las animaciones
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
+    // Agregar estilos CSS para las animaciones si no existen
+    if (!document.querySelector('#back-button-styles')) {
+        const style = document.createElement('style');
+        style.id = 'back-button-styles';
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    opacity: 0;
+                    transform: translateX(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
             }
-            to {
-                opacity: 1;
-                transform: translateX(0);
+            
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
             }
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateY(0);
+            
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
             }
-            40% {
-                transform: translateY(-10px);
+            
+            .admin-back-simple {
+                position: fixed !important;
+                top: 15px !important;
+                left: 15px !important;
+                z-index: 10001 !important;
+                background: linear-gradient(135deg, #E75480, #D147A3) !important;
+                color: white !important;
+                border: none !important;
+                border-radius: 50% !important;
+                width: 40px !important;
+                height: 40px !important;
+                font-weight: bold !important;
+                cursor: pointer !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                font-size: 1.5rem !important;
+                box-shadow: 0 4px 15px rgba(231, 84, 128, 0.3) !important;
+                transition: all 0.3s ease !important;
+                opacity: 1 !important;
+                visibility: visible !important;
             }
-            60% {
-                transform: translateY(-5px);
+            
+            .admin-back-simple:hover {
+                transform: scale(1.1) !important;
+                box-shadow: 0 6px 20px rgba(231, 84, 128, 0.4) !important;
             }
-        }
-        
-        .back-button-feedback {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 20px 40px;
-            border-radius: 15px;
-            z-index: 10000;
-            font-size: 2rem;
-            font-weight: bold;
-            animation: fadeIn 0.3s ease, bounce 0.5s ease;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .back-button-message {
-            font-size: 1rem;
-            opacity: 0.9;
-            text-align: center;
-        }
-    `;
-    document.head.appendChild(style);
+            
+            .back-button-feedback {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 20px 40px;
+                border-radius: 15px;
+                z-index: 10000;
+                font-size: 2rem;
+                font-weight: bold;
+                animation: fadeIn 0.3s ease, bounce 0.5s ease;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .back-button-message {
+                font-size: 1rem;
+                opacity: 0.9;
+                text-align: center;
+            }
+            
+            @keyframes bounce {
+                0%, 20%, 50%, 80%, 100% {
+                    transform: translate(-50%, -50%) scale(1);
+                }
+                40% {
+                    transform: translate(-50%, -50%) scale(1.1);
+                }
+                60% {
+                    transform: translate(-50%, -50%) scale(1.05);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
 }
 
+// ========== FUNCIONES AUXILIARES PARA EL BOTÓN ATRÁS ==========
 function showBackButtonFeedback(count) {
     // Remover feedback anterior si existe
     const existingFeedback = document.querySelector('.back-button-feedback');
@@ -304,8 +451,7 @@ function showBackButtonFeedback(count) {
     
     setTimeout(() => {
         if (feedback.parentNode) {
-            feedback.style.opacity = '0';
-            feedback.style.transform = 'translate(-50%, -50%) scale(0.9)';
+            feedback.style.animation = 'fadeOut 0.3s ease';
             setTimeout(() => {
                 if (feedback.parentNode) {
                     feedback.remove();
@@ -318,8 +464,7 @@ function showBackButtonFeedback(count) {
 function hideBackButtonFeedback() {
     const feedback = document.querySelector('.back-button-feedback');
     if (feedback) {
-        feedback.style.opacity = '0';
-        feedback.style.transform = 'translate(-50%, -50%) scale(0.9)';
+        feedback.style.animation = 'fadeOut 0.3s ease';
         setTimeout(() => {
             if (feedback.parentNode) {
                 feedback.remove();
@@ -362,8 +507,6 @@ function showExitMessage() {
                 if (exitMessage.parentNode) {
                     exitMessage.remove();
                 }
-                // Aquí podrías redirigir o cerrar la pestaña
-                // window.location.href = 'about:blank';
             }, 300);
         }
     }, 2000);
@@ -2095,16 +2238,27 @@ function generateBookingCode() {
     return code;
 }
 
-// ========== NUEVO SISTEMA DE AUTENTICACIÓN INTEGRADO EN EL MODAL ==========
+// ========== CONFIGURACIÓN MODAL ADMIN - COMPLETAMENTE CORREGIDO ==========
 function openAdminModal() {
+    console.log("🔓 Abriendo modal admin...");
     const adminModal = getElement('adminModal');
     if (adminModal) {
+        // Limpiar listeners anteriores (NUEVO)
+        cleanUpListeners();
+        
         // Mostrar la sección de autenticación primero
         const adminAuth = getElement('adminAuth');
         const adminContent = getElement('adminContent');
         
         if (adminAuth) adminAuth.style.display = 'block';
-        if (adminContent) adminContent.style.display = 'none';
+        if (adminContent) {
+            adminContent.style.display = 'none';
+            adminContent.innerHTML = '';
+        }
+        
+        // Limpiar formulario
+        const adminPasswordInput = getElement('adminPasswordInput');
+        if (adminPasswordInput) adminPasswordInput.value = '';
         
         adminModal.style.display = 'block';
         adminModal.classList.add('show');
@@ -2118,12 +2272,15 @@ function openAdminModal() {
 }
 
 function setupAdminModal() {
+    console.log("🛠️ Configurando modal admin...");
+    
     const adminBtn = getElement('adminBtn');
     const adminModal = getElement('adminModal');
     
     if (adminBtn && adminModal) {
         adminBtn.addEventListener('click', (e) => {
             e.preventDefault();
+            e.stopPropagation();
             openAdminModal();
         });
     }
@@ -2131,9 +2288,27 @@ function setupAdminModal() {
     // Configurar evento para cerrar modal admin
     const closeAdminBtn = adminModal?.querySelector('.close');
     if (closeAdminBtn) {
-        closeAdminBtn.addEventListener('click', () => {
+        closeAdminBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            console.log("❌ Cerrando modal admin...");
+            
+            // Limpiar listeners (NUEVO)
+            cleanUpListeners();
+            
             adminModal.style.display = 'none';
             adminModal.classList.remove('show');
+            
+            // Limpiar formulario
+            const adminPasswordInput = getElement('adminPasswordInput');
+            if (adminPasswordInput) adminPasswordInput.value = '';
+            
+            // Asegurar que volvemos al inicio
+            switchSection('inicio');
+            
+            // Mostrar confirmación
+            showNotification('🏠 Volviendo al inicio', 'info');
         });
     }
 
@@ -2142,6 +2317,8 @@ function setupAdminModal() {
     if (adminMobileBtn) {
         adminMobileBtn.addEventListener('click', function(e) {
             e.preventDefault();
+            e.stopPropagation();
+            
             openAdminModal();
             
             // Cerrar menú móvil después de hacer clic
@@ -2159,16 +2336,32 @@ function setupAdminModal() {
     if (adminAuthForm) {
         adminAuthForm.addEventListener('submit', function(e) {
             e.preventDefault();
+            e.stopPropagation();
+            
             const passwordInput = getElement('adminPasswordInput');
             if (passwordInput && passwordInput.value === 'y1994') {
+                console.log("✅ Contraseña correcta - accediendo al panel");
+                
                 // Contraseña correcta, mostrar contenido de admin
                 const adminAuth = getElement('adminAuth');
                 const adminContent = getElement('adminContent');
                 
                 if (adminAuth) adminAuth.style.display = 'none';
-                if (adminContent) adminContent.style.display = 'block';
+                if (adminContent) {
+                    adminContent.style.display = 'block';
+                    // Asegurar que el botón de retorno se cree
+                    setTimeout(() => {
+                        // Forzar la creación del botón de retorno
+                        const adminModal = getElement('adminModal');
+                        if (adminModal && adminModal.style.display === 'block') {
+                            console.log("🔄 Forzando creación de botón de retorno...");
+                            initBackButtonControl();
+                        }
+                    }, 100);
+                }
                 
                 loadAdminContent();
+                showNotification('🔓 Acceso admin concedido', 'success');
             } else {
                 showNotification('❌ Contraseña incorrecta', 'error');
                 passwordInput.value = '';
@@ -2180,6 +2373,8 @@ function setupAdminModal() {
 
 // ========== PANEL DE ADMINISTRACIÓN COMPACTO ==========
 async function loadAdminContent() {
+    console.log("📋 Cargando contenido admin...");
+    
     const adminContent = getElement('adminContent');
     if (!adminContent) return;
     
@@ -2370,14 +2565,17 @@ function setupAdminControls() {
             
             if (statusIndicator) {
                 statusIndicator.className = `status-indicator ${data.isPaused ? 'paused' : 'active'}`;
-                let statusHTML = `Estado: <strong>${data.isPaused ? '⏸️ CITAS PAUSADAS' : '✅ CITAS ACTIVAS'}</strong>`;
+                let statusHTML = `<strong>${data.isPaused ? '⏸️ CITAS PAUSADAS' : '✅ CITAS ACTIVAS'}</strong>`;
                 if (data.isPaused && data.resumeDate) {
-                    statusHTML += `<br><small>Reanudación: ${data.resumeDate}</small>`;
+                    statusHTML += `<br><small>Reanuda: ${data.resumeDate}</small>`;
                 }
                 statusIndicator.innerHTML = statusHTML;
             }
         }
     });
+    
+    // Guardar el listener para limpiarlo después
+    appointmentListeners.push(configObserver);
 }
 
 function setupAdminTabs() {
@@ -2396,13 +2594,20 @@ function setupAdminTabs() {
     });
 }
 
+// ========== NUEVO SISTEMA DE CONTADOR DE CITAS - SIN DUPLICADOS ==========
 function loadCitas() {
     const citasList = document.getElementById('citasList');
     if (!citasList) return;
     
+    // Limpiar listener anterior si existe
+    if (appointmentsUnsubscribe) {
+        appointmentsUnsubscribe();
+    }
+    
     const q = query(collection(db, "citas"), orderBy("timestamp", "desc"));
     
-    onSnapshot(q, (snapshot) => {
+    // Solo un listener activo a la vez
+    appointmentsUnsubscribe = onSnapshot(q, (snapshot) => {
         citasList.innerHTML = '';
         
         if (snapshot.empty) {
@@ -2468,6 +2673,14 @@ function loadCitas() {
 
         updateCitasCount(totalCitas, citasHoy, citasPendientes);
     });
+    
+    // Guardar referencia para limpiar después
+    appointmentListeners.push(() => {
+        if (appointmentsUnsubscribe) {
+            appointmentsUnsubscribe();
+            appointmentsUnsubscribe = null;
+        }
+    });
 }
 
 function updateCitasCount(total, hoy, pendientes) {
@@ -2479,13 +2692,20 @@ function updateCitasCount(total, hoy, pendientes) {
     if (totalCitasElement) totalCitasElement.textContent = total;
     if (citasHoyElement) citasHoyElement.textContent = hoy;
     if (citasPendientesElement) citasPendientesElement.textContent = pendientes;
-    if (citasCountElement) citasCountElement.textContent = total;
+    if (citasCountElement) citasCountElement.textContent = hoy; // Mostrar citas de hoy en la pestaña
 }
 
+// ========== NUEVO SISTEMA DE ESTADÍSTICAS - SIN DUPLICADOS ==========
 function loadEstadisticas() {
+    // Limpiar listener anterior si existe
+    if (statsUnsubscribe) {
+        statsUnsubscribe();
+    }
+    
     const q = query(collection(db, "citas"), orderBy("timestamp", "desc"));
     
-    onSnapshot(q, (snapshot) => {
+    // Solo un listener activo a la vez
+    statsUnsubscribe = onSnapshot(q, (snapshot) => {
         let ingresosHoy = 0;
         let tiempoTotal = 0;
         let clientesHoy = 0;
@@ -2516,6 +2736,14 @@ function loadEstadisticas() {
         if (tiempoTotalElement) tiempoTotalElement.textContent = tiempoTotal;
         if (clientesHoyElement) clientesHoyElement.textContent = clientesHoy;
         if (ingresosTotalesElement) ingresosTotalesElement.textContent = ingresosTotales;
+    });
+    
+    // Guardar referencia para limpiar después
+    appointmentListeners.push(() => {
+        if (statsUnsubscribe) {
+            statsUnsubscribe();
+            statsUnsubscribe = null;
+        }
     });
 }
 
@@ -2550,8 +2778,23 @@ function setupGlobalEventListeners() {
         const modals = document.querySelectorAll('.modal');
         modals.forEach(modal => {
             if (e.target === modal) {
+                // Limpiar listeners si es el modal admin (NUEVO)
+                if (modal.id === 'adminModal') {
+                    cleanUpListeners();
+                }
+                
                 modal.style.display = 'none';
                 modal.classList.remove('show');
+                
+                // Si es el modal admin, limpiar formulario
+                if (modal.id === 'adminModal') {
+                    const adminPasswordInput = getElement('adminPasswordInput');
+                    if (adminPasswordInput) adminPasswordInput.value = '';
+                    
+                    // Ir al inicio
+                    switchSection('inicio');
+                    showNotification('🏠 Volviendo al inicio', 'info');
+                }
             }
         });
     });
@@ -2559,6 +2802,11 @@ function setupGlobalEventListeners() {
     document.querySelectorAll('.close').forEach(closeBtn => {
         closeBtn.addEventListener('click', function() {
             const modal = this.closest('.modal');
+            // Limpiar listeners si es el modal admin (NUEVO)
+            if (modal.id === 'adminModal') {
+                cleanUpListeners();
+            }
+            
             modal.style.display = 'none';
             modal.classList.remove('show');
         });
@@ -2596,14 +2844,15 @@ function initNavigation() {
 
 // ========== INICIALIZACIÓN PRINCIPAL MEJORADA ==========
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Iniciando aplicación...');
+    console.log('🚀 Iniciando aplicación YennyHair-Salón...');
     
     // Inicializar configuración de Firebase
     initBookingConfig();
     
-    // Inicializar control del botón atrás del móvil
+    // Inicializar control del botón atrás del móvil (PRIMERO y principal)
     initBackButtonControl();
     
+    // Inicializar componentes
     initHeaderScroll();
     initMobileMenu();
     initPortalNavigation();
@@ -2623,11 +2872,19 @@ document.addEventListener('DOMContentLoaded', function() {
         showNotification('⚠️ Error cargando algunos elementos', 'warning');
     }
     
+    // Configurar eventos globales
     setupGlobalEventListeners();
     setupBookingForm();
     setupAdminModal();
     
     console.log('✅ Aplicación cargada correctamente');
+    
+    // Forzar que el botón atrás funcione incluso si hay problemas
+    setTimeout(() => {
+        console.log('🔄 Verificando sistema de botón atrás...');
+        // Reforzar la inicialización
+        initBackButtonControl();
+    }, 1000);
 });
 
 // ========== FUNCIONES GLOBALES ==========
@@ -2642,3 +2899,5 @@ window.switchSection = switchSection;
 window.scrollToServices = scrollToServices;
 window.openAdminModal = openAdminModal;
 window.removeService = removeService;
+window.initBackButtonControl = initBackButtonControl;
+window.cleanUpListeners = cleanUpListeners;

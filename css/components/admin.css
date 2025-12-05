@@ -13,7 +13,7 @@
     position: relative;
 }
 
-/* Botón de retorno al inicio - FLOTANTE */
+/* Botón de retorno al inicio - FLOTANTE - CORREGIDO PARA TODOS LOS DISPOSITIVOS */
 .admin-back-to-home {
     position: fixed !important;
     top: 20px !important;
@@ -31,9 +31,10 @@
     gap: 8px !important;
     box-shadow: 0 4px 15px rgba(231, 84, 128, 0.3) !important;
     transition: all 0.3s ease !important;
-    opacity: 0;
-    transform: translateX(-20px);
-    animation: slideInRight 0.5s ease 0.3s forwards !important;
+    opacity: 1 !important; /* Asegurar que sea visible */
+    transform: translateX(0) !important; /* Eliminar transformación inicial */
+    animation: none !important; /* Remover animación que causa problemas */
+    visibility: visible !important;
 }
 
 .admin-back-to-home:hover {
@@ -49,15 +50,33 @@
     font-size: 0.9rem;
 }
 
-@keyframes slideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
+/* NUEVO: Botón de retorno simplificado para móviles */
+.admin-back-simple {
+    position: fixed !important;
+    top: 15px !important;
+    left: 15px !important;
+    z-index: 10001 !important;
+    background: linear-gradient(135deg, #E75480, #D147A3) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 50% !important;
+    width: 40px !important;
+    height: 40px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 15px rgba(231, 84, 128, 0.3) !important;
+    transition: all 0.3s ease !important;
+    font-size: 1.5rem !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.admin-back-simple:hover {
+    transform: scale(1.1) !important;
+    box-shadow: 0 6px 20px rgba(231, 84, 128, 0.4) !important;
 }
 
 /* Autenticación */
@@ -145,18 +164,35 @@
     top: 0;
     z-index: 10;
     backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+}
+
+.admin-header.compact {
+    padding: 10px 0;
+}
+
+.admin-header.compact h2 {
+    font-size: 1.2rem;
+    margin-bottom: 2px;
+}
+
+.admin-header.compact p {
+    font-size: 0.7rem;
+    margin-bottom: 10px;
 }
 
 .admin-header h2 {
     font-size: 1.5rem;
     margin-bottom: 5px;
     color: #fff;
+    transition: all 0.3s ease;
 }
 
 .admin-header p {
     color: #95a5a6;
     margin-bottom: 20px;
     font-size: 0.8rem;
+    transition: all 0.3s ease;
 }
 
 /* Controles Globales */
@@ -165,16 +201,16 @@
     border-radius: 10px;
     padding: 15px;
     margin: 15px 0;
+    transition: all 0.3s ease;
+}
+
+.admin-header.compact .admin-global-controls {
+    padding: 10px;
+    margin: 5px 0;
 }
 
 .control-group {
     text-align: center;
-}
-
-.control-group h4 {
-    color: #ecf0f1;
-    margin-bottom: 15px;
-    font-size: 1.1rem;
 }
 
 .resume-date-control {
@@ -182,6 +218,12 @@
     padding: 10px;
     background: rgba(0, 0, 0, 0.1);
     border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.admin-header.compact .resume-date-control {
+    margin: 8px 0;
+    padding: 8px;
 }
 
 .resume-date-control label {
@@ -207,6 +249,13 @@
     padding: 10px;
     border-radius: 8px;
     font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.admin-header.compact .status-indicator {
+    margin-top: 8px;
+    padding: 8px;
+    font-size: 0.8rem;
 }
 
 .status-indicator.active {
@@ -235,6 +284,11 @@
     background: rgba(44, 62, 80, 0.9);
     backdrop-filter: blur(5px);
     border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.admin-header.compact + .admin-tabs {
+    top: 100px;
 }
 
 .tab-btn {
@@ -571,6 +625,14 @@
         font-size: 0.8rem;
     }
     
+    .admin-back-simple {
+        top: 10px !important;
+        left: 10px !important;
+        width: 35px !important;
+        height: 35px !important;
+        font-size: 1.3rem !important;
+    }
+    
     .citas-header {
         flex-direction: column;
         gap: 10px;
@@ -605,8 +667,16 @@
         padding: 15px 0;
     }
     
+    .admin-header.compact {
+        padding: 8px 0;
+    }
+    
     .admin-header h2 {
         font-size: 1.3rem;
+    }
+    
+    .admin-header.compact h2 {
+        font-size: 1.1rem;
     }
 }
 
@@ -625,6 +695,12 @@
         font-size: 1.1rem;
     }
     
+    .admin-back-simple {
+        width: 30px !important;
+        height: 30px !important;
+        font-size: 1.2rem !important;
+    }
+    
     .stats-grid {
         grid-template-columns: 1fr;
     }
@@ -632,6 +708,16 @@
     .tab-btn {
         font-size: 0.75rem;
         padding: 6px 3px;
+    }
+    
+    .citas-stats {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .stat-item {
+        width: 100%;
+        text-align: center;
     }
 }
 
@@ -641,4 +727,73 @@
     padding: 30px 15px;
     color: #bdc3c7;
     font-size: 0.9rem;
+}
+
+/* Estilos para el control del botón atrás del móvil */
+.back-button-feedback {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px 40px;
+    border-radius: 15px;
+    z-index: 10000;
+    font-size: 2rem;
+    font-weight: bold;
+    animation: fadeIn 0.3s ease, bounce 0.5s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.back-button-message {
+    font-size: 1rem;
+    opacity: 0.9;
+    text-align: center;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+    40% {
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+    60% {
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+}
+
+/* NUEVO: Contador de citas hoy - destacado */
+#citasCount {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    margin-left: 5px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Mejora para el contador de hoy en las estadísticas */
+#citasHoy {
+    color: #f1c40f;
+    font-size: 1.1rem;
+}
+
+/* Estilo para el contador en la pestaña activa */
+.tab-btn.active #citasCount {
+    background: white;
+    color: #3498db;
+    animation: none;
 }
