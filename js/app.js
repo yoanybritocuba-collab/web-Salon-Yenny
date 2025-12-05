@@ -90,6 +90,81 @@ function cleanUpListeners() {
     }
 }
 
+// ========== FUNCIONES PARA CONTROLAR EL INDICADOR DE SERVICIOS ==========
+function showServicesIndicator() {
+    const indicator = getElement('servicesIndicator');
+    if (indicator) {
+        indicator.style.display = 'block';
+        
+        // Mostrar solo por 6 segundos en lugar de 8
+        setTimeout(() => {
+            if (indicator && indicator.style.display === 'block') {
+                indicator.style.display = 'none';
+            }
+        }, 6000);
+    }
+}
+
+function initServicesIndicatorScroll() {
+    const servicesSection = document.getElementById('servicios');
+    const indicator = getElement('servicesIndicator');
+    
+    if (!servicesSection || !indicator) return;
+    
+    // Crear un Intersection Observer para detectar cuando la sección de servicios está visible
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Cuando la sección de servicios es visible
+                    // Esperar 1 segundo y luego ocultar el indicador si aún está visible
+                    setTimeout(() => {
+                        if (indicator.style.display === 'block') {
+                            indicator.style.display = 'none';
+                        }
+                    }, 1000);
+                }
+            });
+        },
+        {
+            threshold: 0.3 // Cuando el 30% de la sección es visible
+        }
+    );
+    
+    // Observar la sección de servicios
+    observer.observe(servicesSection);
+    
+    // También ocultar cuando el usuario interactúa con los servicios
+    const servicesContainer = getElement('servicesContainer');
+    if (servicesContainer) {
+        servicesContainer.addEventListener('click', () => {
+            if (indicator.style.display === 'block') {
+                indicator.style.display = 'none';
+            }
+        });
+    }
+    
+    // Ocultar al hacer scroll en la sección de servicios
+    window.addEventListener('scroll', () => {
+        const servicesSection = document.getElementById('servicios');
+        if (!servicesSection) return;
+        
+        const rect = servicesSection.getBoundingClientRect();
+        
+        // Si la sección de servicios está visible en la ventana
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+            if (indicator.style.display === 'block') {
+                // Esperar un momento y ocultar
+                setTimeout(() => {
+                    if (indicator.style.display === 'block') {
+                        indicator.style.display = 'none';
+                    }
+                }, 500);
+            }
+        }
+    }, { passive: true });
+}
+
 // ========== SISTEMA DE CONTROL DEL BOTÓN "ATRÁS" DEL MÓVIL ==========
 function initBackButtonControl() {
     console.log("🔄 Inicializando control del botón atrás...");
@@ -975,16 +1050,6 @@ function scrollToServices() {
     setTimeout(showServicesIndicator, 500);
 }
 
-function showServicesIndicator() {
-    const indicator = getElement('servicesIndicator');
-    if (indicator) {
-        indicator.style.display = 'block';
-        setTimeout(() => {
-            indicator.style.display = 'none';
-        }, 8000);
-    }
-}
-
 function initSmartBooking() {
     const bookingBtn = getElement('bookingBtn');
     const heroBookingBtn = getElement('heroBookingBtn');
@@ -1200,6 +1265,12 @@ function toggleServiceSelection(service, card, bookBtn) {
         bookBtn.innerHTML = '<span class="btn-icon">➕</span> Agregar';
         showNotification(`🗑️ ${service.name} removido`, 'info');
         bookBtn.style.background = 'linear-gradient(135deg, #E75480, #D147A3)';
+    }
+    
+    // Ocultar el indicador de servicios cuando se selecciona un servicio
+    const indicator = getElement('servicesIndicator');
+    if (indicator && indicator.style.display === 'block') {
+        indicator.style.display = 'none';
     }
     
     // Actualizar recuadro flotante
@@ -2861,6 +2932,9 @@ document.addEventListener('DOMContentLoaded', function() {
     initCarousel();
     initFloatingServices();
     
+    // Inicializar el control del indicador de servicios
+    initServicesIndicatorScroll();
+    
     // Cargar contenido con manejo de errores
     try {
         loadServices();
@@ -2901,3 +2975,4 @@ window.openAdminModal = openAdminModal;
 window.removeService = removeService;
 window.initBackButtonControl = initBackButtonControl;
 window.cleanUpListeners = cleanUpListeners;
+window.showServicesIndicator = showServicesIndicator;
