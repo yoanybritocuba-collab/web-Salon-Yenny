@@ -92,13 +92,13 @@ function cleanUpListeners() {
 
 // ========== FUNCIONES PARA CONTROLAR EL INDICADOR DE SERVICIOS ==========
 function showServicesIndicator() {
-    const indicator = getElement('servicesIndicator');
+    const indicator = getElement('malvaIndicator'); // Cambiado a 'malvaIndicator'
     if (indicator) {
-        indicator.style.display = 'block';
+        indicator.style.display = 'inline-block'; // Cambiado a 'inline-block'
         
         // Mostrar solo por 6 segundos en lugar de 8
         setTimeout(() => {
-            if (indicator && indicator.style.display === 'block') {
+            if (indicator && indicator.style.display === 'inline-block') {
                 indicator.style.display = 'none';
             }
         }, 6000);
@@ -107,7 +107,7 @@ function showServicesIndicator() {
 
 function initServicesIndicatorScroll() {
     const servicesSection = document.getElementById('servicios');
-    const indicator = getElement('servicesIndicator');
+    const indicator = getElement('malvaIndicator'); // Cambiado a 'malvaIndicator'
     
     if (!servicesSection || !indicator) return;
     
@@ -117,17 +117,15 @@ function initServicesIndicatorScroll() {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     // Cuando la sección de servicios es visible
-                    // Esperar 1 segundo y luego ocultar el indicador si aún está visible
-                    setTimeout(() => {
-                        if (indicator.style.display === 'block') {
-                            indicator.style.display = 'none';
-                        }
-                    }, 1000);
+                    // Ocultar el indicador inmediatamente al entrar en la sección
+                    if (indicator.style.display === 'inline-block') {
+                        indicator.style.display = 'none';
+                    }
                 }
             });
         },
         {
-            threshold: 0.3 // Cuando el 30% de la sección es visible
+            threshold: 0.1 // Cuando el 10% de la sección es visible
         }
     );
     
@@ -138,31 +136,17 @@ function initServicesIndicatorScroll() {
     const servicesContainer = getElement('servicesContainer');
     if (servicesContainer) {
         servicesContainer.addEventListener('click', () => {
-            if (indicator.style.display === 'block') {
+            if (indicator.style.display === 'inline-block') {
+                indicator.style.display = 'none';
+            }
+        });
+        
+        servicesContainer.addEventListener('touchstart', () => {
+            if (indicator.style.display === 'inline-block') {
                 indicator.style.display = 'none';
             }
         });
     }
-    
-    // Ocultar al hacer scroll en la sección de servicios
-    window.addEventListener('scroll', () => {
-        const servicesSection = document.getElementById('servicios');
-        if (!servicesSection) return;
-        
-        const rect = servicesSection.getBoundingClientRect();
-        
-        // Si la sección de servicios está visible en la ventana
-        if (rect.top < window.innerHeight && rect.bottom > 0) {
-            if (indicator.style.display === 'block') {
-                // Esperar un momento y ocultar
-                setTimeout(() => {
-                    if (indicator.style.display === 'block') {
-                        indicator.style.display = 'none';
-                    }
-                }, 500);
-            }
-        }
-    }, { passive: true });
 }
 
 // ========== SISTEMA DE CONTROL DEL BOTÓN "ATRÁS" DEL MÓVIL ==========
@@ -1102,7 +1086,13 @@ function handleBookingButtonClick() {
     if (selectedServices.length === 0) {
         switchSection('servicios');
         showServicesIndicator();
-        showNotification('👆 Selecciona los servicios que deseas reservar', 'info');
+        showNotification('👇 Selecciona los servicios que deseas reservar', 'info');
+        
+        // Asegurar que el indicador se muestre solo si no hay servicios seleccionados
+        const indicator = getElement('malvaIndicator'); // Cambiado a 'malvaIndicator'
+        if (indicator) {
+            indicator.style.display = 'inline-block';
+        }
     } else {
         openBookingModal();
     }
@@ -1258,6 +1248,14 @@ function toggleServiceSelection(service, card, bookBtn) {
         bookBtn.innerHTML = '<span class="btn-icon">✓</span> Agregado';
         showNotification(`✅ ${service.name} añadido`, 'success');
         bookBtn.style.background = 'linear-gradient(135deg, #27ae60, #219653)';
+        
+        // OCULTAR EL INDICADOR MALVA CUANDO SE SELECCIONA EL PRIMER SERVICIO
+        if (selectedServices.length === 1) {
+            const indicator = getElement('malvaIndicator'); // Cambiado a 'malvaIndicator'
+            if (indicator) {
+                indicator.style.display = 'none';
+            }
+        }
     } else {
         selectedServices.splice(index, 1);
         card.classList.remove('selected');
@@ -1265,12 +1263,6 @@ function toggleServiceSelection(service, card, bookBtn) {
         bookBtn.innerHTML = '<span class="btn-icon">➕</span> Agregar';
         showNotification(`🗑️ ${service.name} removido`, 'info');
         bookBtn.style.background = 'linear-gradient(135deg, #E75480, #D147A3)';
-    }
-    
-    // Ocultar el indicador de servicios cuando se selecciona un servicio
-    const indicator = getElement('servicesIndicator');
-    if (indicator && indicator.style.display === 'block') {
-        indicator.style.display = 'none';
     }
     
     // Actualizar recuadro flotante
