@@ -9,6 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <!-- Animate.css para efectos profesionales -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Nuevo CSS para el visor de imágenes moderno -->
+    <link rel="stylesheet" href="css/components/image-viewer.css?v=20251207">
     <style>
         /* FONDO GLOBAL - CORREGIDO DEFINITIVO */
         body {
@@ -170,6 +172,33 @@
                 height: 100% !important;
             }
         }
+
+        /* Estilos adicionales para el nuevo visor */
+        .image-viewer-modal {
+            display: none;
+        }
+        
+        .image-viewer-modal.active {
+            display: block;
+        }
+
+        /* Indicador de servicios (nombre corregido) */
+        .services-indicator {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(231, 84, 128, 0.9), rgba(209, 71, 163, 0.9));
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 5px 20px rgba(231, 84, 128, 0.3);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
@@ -237,7 +266,8 @@
                         </button>
                     </div>
 
-                    <div class="services-indicator" id="servicesIndicator" style="display: none;">
+                    <!-- Indicador de servicios - NOMBRE CORREGIDO -->
+                    <div class="services-indicator" id="malvaIndicator" style="display: none;">
                         <div class="indicator-content">
                             <span class="indicator-icon">👇</span>
                             <div class="indicator-text">
@@ -268,6 +298,8 @@
                     <div class="products-grid" id="productsContainer">
                         <!-- Los productos se cargan dinámicamente -->
                     </div>
+                    <!-- Miniaturas para móvil (se agregarán dinámicamente) -->
+                    <div id="productThumbnailsContainer"></div>
                 </div>
             </div>
         </section>
@@ -279,6 +311,8 @@
                     <div class="gallery-grid" id="galleryContainer">
                         <!-- Las imágenes de galería se cargan dinámicamente -->
                     </div>
+                    <!-- Miniaturas para móvil (se agregarán dinámicamente) -->
+                    <div id="galleryThumbnailsContainer"></div>
                 </div>
             </div>
         </section>
@@ -493,7 +527,7 @@
         </div>
     </div>
 
-    <!-- Image Viewer Modal Carrusel -->
+    <!-- Image Viewer Modal Carrusel (original) -->
     <div id="imageViewerModal" class="modal image-viewer-modal">
         <div class="modal-content carousel-content">
             <span class="close image-viewer-close">&times;</span>
@@ -602,7 +636,42 @@
                 }
             };
             img.src = 'imagenes/FL/fondo.jpg?t=202512042050';
+
+            // Verificar y cargar el nuevo visor de imágenes si existe
+            setTimeout(() => {
+                const newViewerModal = document.getElementById('modernImageViewer');
+                if (!newViewerModal) {
+                    console.log('⚠️ El nuevo visor de imágenes no se ha cargado');
+                } else {
+                    console.log('✅ Nuevo visor de imágenes detectado');
+                }
+            }, 1000);
         });
+
+        // Función para crear miniaturas dinámicamente (para compatibilidad)
+        function createMobileThumbnails() {
+            // Esta función será reemplazada por la del app.js
+            console.log('📱 Preparando miniaturas para móvil...');
+        }
+
+        // Detectar si es móvil y ajustar comportamientos
+        function checkMobileView() {
+            const isMobile = window.innerWidth <= 768;
+            if (isMobile) {
+                console.log('📱 Modo móvil detectado');
+                // Agregar clase para indicar que es móvil
+                document.body.classList.add('mobile-view');
+                
+                // Crear miniaturas si no existen
+                setTimeout(createMobileThumbnails, 500);
+            } else {
+                document.body.classList.remove('mobile-view');
+            }
+        }
+
+        // Verificar al cargar y al cambiar tamaño
+        window.addEventListener('load', checkMobileView);
+        window.addEventListener('resize', checkMobileView);
     </script>
 </body>
 </html>

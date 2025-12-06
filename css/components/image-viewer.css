@@ -1,115 +1,112 @@
-/* ========== VISOR DE IMÁGENES CARRUSEL ========== */
-.image-viewer-modal .modal-content {
-    max-width: 90%;
-    max-height: 90vh;
-    margin: 5% auto;
-    background: rgba(0, 0, 0, 0.9);
-    color: white;
-    border-radius: 15px;
-    overflow: hidden;
+/* VISOR DE IMÁGENES MODERNO CON SWIPE PARA MÓVILES */
+.image-viewer-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-.image-viewer-close {
-    color: white;
-    position: absolute;
-    top: 15px;
-    right: 25px;
-    font-size: 36px;
-    font-weight: bold;
-    cursor: pointer;
-    z-index: 100;
-    background: rgba(0, 0, 0, 0.5);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.image-viewer-close:hover {
-    background: rgba(0, 0, 0, 0.7);
+.image-viewer-modal.active {
+    opacity: 1;
 }
 
 .carousel-content {
-    display: flex;
-    flex-direction: column;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    width: 100%;
     height: 100%;
+    padding: 0;
+    animation: modalFadeIn 0.4s ease;
 }
 
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Contenedor principal del carrusel */
 .carousel-container {
-    flex: 1;
     position: relative;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
-    padding: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
+/* Pista del carrusel */
 .carousel-track {
     display: flex;
-    transition: transform 0.5s ease;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     height: 100%;
-    align-items: center;
-    gap: 20px;
+    width: 100%;
+    will-change: transform;
 }
 
-.carousel-item {
-    min-width: 100%;
+/* Slides individuales */
+.carousel-slide {
+    flex: 0 0 100%;
+    height: 100%;
     display: flex;
+    align-items: center;
     justify-content: center;
-    align-items: center;
-    transition: all 0.3s ease;
-}
-
-.carousel-item img {
-    max-width: 100%;
-    max-height: 70vh;
-    object-fit: contain;
-    border-radius: 10px;
-    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
-}
-
-.carousel-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     padding: 20px;
-    background: rgba(0, 0, 0, 0.5);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    user-select: none;
 }
 
-.carousel-btn {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: none;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    font-size: 24px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+/* Imagen dentro del slide */
+.carousel-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    cursor: grab;
+    transition: transform 0.3s ease;
+}
+
+.carousel-image:active {
+    cursor: grabbing;
+    transform: scale(0.98);
+}
+
+/* Controles del carrusel */
+.carousel-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 20px;
+    z-index: 10;
 }
 
-.carousel-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(1.1);
-}
-
+/* Indicadores */
 .carousel-indicators {
     display: flex;
-    gap: 10px;
-    justify-content: center;
-    flex: 1;
+    gap: 8px;
 }
 
 .carousel-indicator {
-    width: 12px;
-    height: 12px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.3);
     cursor: pointer;
@@ -117,60 +114,300 @@
 }
 
 .carousel-indicator.active {
-    background: #E75480;
+    background: #e75480;
     transform: scale(1.2);
 }
 
+/* Botones de navegación (solo desktop) */
+.carousel-btn {
+    display: none; /* Ocultos en móvil por defecto */
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(231, 84, 128, 0.8);
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 10;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+}
+
+.carousel-btn:hover {
+    background: rgba(231, 84, 128, 1);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.prev-btn {
+    left: 20px;
+}
+
+.next-btn {
+    right: 20px;
+}
+
+/* Información de la imagen */
 .image-info {
-    padding: 20px;
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
     text-align: center;
-    background: rgba(0, 0, 0, 0.7);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 0 20px;
+    z-index: 10;
 }
 
 .image-info h3 {
-    margin: 0 0 10px 0;
-    color: white;
+    margin: 0;
     font-size: 1.3rem;
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .image-info p {
-    margin: 5px 0;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.95rem;
+    margin: 5px 0 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
 }
 
-/* Responsive para carrusel */
-@media (max-width: 768px) {
-    .image-viewer-modal .modal-content {
-        max-width: 95%;
-        max-height: 95vh;
-        margin: 2% auto;
+/* Botón de cerrar */
+.image-viewer-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: white;
+    font-size: 35px;
+    font-weight: 300;
+    cursor: pointer;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.5);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.image-viewer-close:hover {
+    background: rgba(231, 84, 128, 0.8);
+    transform: rotate(90deg);
+}
+
+/* Miniaturas para móvil (galería de miniaturas) */
+.thumbnails-container {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px;
+    backdrop-filter: blur(10px);
+    z-index: 9998;
+}
+
+.thumbnails-track {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+    scrollbar-width: thin;
+    scrollbar-color: #e75480 rgba(255, 255, 255, 0.1);
+}
+
+.thumbnails-track::-webkit-scrollbar {
+    height: 6px;
+}
+
+.thumbnails-track::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.thumbnails-track::-webkit-scrollbar-thumb {
+    background: #e75480;
+    border-radius: 3px;
+}
+
+.thumbnail {
+    flex: 0 0 70px;
+    height: 70px;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.thumbnail.active {
+    opacity: 1;
+    border-color: #e75480;
+    transform: scale(1.05);
+}
+
+.thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Contador de imágenes */
+.image-counter {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    z-index: 10;
+    backdrop-filter: blur(5px);
+}
+
+/* Efectos de gestos */
+.swipe-hint {
+    position: absolute;
+    bottom: 80px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    animation: swipeHint 2s infinite;
+    z-index: 10;
+}
+
+@keyframes swipeHint {
+    0%, 100% {
+        opacity: 0.5;
+        transform: translateX(0);
     }
-    
-    .carousel-container {
+    50% {
+        opacity: 1;
+        transform: translateX(10px);
+    }
+}
+
+/* Estilos para móvil */
+@media (max-width: 768px) {
+    .carousel-slide {
         padding: 10px;
     }
     
-    .carousel-item img {
-        max-height: 60vh;
-    }
-    
-    .carousel-controls {
-        padding: 15px;
-    }
-    
-    .carousel-btn {
-        width: 40px;
-        height: 40px;
-        font-size: 20px;
+    .carousel-image {
+        max-width: 90%;
+        max-height: 80vh;
+        border-radius: 8px;
     }
     
     .image-info {
-        padding: 15px;
+        top: 70px;
+        padding: 0 15px;
     }
     
     .image-info h3 {
         font-size: 1.1rem;
+    }
+    
+    .image-info p {
+        font-size: 0.8rem;
+    }
+    
+    .carousel-controls {
+        bottom: 100px;
+    }
+    
+    .thumbnails-container {
+        display: block;
+    }
+    
+    .image-counter {
+        top: 70px;
+        left: 15px;
+        font-size: 0.8rem;
+        padding: 5px 12px;
+    }
+    
+    .swipe-hint {
+        bottom: 160px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Estilos para desktop */
+@media (min-width: 769px) {
+    .carousel-btn {
+        display: block;
+    }
+    
+    .carousel-slide {
+        padding: 40px;
+    }
+    
+    .carousel-image {
+        max-width: 85%;
+        max-height: 85vh;
+    }
+    
+    .thumbnails-container {
+        display: none;
+    }
+}
+
+/* Animación de entrada para las imágenes */
+@keyframes imageZoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.carousel-slide.active .carousel-image {
+    animation: imageZoomIn 0.5s ease;
+}
+
+/* Efecto de swipe visual */
+.swipe-left {
+    transform: translateX(-100%);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.swipe-right {
+    transform: translateX(100%);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+/* Loading spinner */
+.carousel-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #e75480;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
     }
 }

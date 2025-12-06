@@ -2,84 +2,94 @@
   "productos": [
     {
       "id": 1,
-      "nombre": "Shampoo Profesional",
-      "descripcion": "Shampoo para cabello tratado",
+      "nombre": "Champú Profesional",
+      "descripcion": "Champú profesional para todo tipo de cabello",
       "precio": 25,
-      "imagen": "imagen1.jpg"
+      "imagen": "Campú-Profesional.jpg"
     },
     {
       "id": 2,
-      "nombre": "Acondicionador Repair",
-      "descripcion": "Acondicionador reconstructor",
+      "nombre": "Crema Capilar",
+      "descripcion": "Crema nutritiva para cabello seco",
       "precio": 28,
-      "imagen": "imagen2.jpg"
+      "imagen": "Crema1.jpg"
     },
     {
       "id": 3,
-      "nombre": "Mascarilla Keratina",
-      "descripcion": "Tratamiento intensivo con keratina",
+      "nombre": "Crema Profesional",
+      "descripcion": "Crema profesional para tratamientos intensivos",
       "precio": 35,
-      "imagen": "imagen3.jpg"
+      "imagen": "Crema-Profesional.jpg"
     },
     {
       "id": 4,
-      "nombre": "Serum Brillante",
-      "descripcion": "Serum para brillo y suavidad",
-      "precio": 22,
-      "imagen": "imagen4.jpg"
+      "nombre": "Kit de Extensiones 1",
+      "descripcion": "Extensiones de cabello natural premium",
+      "precio": 120,
+      "imagen": "Extension1.jpg"
     },
     {
       "id": 5,
-      "nombre": "Spray Protector Térmico",
-      "descripcion": "Protección para herramientas de calor",
-      "precio": 18,
-      "imagen": "imagen5.jpg"
+      "nombre": "Kit de Extensiones 2",
+      "descripcion": "Extensiones con aplicación profesional",
+      "precio": 150,
+      "imagen": "Extension2.jpg"
     },
     {
       "id": 6,
-      "nombre": "Gel Fijador Max",
-      "descripcion": "Fijación profesional máxima",
-      "precio": 20,
-      "imagen": "imagen6.jpg"
+      "nombre": "Kit de Extensiones 3",
+      "descripcion": "Extensiones de alta calidad",
+      "precio": 130,
+      "imagen": "Extension3.jpg"
     },
     {
       "id": 7,
-      "nombre": "Crema Peinado",
-      "descripcion": "Crema para peinado y control",
-      "precio": 24,
-      "imagen": "imagen7.jpg"
+      "nombre": "Kit de Extensiones 4",
+      "descripcion": "Extensiones para volumen completo",
+      "precio": 140,
+      "imagen": "Extension4.jpg"
     }
   ],
   "galeria": [
     {
       "id": 1,
-      "archivo": "trabajo1.jpg",
+      "archivo": "imagen1.jpg",
       "descripcion": "Corte y coloración profesional"
     },
     {
       "id": 2,
-      "archivo": "trabajo2.jpg",
+      "archivo": "imagen2.jpg",
       "descripcion": "Peinado para evento especial"
     },
     {
       "id": 3,
-      "archivo": "trabajo3.jpg",
+      "archivo": "imagen3.jpg",
       "descripcion": "Tratamiento de keratina"
     },
     {
       "id": 4,
-      "archivo": "trabajo4.jpg",
+      "archivo": "imagen4.jpg",
       "descripcion": "Extensiones completas"
     },
     {
       "id": 5,
-      "archivo": "trabajo5.jpg",
+      "archivo": "imagen5.jpg",
       "descripcion": "Coloración fantasía"
     },
     {
       "id": 6,
-      "archivo": "trabajo6.jpg",
+      "archivo": "imagen6.jpg",
       "descripcion": "Corte moderno"
+    },
+    {
+      "id": 7,
+      "archivo": "imagen7.jpg",
+      "descripcion": "Trabajo de styling profesional"
+    },
+    {
+      "id": 8,
+      "archivo": "imagen8.jpg",
+      "descripcion": "Maquillaje y peinado de novia"
     }
   ]
 }
