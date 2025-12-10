@@ -4,20 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YennyHair-Salón - Belleza Profesional</title>
-    <link rel="stylesheet" href="css/main.css?v=202512042050">
+    <link rel="stylesheet" href="css/main.css">
     <!-- Fuente Dancing Script para el nombre -->
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <!-- Animate.css para efectos profesionales -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <!-- Nuevo CSS para el visor de imágenes moderno -->
-    <link rel="stylesheet" href="css/components/image-viewer.css?v=20251207">
     <style>
         /* FONDO GLOBAL - CORREGIDO DEFINITIVO */
         body {
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            background-image: url('imagenes/FL/fondo.jpg?t=202412051530');
+            background-image: url('imagenes/FL/fondo.jpg');
             background-size: cover;
             background-position: center center;
             background-repeat: no-repeat;
@@ -163,6 +161,37 @@
             overflow-y: auto;
         }
 
+        /* Contador de notificaciones en el botón Admin */
+        #adminBtn {
+            position: relative;
+        }
+
+        #adminBtn.has-notifications::after {
+            content: attr(data-count);
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            animation: bounce 1s ease;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(255, 71, 87, 0.5);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-5px); }
+            60% { transform: translateY(-3px); }
+        }
+
         @media (max-width: 768px) {
             .admin-modal .modal-content {
                 max-height: 100vh !important;
@@ -171,33 +200,14 @@
                 width: 100% !important;
                 height: 100% !important;
             }
-        }
-
-        /* Estilos adicionales para el nuevo visor */
-        .image-viewer-modal {
-            display: none;
-        }
-        
-        .image-viewer-modal.active {
-            display: block;
-        }
-
-        /* Indicador de servicios (nombre corregido) */
-        .services-indicator {
-            display: none;
-            text-align: center;
-            margin: 20px 0;
-            padding: 15px;
-            background: linear-gradient(135deg, rgba(231, 84, 128, 0.9), rgba(209, 71, 163, 0.9));
-            border-radius: 15px;
-            color: white;
-            box-shadow: 0 5px 20px rgba(231, 84, 128, 0.3);
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            
+            #adminBtn::after {
+                top: -5px;
+                right: -5px;
+                width: 18px;
+                height: 18px;
+                font-size: 10px;
+            }
         }
     </style>
 </head>
@@ -208,7 +218,7 @@
             <div class="header-content">
                 <div class="brand-section">
                     <div class="logo-container">
-                        <img src="imagenes/FL/logo.png?t=202412051530" alt="YennyHair-Salón Logo" class="logo-image-small">
+                        <img src="imagenes/FL/logo.png" alt="YennyHair-Salón Logo" class="logo-image-small">
                         <div class="logo-text">
                             <h1 class="logo-title animate__animated animate__fadeInDown">YennyHair-Salón</h1>
                             <p class="logo-subtitle animate__animated animate__fadeInUp">BELLEZA PROFESIONAL</p>
@@ -266,8 +276,7 @@
                         </button>
                     </div>
 
-                    <!-- Indicador de servicios - NOMBRE CORREGIDO -->
-                    <div class="services-indicator" id="malvaIndicator" style="display: none;">
+                    <div class="services-indicator" id="servicesIndicator" style="display: none;">
                         <div class="indicator-content">
                             <span class="indicator-icon">👇</span>
                             <div class="indicator-text">
@@ -298,8 +307,6 @@
                     <div class="products-grid" id="productsContainer">
                         <!-- Los productos se cargan dinámicamente -->
                     </div>
-                    <!-- Miniaturas para móvil (se agregarán dinámicamente) -->
-                    <div id="productThumbnailsContainer"></div>
                 </div>
             </div>
         </section>
@@ -311,8 +318,6 @@
                     <div class="gallery-grid" id="galleryContainer">
                         <!-- Las imágenes de galería se cargan dinámicamente -->
                     </div>
-                    <!-- Miniaturas para móvil (se agregarán dinámicamente) -->
-                    <div id="galleryThumbnailsContainer"></div>
                 </div>
             </div>
         </section>
@@ -527,7 +532,7 @@
         </div>
     </div>
 
-    <!-- Image Viewer Modal Carrusel (original) -->
+    <!-- Image Viewer Modal Carrusel -->
     <div id="imageViewerModal" class="modal image-viewer-modal">
         <div class="modal-content carousel-content">
             <span class="close image-viewer-close">&times;</span>
@@ -580,7 +585,7 @@
     </footer>
 
     <!-- JavaScript -->
-    <script type="module" src="js/app.js?v=202412051530"></script>
+    <script type="module" src="js/app.js"></script>
     <script>
         // JavaScript para animaciones al hacer scroll
         document.addEventListener('DOMContentLoaded', function() {
@@ -602,7 +607,7 @@
             const img = new Image();
             img.onload = function() {
                 console.log('✅ Imagen de fondo cargada correctamente');
-                document.body.style.backgroundImage = "url('imagenes/FL/fondo.jpg?t=202412051530')";
+                document.body.style.backgroundImage = "url('imagenes/FL/fondo.jpg')";
             };
             img.onerror = function() {
                 console.log('❌ No se pudo cargar la imagen de fondo');
@@ -613,65 +618,18 @@
                     '../imagenes/FL/fondo.jpg'
                 ];
                 
-                // Variable para controlar si ya se cargó una imagen
-                let imageLoaded = false;
-                
-                // Usar for...of en lugar de forEach para poder salir del bucle
-                for (const path of altPaths) {
-                    if (imageLoaded) continue;
-                    
+                for (let i = 0; i < altPaths.length; i++) {
                     const testImg = new Image();
-                    testImg.src = path;
+                    testImg.src = altPaths[i];
                     testImg.onload = function() {
-                        if (!imageLoaded) {
-                            imageLoaded = true;
-                            document.body.style.backgroundImage = `url('${path}')`;
-                            console.log(`✅ Imagen cargada desde: ${path}`);
-                        }
-                    };
-                    testImg.onerror = function() {
-                        // Continuar con la siguiente ruta
-                        console.log(`❌ No se pudo cargar desde: ${path}`);
+                        document.body.style.backgroundImage = `url('${altPaths[i]}')`;
+                        console.log(`✅ Imagen cargada desde: ${altPaths[i]}`);
+                        break;
                     };
                 }
             };
-            img.src = 'imagenes/FL/fondo.jpg?t=202512042050';
-
-            // Verificar y cargar el nuevo visor de imágenes si existe
-            setTimeout(() => {
-                const newViewerModal = document.getElementById('modernImageViewer');
-                if (!newViewerModal) {
-                    console.log('⚠️ El nuevo visor de imágenes no se ha cargado');
-                } else {
-                    console.log('✅ Nuevo visor de imágenes detectado');
-                }
-            }, 1000);
+            img.src = 'imagenes/FL/fondo.jpg';
         });
-
-        // Función para crear miniaturas dinámicamente (para compatibilidad)
-        function createMobileThumbnails() {
-            // Esta función será reemplazada por la del app.js
-            console.log('📱 Preparando miniaturas para móvil...');
-        }
-
-        // Detectar si es móvil y ajustar comportamientos
-        function checkMobileView() {
-            const isMobile = window.innerWidth <= 768;
-            if (isMobile) {
-                console.log('📱 Modo móvil detectado');
-                // Agregar clase para indicar que es móvil
-                document.body.classList.add('mobile-view');
-                
-                // Crear miniaturas si no existen
-                setTimeout(createMobileThumbnails, 500);
-            } else {
-                document.body.classList.remove('mobile-view');
-            }
-        }
-
-        // Verificar al cargar y al cambiar tamaño
-        window.addEventListener('load', checkMobileView);
-        window.addEventListener('resize', checkMobileView);
     </script>
 </body>
 </html>
