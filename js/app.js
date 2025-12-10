@@ -2241,6 +2241,7 @@ function setupAdminTabs() {
     });
 }
 
+// ========== FUNCIÓN LOADCITAS CORREGIDA - SIN LIMITE DE ALTURA ==========
 function loadCitas() {
     const citasList = document.getElementById('citasList');
     if (!citasList) return;
