@@ -354,6 +354,8 @@ function initNotificacionesCitas() {
             const nuevasCitas = snapshot.size;
             contadorNuevasCitas = nuevasCitas;
             
+            console.log(`📱 Nuevas citas detectadas: ${nuevasCitas}`);
+            
             // Actualizar contador visual
             actualizarContadorNotificaciones(contadorNuevasCitas);
             
@@ -365,23 +367,53 @@ function initNotificacionesCitas() {
             primeraCargaNotificaciones = false;
         }, (error) => {
             console.error('Error en listener de notificaciones:', error);
+            // Reintentar después de 5 segundos
+            setTimeout(initNotificacionesCitas, 5000);
         });
         
     } catch (error) {
         console.error('Error inicializando notificaciones:', error);
+        // Reintentar después de 5 segundos
+        setTimeout(initNotificacionesCitas, 5000);
     }
 }
 
 function actualizarContadorNotificaciones(numero) {
-    const contador = getElement('contador-citas');
     const adminBtn = getElement('adminBtn');
+    const adminMobileBtn = getElement('adminMobileBtn');
     
-    if (contador) {
-        contador.textContent = numero;
-        contador.style.display = numero > 0 ? 'block' : 'none';
+    console.log(`🔄 Actualizando contador a: ${numero}`);
+    
+    // Crear o actualizar elemento de contador para PC
+    let contadorPC = document.getElementById('contador-citas-pc');
+    if (!contadorPC && adminBtn) {
+        contadorPC = document.createElement('span');
+        contadorPC.id = 'contador-citas-pc';
+        contadorPC.className = 'notification-badge';
+        adminBtn.appendChild(contadorPC);
     }
     
-    // También actualizar el botón de admin con contador
+    // Crear o actualizar elemento de contador para móvil
+    let contadorMobile = document.getElementById('contador-citas-mobile');
+    if (!contadorMobile && adminMobileBtn) {
+        contadorMobile = document.createElement('span');
+        contadorMobile.id = 'contador-citas-mobile';
+        contadorMobile.className = 'notification-badge';
+        adminMobileBtn.appendChild(contadorMobile);
+    }
+    
+    // Actualizar ambos contadores
+    if (contadorPC) {
+        contadorPC.textContent = numero;
+        contadorPC.style.display = numero > 0 ? 'block' : 'none';
+    }
+    
+    if (contadorMobile) {
+        contadorMobile.textContent = numero;
+        contadorMobile.style.display = numero > 0 ? 'block' : 'none';
+    }
+    
+    // Agregar clase has-notifications al botón de admin para PC
     if (adminBtn) {
         if (numero > 0) {
             adminBtn.classList.add('has-notifications');
@@ -394,6 +426,11 @@ function actualizarContadorNotificaciones(numero) {
 }
 
 function mostrarNotificacionWhatsApp(numCitas) {
+    // Evitar múltiples notificaciones simultáneas
+    if (document.querySelector('.whatsapp-notification')) {
+        return;
+    }
+    
     // Crear notificación estilo WhatsApp
     const notification = document.createElement('div');
     notification.className = 'whatsapp-notification';
@@ -416,148 +453,26 @@ function mostrarNotificacionWhatsApp(numCitas) {
         </div>
     `;
     
-    // Estilos para la notificación
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        width: 320px;
-        background: #25D366;
-        color: white;
-        border-radius: 10px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        z-index: 999999;
-        overflow: hidden;
-        animation: slideInRight 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(10px);
-    `;
-    
-    // Agregar estilos CSS si no existen
-    if (!document.querySelector('#whatsapp-notification-styles')) {
-        const style = document.createElement('style');
-        style.id = 'whatsapp-notification-styles';
-        style.textContent = `
-            @keyframes slideInRight {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            @keyframes slideOutRight {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(100%); opacity: 0; }
-            }
-            
-            .whatsapp-notification-header {
-                display: flex;
-                align-items: center;
-                padding: 15px;
-                background: rgba(0, 0, 0, 0.2);
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            }
-            
-            .whatsapp-icon {
-                font-size: 24px;
-                margin-right: 12px;
-            }
-            
-            .whatsapp-title {
-                flex: 1;
-            }
-            
-            .whatsapp-title strong {
-                display: block;
-                font-size: 16px;
-            }
-            
-            .whatsapp-title span {
-                font-size: 12px;
-                opacity: 0.8;
-            }
-            
-            .whatsapp-close {
-                background: none;
-                border: none;
-                color: white;
-                font-size: 24px;
-                cursor: pointer;
-                opacity: 0.7;
-                transition: opacity 0.2s;
-            }
-            
-            .whatsapp-close:hover {
-                opacity: 1;
-            }
-            
-            .whatsapp-notification-body {
-                padding: 20px;
-            }
-            
-            .whatsapp-notification-body p {
-                margin: 0 0 15px 0;
-                line-height: 1.5;
-            }
-            
-            .whatsapp-actions {
-                display: flex;
-                gap: 10px;
-            }
-            
-            .whatsapp-action-btn {
-                flex: 1;
-                background: white;
-                color: #25D366;
-                border: none;
-                padding: 10px 15px;
-                border-radius: 6px;
-                font-weight: bold;
-                cursor: pointer;
-                transition: all 0.2s;
-            }
-            
-            .whatsapp-action-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            }
-            
-            /* Estilos para el botón de admin con notificaciones */
-            .has-notifications {
-                position: relative;
-                animation: pulse-notification 2s infinite;
-            }
-            
-            .has-notifications::after {
-                content: attr(data-count);
-                position: absolute;
-                top: -8px;
-                right: -8px;
-                background: #ff4757;
-                color: white;
-                border-radius: 50%;
-                width: 22px;
-                height: 22px;
-                font-size: 12px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: bold;
-                animation: bounce 1s ease;
-            }
-            
-            @keyframes pulse-notification {
-                0%, 100% { transform: scale(1); }
-                50% { transform: scale(1.05); }
-            }
-            
-            @keyframes bounce {
-                0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-                40% { transform: translateY(-5px); }
-                60% { transform: translateY(-3px); }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-    
     document.body.appendChild(notification);
+    
+    // Asegurar que los estilos se apliquen
+    setTimeout(() => {
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 320px;
+            background: #25D366;
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            z-index: 999999;
+            overflow: hidden;
+            animation: slideInRight 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        `;
+    }, 10);
     
     // Auto-eliminar después de 8 segundos
     setTimeout(() => {
@@ -2358,13 +2273,16 @@ function loadCitas() {
                 citasNuevas++;
             }
             
+            // CORREGIDO: Verificar que servicios exista y sea un array
+            const serviciosLista = Array.isArray(cita.servicios) ? cita.servicios.join(', ') : 'No especificado';
+            
             const citaElement = document.createElement('div');
             citaElement.className = `cita-item ${cita.estado} ${cita.vista === false ? 'nueva' : ''}`;
             citaElement.innerHTML = `
                 <div class="cita-header">
                     <div class="cita-cliente">
                         <h4>👤 ${cita.nombre} ${cita.vista === false ? '<span class="nueva-badge">NUEVA</span>' : ''}</h4>
-                        <span class="cita-telefono">📞 ${cita.telefono}</span>
+                        <span class="cita-telefono">📞 ${cita.telefono || 'No especificado'}</span>
                         ${cita.codigo ? `<span class="cita-codigo">🔑 ${cita.codigo}</span>` : ''}
                     </div>
                     <div class="cita-estado-badge ${cita.estado}">
@@ -2374,16 +2292,16 @@ function loadCitas() {
                 
                 <div class="cita-details">
                     <div class="cita-fecha">
-                        <strong>📅 ${cita.fecha}</strong>
-                        <span class="cita-hora">⏰ ${cita.hora}</span>
+                        <strong>📅 ${cita.fecha || 'No especificada'}</strong>
+                        <span class="cita-hora">⏰ ${cita.hora || 'No especificada'}</span>
                     </div>
                     <div class="cita-servicios">
                         <strong>💇 Servicios:</strong> 
-                        <span>${cita.servicios.join(', ')}</span>
+                        <span>${serviciosLista}</span>
                     </div>
                     <div class="cita-totales">
-                        <span class="cita-precio">💰 $${cita.total}</span>
-                        <span class="cita-duracion">⏱️ ${cita.duracion}min</span>
+                        <span class="cita-precio">💰 $${cita.total || 0}</span>
+                        <span class="cita-duracion">⏱️ ${cita.duracion || 0}min</span>
                     </div>
                 </div>
                 
@@ -2445,12 +2363,12 @@ function loadEstadisticas() {
         snapshot.forEach((doc) => {
             const cita = doc.data();
             
-            ingresosTotales += cita.total;
+            ingresosTotales += cita.total || 0;
             
             if (cita.fecha === today && cita.estado === 'confirmada') {
-                ingresosHoy += cita.total;
-                tiempoTotal += cita.duracion;
-                clientesSet.add(cita.telefono);
+                ingresosHoy += cita.total || 0;
+                tiempoTotal += cita.duracion || 0;
+                clientesSet.add(cita.telefono || 'desconocido');
             }
         });
         
@@ -2559,7 +2477,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initFloatingServices();
     
     // Inicializar sistema de notificaciones
-    initNotificacionesCitas();
+    setTimeout(initNotificacionesCitas, 2000); // Esperar 2 segundos para que Firebase cargue
     
     // Cargar contenido con manejo de errores
     try {

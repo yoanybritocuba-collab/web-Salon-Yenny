@@ -161,37 +161,76 @@
             overflow-y: auto;
         }
 
-        /* Contador de notificaciones en el botón Admin */
+        /* CONTADOR DE NOTIFICACIONES MEJORADO - VISIBLE Y SOBRE EL BOTÓN */
         #adminBtn {
-            position: relative;
+            position: relative !important;
         }
 
-        #adminBtn.has-notifications::after {
-            content: attr(data-count);
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #ff4757;
-            color: white;
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            animation: bounce 1s ease;
-            z-index: 100;
-            box-shadow: 0 2px 8px rgba(255, 71, 87, 0.5);
+        /* Contador para el botón Admin en PC */
+        .notification-badge-admin {
+            position: absolute !important;
+            top: -5px !important;
+            right: -5px !important;
+            background: #ff4757 !important;
+            color: white !important;
+            border-radius: 50% !important;
+            width: 20px !important;
+            height: 20px !important;
+            font-size: 12px !important;
+            font-weight: bold !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 1000 !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3) !important;
+            border: 2px solid #1a1a2e !important;
+            pointer-events: none !important;
         }
 
+        /* Contador para el enlace Admin en móvil */
+        .notification-badge-mobile {
+            position: absolute !important;
+            top: -5px !important;
+            right: -5px !important;
+            background: #ff4757 !important;
+            color: white !important;
+            border-radius: 50% !important;
+            width: 18px !important;
+            height: 18px !important;
+            font-size: 10px !important;
+            font-weight: bold !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 1000 !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3) !important;
+            border: 2px solid #1a1a2e !important;
+            pointer-events: none !important;
+        }
+
+        /* Asegurar que el enlace Admin en móvil tenga posición relativa */
+        #adminMobileBtn {
+            position: relative !important;
+        }
+
+        /* Animación del contador */
         @keyframes bounce {
             0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
             40% { transform: translateY(-5px); }
             60% { transform: translateY(-3px); }
         }
 
+        /* Botón Admin con notificaciones */
+        .has-notifications {
+            animation: pulse-notification 2s infinite;
+        }
+
+        @keyframes pulse-notification {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Estilos para modales responsive */
         @media (max-width: 768px) {
             .admin-modal .modal-content {
                 max-height: 100vh !important;
@@ -199,14 +238,6 @@
                 margin: 0 !important;
                 width: 100% !important;
                 height: 100% !important;
-            }
-            
-            #adminBtn::after {
-                top: -5px;
-                right: -5px;
-                width: 18px;
-                height: 18px;
-                font-size: 10px;
             }
         }
     </style>
