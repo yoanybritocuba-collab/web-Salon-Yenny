@@ -86,8 +86,8 @@
         }
 
         .logo-text {
-            background: transparent !important;
-            padding: 0 !important;
+            display: flex;
+            flex-direction: column;
         }
 
         /* TODAS LAS LETRAS CON COLOR MALVA-FUCSIA (#D147A3) */
@@ -547,7 +547,7 @@
             display: none;
         }
 
-        /* BOTÓN MENÚ MÓVIL CON NOTIFICACIÓN - PEGADO A LA ORILLA DERECHA */
+        /* BOTÓN MENÚ MÓVIL CON NOTIFICACIÓN - 1cm A LA DERECHA */
         .mobile-menu-toggle {
             position: relative;
             display: none;
@@ -561,30 +561,42 @@
             border: 1px solid rgba(209, 71, 163, 0.3); /* Borde malva-fucsia */
             border-radius: 8px;
             margin-left: auto;
-            position: absolute; /* Cambiado para móvil */
-            right: 15px; /* Pegado a la orilla derecha */
+            position: absolute; /* Para móvil */
+            right: 20px; /* CAMBIO: 1cm a la derecha (de 15px a 20px) */
             top: 50%;
             transform: translateY(-50%);
         }
 
-        /* NOTIFICACIÓN EN BOTÓN HAMBURGUESA */
+        /* NOTIFICACIÓN EN BOTÓN HAMBURGUESA - CONTADOR DE CITAS */
         .notification-badge {
             position: absolute;
             top: -8px;
             right: -8px;
-            background: #e74c3c;
+            background: #e74c3c; /* Rojo para llamar la atención */
             color: white;
-            width: 22px;
-            height: 22px;
+            width: 24px; /* Un poco más grande */
+            height: 24px;
             border-radius: 50%;
             font-size: 12px;
             font-weight: bold;
-            display: none;
+            display: none; /* Oculto por defecto */
             align-items: center;
             justify-content: center;
             border: 2px solid #000000;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
             z-index: 1003;
+            animation: pulseRed 1.5s infinite; /* Animación de pulso */
+        }
+
+        @keyframes pulseRed {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+            }
+            50% { 
+                transform: scale(1.1);
+                box-shadow: 0 0 0 8px rgba(231, 76, 60, 0);
+            }
         }
 
         .mobile-menu-toggle.has-notifications .notification-badge {
@@ -612,22 +624,23 @@
                 display: none !important;
             }
             
-            /* Mostrar solo el botón hamburguesa en móvil - PEGADO A LA DERECHA */
+            /* Mostrar solo el botón hamburguesa en móvil - 1cm A LA DERECHA */
             .mobile-menu-toggle {
                 display: block;
                 position: absolute;
-                right: 15px; /* Pegado a la orilla derecha */
+                right: 20px; /* CAMBIO: 1cm a la derecha */
                 top: 50%;
                 transform: translateY(-50%);
                 margin-left: 0;
                 z-index: 1002;
             }
             
-            /* Ajustar logo y brand-section - ESPACIO PARA NOMBRE COMPLETO */
+            /* Ajustar logo y brand-section - 0.5cm A LA IZQUIERDA */
             .brand-section {
                 flex: 1;
                 margin-left: 0;
-                max-width: calc(100% - 70px); /* Deja espacio para el botón hamburguesa */
+                max-width: calc(100% - 80px); /* Más espacio para el botón */
+                transform: translateX(-15px); /* CAMBIO: 0.5cm a la izquierda (15px ≈ 0.5cm) */
             }
             
             .logo-container {
@@ -647,8 +660,13 @@
                 max-width: none; /* Sin límite de ancho */
             }
             
+            /* MOSTRAR "BELLEZA PROFESIONAL" EN MÓVIL */
             .logo-subtitle {
                 font-size: 0.75rem;
+                display: block !important; /* CAMBIO: Mostrar en móvil */
+                color: #D147A3;
+                letter-spacing: 1.5px;
+                margin-top: 2px;
             }
             
             .admin-mobile-item {
@@ -751,7 +769,7 @@
             }
             
             .mobile-menu-toggle {
-                right: 10px; /* Más cerca del borde en móviles pequeños */
+                right: 15px; /* 1cm a la derecha también en móviles pequeños */
                 padding: 8px;
                 font-size: 1.6rem;
             }
@@ -774,8 +792,11 @@
                 max-width: none;
             }
 
+            /* "BELLEZA PROFESIONAL" visible en móviles pequeños */
             .logo-subtitle {
                 font-size: 0.7rem;
+                display: block !important; /* Mostrar en móviles pequeños */
+                color: #D147A3;
             }
 
             .hero-title {
@@ -801,8 +822,12 @@
                 max-width: 180px; /* Pero aún visible completo */
             }
             
+            .logo-subtitle {
+                font-size: 0.65rem; /* Un poco más pequeño */
+            }
+            
             .mobile-menu-toggle {
-                right: 5px;
+                right: 10px; /* Ajustado para pantallas muy pequeñas */
             }
         }
         
@@ -886,10 +911,10 @@
                     </ul>
                 </nav>
 
-                <!-- Botón hamburguesa con notificación - PEGADO A LA DERECHA EN MÓVIL -->
+                <!-- Botón hamburguesa con notificación - 1cm A LA DERECHA + CONTADOR DE CITAS -->
                 <button class="mobile-menu-toggle" id="mobileMenuToggle">
                     ☰
-                    <span class="notification-badge" id="mobileNotificationBadge"></span>
+                    <span class="notification-badge" id="mobileNotificationBadge">0</span>
                 </button>
 
                 <!-- Header actions - OCULTOS EN MÓVIL -->
@@ -1308,6 +1333,37 @@
                     });
                 });
             }
+
+            // ===== FUNCIÓN PARA ACTUALIZAR CONTADOR DE CITAS =====
+            function actualizarContadorCitas() {
+                const badge = document.getElementById('mobileNotificationBadge');
+                const mobileToggle = document.getElementById('mobileMenuToggle');
+                
+                // Simular citas nuevas (esto debería conectarse con Firebase en app.js)
+                // Por ahora simulamos 3 citas nuevas
+                const citasNuevas = 3; // Esto vendrá de Firebase
+                
+                if (citasNuevas > 0) {
+                    badge.textContent = citasNuevas;
+                    badge.style.display = 'flex';
+                    mobileToggle.classList.add('has-notifications');
+                    
+                    // Si hay más de 9 citas, mostrar "9+"
+                    if (citasNuevas > 9) {
+                        badge.textContent = '9+';
+                        badge.style.fontSize = '10px';
+                    }
+                } else {
+                    badge.style.display = 'none';
+                    mobileToggle.classList.remove('has-notifications');
+                }
+            }
+            
+            // Llamar la función al cargar la página
+            actualizarContadorCitas();
+            
+            // Simular actualización cada 30 segundos (en producción esto vendría de Firebase)
+            setInterval(actualizarContadorCitas, 30000);
         });
     </script>
 </body>

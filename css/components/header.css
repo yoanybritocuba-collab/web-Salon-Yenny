@@ -174,40 +174,9 @@
   outline: none;
 }
 
-/* === NUEVO: CONTADOR DE CITAS EN MÓVILES === */
-.mobile-citas-counter {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: #27ae60; /* VERDE como solicitaste */
-  color: white;
-  font-size: 12px;
-  font-weight: bold;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1003;
-  border: 2px solid #000000;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-  animation: pulseGreen 1.5s infinite;
-}
-
-@keyframes pulseGreen {
-  0%, 100% { 
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.7);
-  }
-  50% { 
-    transform: scale(1.1);
-    box-shadow: 0 0 0 8px rgba(39, 174, 96, 0);
-  }
-}
-
-/* Botón menú móvil con contador - PEGADO A LA DERECHA EN MÓVIL */
+/* === CONTADOR DE CITAS EN BOTÓN HAMBURGUESA === */
 .mobile-menu-toggle {
+  position: relative;
   display: none;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(209, 71, 163, 0.3); /* Borde malva-fucsia */
@@ -218,8 +187,8 @@
   z-index: 1002;
   border-radius: 8px;
   transition: all 0.3s ease;
-  position: absolute; /* Cambiado para móvil */
-  right: 15px; /* Pegado a la orilla derecha */
+  position: absolute; /* Para móvil */
+  right: 20px; /* CAMBIO: 1cm a la derecha (de 15px a 20px) */
   top: 50%;
   transform: translateY(-50%);
 }
@@ -227,6 +196,42 @@
 .mobile-menu-toggle:hover {
   background: rgba(209, 71, 163, 0.2); /* Fondo malva-fucsia */
   transform: scale(1.05) translateY(-50%);
+}
+
+/* NOTIFICACIÓN EN BOTÓN HAMBURGUESA - CONTADOR DE CITAS */
+.mobile-citas-counter {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #e74c3c; /* Rojo para llamar la atención */
+  color: white;
+  width: 24px; /* Un poco más grande */
+  height: 24px;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: bold;
+  display: none; /* Oculto por defecto */
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #000000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  z-index: 1003;
+  animation: pulseRed 1.5s infinite; /* Animación de pulso */
+}
+
+@keyframes pulseRed {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+  }
+  50% { 
+    transform: scale(1.1);
+    box-shadow: 0 0 0 8px rgba(231, 76, 60, 0);
+  }
+}
+
+.mobile-menu-toggle.has-notifications .mobile-citas-counter {
+  display: flex;
 }
 
 /* Acciones del header - SOLO VISIBLE EN PC */
@@ -394,11 +399,11 @@
     position: relative; /* Para posicionar el botón hamburguesa */
   }
   
-  /* Mover logo y nombre 0.5cm a la izquierda en móviles */
+  /* CAMBIO: Mover logo y nombre 0.5cm más a la izquierda en móviles */
   .brand-section {
-    transform: translateX(-10px); /* Un poco más para móviles */
+    transform: translateX(-20px); /* CAMBIO: 0.5cm más a la izquierda (de -10px a -20px) */
     flex: 1; /* Ocupa el espacio disponible */
-    max-width: calc(100% - 70px); /* Deja espacio para el botón hamburguesa */
+    max-width: calc(100% - 80px); /* Más espacio para el botón */
   }
   
   /* === CORRECCIÓN IMPORTANTE: OCULTAR BOTONES EN MÓVILES === */
@@ -410,11 +415,11 @@
     padding: 0 15px;
   }
   
-  /* Mostrar menú hamburguesa - PEGADO A LA DERECHA */
+  /* Mostrar menú hamburguesa - 1cm A LA DERECHA */
   .mobile-menu-toggle {
     display: block;
     position: absolute;
-    right: 15px; /* Pegado a la orilla derecha */
+    right: 20px; /* CAMBIO: 1cm a la derecha */
     top: 50%;
     transform: translateY(-50%);
     margin-left: 0;
@@ -468,7 +473,7 @@
     font-weight: 600;
   }
   
-  /* Ajustar logo para móviles - NOMBRE COMPLETO */
+  /* Ajustar logo para móviles - NOMBRE COMPLETO + BELLEZA PROFESIONAL */
   .logo-title {
     font-size: 1.8rem; /* Más pequeño para móviles */
     white-space: nowrap; /* Evitar salto de línea - NOMBRE COMPLETO */
@@ -477,16 +482,20 @@
     max-width: none; /* Sin límite de ancho */
   }
   
+  /* CAMBIO: Mostrar "BELLEZA PROFESIONAL" en móvil */
+  .logo-subtitle {
+    font-size: 0.7rem;
+    display: block !important; /* CAMBIO: Mostrar en móvil */
+    color: #D147A3;
+    letter-spacing: 1.5px;
+    margin-top: 2px;
+  }
+  
   .logo-image-small {
     width: 60px; /* Más pequeño para móviles */
     height: 60px;
     border: none !important; /* Sin borde en móvil */
     box-shadow: none !important;
-  }
-  
-  .logo-subtitle {
-    font-size: 0.7rem;
-    display: none; /* Ocultar subtítulo en móviles para más espacio */
   }
 }
 
@@ -496,13 +505,14 @@
     gap: 5px;
   }
   
+  /* CAMBIO: 0.5cm más a la izquierda también en móviles pequeños */
   .brand-section {
-    transform: translateX(-5px);
-    max-width: calc(100% - 60px); /* Menos espacio para pantallas pequeñas */
+    transform: translateX(-15px); /* 0.5cm a la izquierda */
+    max-width: calc(100% - 70px); /* Menos espacio para pantallas pequeñas */
   }
   
   .mobile-menu-toggle {
-    right: 10px; /* Más cerca del borde en móviles pequeños */
+    right: 15px; /* 1cm a la derecha también en móviles pequeños */
     padding: 8px 12px;
     font-size: 1.6rem;
   }
@@ -512,6 +522,13 @@
     white-space: nowrap; /* Nombre completo */
     overflow: visible;
     max-width: none;
+  }
+  
+  /* "BELLEZA PROFESIONAL" visible en móviles pequeños */
+  .logo-subtitle {
+    font-size: 0.65rem;
+    display: block !important; /* Mostrar en móviles pequeños */
+    color: #D147A3;
   }
   
   .logo-image-small {
@@ -527,13 +544,12 @@
     max-width: 130px; /* Pero ajustado para no solapar con botón */
   }
   
-  .logo-image-small {
-    width: 45px;
-    height: 45px;
+  .logo-subtitle {
+    font-size: 0.6rem; /* Un poco más pequeño */
   }
   
   .mobile-menu-toggle {
-    right: 5px;
+    right: 10px; /* Ajustado para pantallas muy pequeñas */
     padding: 6px 10px;
     font-size: 1.5rem;
   }

@@ -30,7 +30,7 @@ body {
     right: 0;
     z-index: 1000;
     transition: transform 0.3s ease;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.9);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.9);
     height: 100px; /* Cambiado de 90px a 100px (1cm más ancho) */
     display: flex;
     align-items: center;
@@ -58,6 +58,7 @@ body {
 .brand-section {
     display: flex;
     align-items: center;
+    transform: translateX(-15px); /* 0.5cm a la izquierda para PC */
 }
 
 .logo-container {
@@ -1839,10 +1840,11 @@ body {
         gap: 10px;
     }
 
+    /* CAMBIO: Botón hamburguesa 1cm a la derecha */
     .mobile-menu-toggle {
         display: block;
         position: absolute;
-        right: 15px; /* Pegado a la orilla derecha */
+        right: 20px; /* CAMBIO: 1cm a la derecha (de 15px a 20px) */
         top: 50%;
         transform: translateY(-50%);
         z-index: 1002;
@@ -1854,6 +1856,20 @@ body {
 
     .header-actions {
         display: none !important; /* Ocultar en móvil */
+    }
+
+    /* CAMBIO: Logo y nombre 0.5cm más a la izquierda en móvil */
+    .brand-section {
+        transform: translateX(-20px); /* CAMBIO: 0.5cm más a la izquierda */
+        max-width: calc(100% - 80px); /* Más espacio para el botón */
+    }
+
+    /* CAMBIO: Mostrar "BELLEZA PROFESIONAL" en móvil */
+    .logo-subtitle {
+        display: block !important;
+        font-size: 0.7rem;
+        color: #D147A3;
+        margin-top: 2px;
     }
 
     .hero {
@@ -1934,6 +1950,13 @@ body {
         max-width: none;
     }
     
+    /* "BELLEZA PROFESIONAL" visible en móviles pequeños */
+    .logo-subtitle {
+        display: block !important;
+        font-size: 0.65rem;
+        color: #D147A3;
+    }
+    
     .logo-image-small {
         width: 60px;
         height: 60px;
@@ -1980,9 +2003,9 @@ body {
         font-size: 1rem;
     }
 
-    /* Botón hamburguesa más cerca del borde */
+    /* Botón hamburguesa 1cm a la derecha también en móviles pequeños */
     .mobile-menu-toggle {
-        right: 10px;
+        right: 15px;
     }
 }
 
@@ -1991,6 +2014,14 @@ body {
         font-size: 1.6rem;
         white-space: nowrap;
         max-width: 180px; /* Ajustado pero aún visible */
+    }
+    
+    .logo-subtitle {
+        font-size: 0.6rem;
+    }
+    
+    .mobile-menu-toggle {
+        right: 10px; /* Ajustado para pantallas muy pequeñas */
     }
 }
 
