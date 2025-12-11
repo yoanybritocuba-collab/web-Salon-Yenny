@@ -196,7 +196,7 @@ body {
     color: #D147A3; /* Color malva-fucsia */
     font-size: 1.8rem;
     cursor: pointer;
-    padding: 10px 15px;
+    padding: 10px 12px; /* Reducido padding horizontal */
     border-radius: 8px;
     transition: all 0.3s ease;
 }
@@ -1840,14 +1840,15 @@ body {
         gap: 10px;
     }
 
-    /* CAMBIO: Botón hamburguesa 1cm a la derecha */
+    /* CAMBIO: Botón hamburguesa MUY PEGADO AL BORDE DERECHO */
     .mobile-menu-toggle {
         display: block;
         position: absolute;
-        right: 20px; /* CAMBIO: 1cm a la derecha (de 15px a 20px) */
+        right: 5px; /* CAMBIO: MUY PEGADO AL BORDE (de 20px a 5px) */
         top: 50%;
         transform: translateY(-50%);
         z-index: 1002;
+        padding: 10px 12px; /* Padding reducido */
     }
 
     .mobile-menu-toggle.active {
@@ -1861,7 +1862,7 @@ body {
     /* CAMBIO: Logo y nombre 0.5cm más a la izquierda en móvil */
     .brand-section {
         transform: translateX(-20px); /* CAMBIO: 0.5cm más a la izquierda */
-        max-width: calc(100% - 80px); /* Más espacio para el botón */
+        max-width: calc(100% - 70px); /* Menos espacio para el botón más pequeño */
     }
 
     /* CAMBIO: Mostrar "BELLEZA PROFESIONAL" en móvil */
@@ -2003,9 +2004,10 @@ body {
         font-size: 1rem;
     }
 
-    /* Botón hamburguesa 1cm a la derecha también en móviles pequeños */
+    /* Botón hamburguesa AÚN MÁS PEGADO en móviles pequeños */
     .mobile-menu-toggle {
-        right: 15px;
+        right: 3px;
+        padding: 8px 10px;
     }
 }
 
@@ -2020,8 +2022,11 @@ body {
         font-size: 0.6rem;
     }
     
+    /* Botón hamburguesa MÁXIMO PEGADO en pantallas muy pequeñas */
     .mobile-menu-toggle {
-        right: 10px; /* Ajustado para pantallas muy pequeñas */
+        right: 2px;
+        padding: 6px 8px;
+        font-size: 1.5rem;
     }
 }
 

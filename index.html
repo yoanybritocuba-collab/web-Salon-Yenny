@@ -547,7 +547,7 @@
             display: none;
         }
 
-        /* BOTÓN MENÚ MÓVIL CON NOTIFICACIÓN - 1cm A LA DERECHA */
+        /* BOTÓN MENÚ MÓVIL CON NOTIFICACIÓN - MUY PEGADO AL BORDE DERECHO */
         .mobile-menu-toggle {
             position: relative;
             display: none;
@@ -556,13 +556,13 @@
             color: #D147A3; /* Color malva-fucsia */
             font-size: 1.8rem;
             cursor: pointer;
-            padding: 10px;
+            padding: 10px 12px; /* Reducido padding horizontal */
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(209, 71, 163, 0.3); /* Borde malva-fucsia */
             border-radius: 8px;
             margin-left: auto;
             position: absolute; /* Para móvil */
-            right: 20px; /* CAMBIO: 1cm a la derecha (de 15px a 20px) */
+            right: 5px; /* CAMBIO: MUY PEGADO AL BORDE (de 20px a 5px) */
             top: 50%;
             transform: translateY(-50%);
         }
@@ -570,20 +570,20 @@
         /* NOTIFICACIÓN EN BOTÓN HAMBURGUESA - CONTADOR DE CITAS */
         .notification-badge {
             position: absolute;
-            top: -8px;
-            right: -8px;
+            top: -5px; /* Ajustado para estar más visible */
+            right: -5px; /* Ajustado para estar más visible */
             background: #e74c3c; /* Rojo para llamar la atención */
             color: white;
-            width: 24px; /* Un poco más grande */
-            height: 24px;
+            width: 22px; /* Un poco más pequeño para caber mejor */
+            height: 22px;
             border-radius: 50%;
-            font-size: 12px;
+            font-size: 11px; /* Un poco más pequeño */
             font-weight: bold;
             display: none; /* Oculto por defecto */
             align-items: center;
             justify-content: center;
             border: 2px solid #000000;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
             z-index: 1003;
             animation: pulseRed 1.5s infinite; /* Animación de pulso */
         }
@@ -595,7 +595,7 @@
             }
             50% { 
                 transform: scale(1.1);
-                box-shadow: 0 0 0 8px rgba(231, 76, 60, 0);
+                box-shadow: 0 0 0 6px rgba(231, 76, 60, 0);
             }
         }
 
@@ -624,22 +624,23 @@
                 display: none !important;
             }
             
-            /* Mostrar solo el botón hamburguesa en móvil - 1cm A LA DERECHA */
+            /* Mostrar solo el botón hamburguesa en móvil - MUY PEGADO AL BORDE */
             .mobile-menu-toggle {
                 display: block;
                 position: absolute;
-                right: 20px; /* CAMBIO: 1cm a la derecha */
+                right: 5px; /* CAMBIO: MUY PEGADO AL BORDE (de 20px a 5px) */
                 top: 50%;
                 transform: translateY(-50%);
                 margin-left: 0;
                 z-index: 1002;
+                padding: 10px 12px; /* Padding reducido */
             }
             
             /* Ajustar logo y brand-section - 0.5cm A LA IZQUIERDA */
             .brand-section {
                 flex: 1;
                 margin-left: 0;
-                max-width: calc(100% - 80px); /* Más espacio para el botón */
+                max-width: calc(100% - 70px); /* Menos espacio para el botón más pequeño */
                 transform: translateX(-15px); /* CAMBIO: 0.5cm a la izquierda (15px ≈ 0.5cm) */
             }
             
@@ -769,9 +770,18 @@
             }
             
             .mobile-menu-toggle {
-                right: 15px; /* 1cm a la derecha también en móviles pequeños */
-                padding: 8px;
+                right: 3px; /* CAMBIO: AÚN MÁS PEGADO EN MÓVILES PEQUEÑOS */
+                padding: 8px 10px; /* Más compacto */
                 font-size: 1.6rem;
+            }
+            
+            /* Ajustar el badge para pantallas pequeñas */
+            .notification-badge {
+                width: 20px;
+                height: 20px;
+                font-size: 10px;
+                top: -4px;
+                right: -4px;
             }
             
             .hero {
@@ -827,7 +837,17 @@
             }
             
             .mobile-menu-toggle {
-                right: 10px; /* Ajustado para pantallas muy pequeñas */
+                right: 2px; /* MÁXIMO PEGADO EN PANTALLAS MUY PEQUEÑAS */
+                padding: 6px 8px;
+                font-size: 1.5rem;
+            }
+            
+            .notification-badge {
+                width: 18px;
+                height: 18px;
+                font-size: 9px;
+                top: -3px;
+                right: -3px;
             }
         }
         
@@ -911,7 +931,7 @@
                     </ul>
                 </nav>
 
-                <!-- Botón hamburguesa con notificación - 1cm A LA DERECHA + CONTADOR DE CITAS -->
+                <!-- Botón hamburguesa con notificación - MUY PEGADO AL BORDE DERECHO + CONTADOR DE CITAS -->
                 <button class="mobile-menu-toggle" id="mobileMenuToggle">
                     ☰
                     <span class="notification-badge" id="mobileNotificationBadge">0</span>

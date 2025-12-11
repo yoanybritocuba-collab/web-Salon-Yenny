@@ -174,7 +174,7 @@
   outline: none;
 }
 
-/* === CONTADOR DE CITAS EN BOTÓN HAMBURGUESA === */
+/* === BOTÓN HAMBURGUESA MUY PEGADO AL BORDE DERECHO === */
 .mobile-menu-toggle {
   position: relative;
   display: none;
@@ -183,12 +183,12 @@
   color: #D147A3; /* Color malva-fucsia */
   font-size: 1.8rem;
   cursor: pointer;
-  padding: 10px 15px;
+  padding: 10px 12px; /* Reducido padding horizontal */
   z-index: 1002;
   border-radius: 8px;
   transition: all 0.3s ease;
   position: absolute; /* Para móvil */
-  right: 20px; /* CAMBIO: 1cm a la derecha (de 15px a 20px) */
+  right: 5px; /* CAMBIO: MUY PEGADO AL BORDE (de 20px a 5px) */
   top: 50%;
   transform: translateY(-50%);
 }
@@ -201,20 +201,20 @@
 /* NOTIFICACIÓN EN BOTÓN HAMBURGUESA - CONTADOR DE CITAS */
 .mobile-citas-counter {
   position: absolute;
-  top: -8px;
-  right: -8px;
+  top: -5px; /* Ajustado para estar más visible */
+  right: -5px; /* Ajustado para estar más visible */
   background: #e74c3c; /* Rojo para llamar la atención */
   color: white;
-  width: 24px; /* Un poco más grande */
-  height: 24px;
+  width: 22px; /* Un poco más pequeño para caber mejor */
+  height: 22px;
   border-radius: 50%;
-  font-size: 12px;
+  font-size: 11px; /* Un poco más pequeño */
   font-weight: bold;
   display: none; /* Oculto por defecto */
   align-items: center;
   justify-content: center;
   border: 2px solid #000000;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
   z-index: 1003;
   animation: pulseRed 1.5s infinite; /* Animación de pulso */
 }
@@ -226,7 +226,7 @@
   }
   50% { 
     transform: scale(1.1);
-    box-shadow: 0 0 0 8px rgba(231, 76, 60, 0);
+    box-shadow: 0 0 0 6px rgba(231, 76, 60, 0);
   }
 }
 
@@ -403,7 +403,7 @@
   .brand-section {
     transform: translateX(-20px); /* CAMBIO: 0.5cm más a la izquierda (de -10px a -20px) */
     flex: 1; /* Ocupa el espacio disponible */
-    max-width: calc(100% - 80px); /* Más espacio para el botón */
+    max-width: calc(100% - 70px); /* Menos espacio para el botón más pequeño */
   }
   
   /* === CORRECCIÓN IMPORTANTE: OCULTAR BOTONES EN MÓVILES === */
@@ -415,15 +415,16 @@
     padding: 0 15px;
   }
   
-  /* Mostrar menú hamburguesa - 1cm A LA DERECHA */
+  /* Mostrar menú hamburguesa - MUY PEGADO AL BORDE DERECHO */
   .mobile-menu-toggle {
     display: block;
     position: absolute;
-    right: 20px; /* CAMBIO: 1cm a la derecha */
+    right: 5px; /* CAMBIO: MUY PEGADO AL BORDE (de 20px a 5px) */
     top: 50%;
     transform: translateY(-50%);
     margin-left: 0;
     z-index: 1002;
+    padding: 10px 12px; /* Padding reducido */
   }
   
   /* Ocultar navegación desktop en móviles */
@@ -508,13 +509,22 @@
   /* CAMBIO: 0.5cm más a la izquierda también en móviles pequeños */
   .brand-section {
     transform: translateX(-15px); /* 0.5cm a la izquierda */
-    max-width: calc(100% - 70px); /* Menos espacio para pantallas pequeñas */
+    max-width: calc(100% - 65px); /* Menos espacio para pantallas pequeñas */
   }
   
   .mobile-menu-toggle {
-    right: 15px; /* 1cm a la derecha también en móviles pequeños */
-    padding: 8px 12px;
+    right: 3px; /* CAMBIO: AÚN MÁS PEGADO EN MÓVILES PEQUEÑOS */
+    padding: 8px 10px; /* Más compacto */
     font-size: 1.6rem;
+  }
+  
+  /* Ajustar el badge para pantallas pequeñas */
+  .mobile-citas-counter {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+    top: -4px;
+    right: -4px;
   }
   
   .logo-title {
@@ -549,9 +559,17 @@
   }
   
   .mobile-menu-toggle {
-    right: 10px; /* Ajustado para pantallas muy pequeñas */
-    padding: 6px 10px;
+    right: 2px; /* MÁXIMO PEGADO EN PANTALLAS MUY PEQUEÑAS */
+    padding: 6px 8px;
     font-size: 1.5rem;
+  }
+  
+  .mobile-citas-counter {
+    width: 18px;
+    height: 18px;
+    font-size: 9px;
+    top: -3px;
+    right: -3px;
   }
 }
 
