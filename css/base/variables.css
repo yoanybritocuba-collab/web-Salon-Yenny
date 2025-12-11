@@ -7,18 +7,18 @@
     --warning-color: #f39c12;
     --error-color: #e74c3c;
     
-    /* Escala de grises */
-    --background-darker: #0f0f1a;
-    --background-dark: #1a1a2e;
-    --surface-color: #16213e;
+    /* Escala de grises - ajustada para negro intenso */
+    --background-darker: #000000; /* Negro puro */
+    --background-dark: #0a0a0a; /* Casi negro */
+    --surface-color: #111111; /* Fondo oscuro */
     --card-bg: rgba(255, 255, 255, 0.05);
     --card-border-color: rgba(255, 255, 255, 0.1);
     
     /* Texto */
     --text-primary: #ffffff;
-    --text-secondary: rgba(255, 255, 255, 0.7);
-    --text-muted: rgba(255, 255, 255, 0.5);
-    --gray-color: #bdc3c7;
+    --text-secondary: rgba(255, 255, 255, 0.8);
+    --text-muted: rgba(255, 255, 255, 0.6);
+    --gray-color: #cccccc;
     
     /* Tipografía */
     --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -45,12 +45,12 @@
     --border-radius-xl: 16px;
     --card-border-radius: 12px;
     
-    /* Sombras */
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.2);
-    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.3);
-    --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.4);
-    --card-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    /* Sombras - más intensas para negro */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.7);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.8);
+    --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.9);
+    --card-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
     
     /* Transiciones */
     --transition: all 0.3s ease;
@@ -63,15 +63,15 @@
     --btn-font-size: 0.875rem;
     --btn-line-height: 1.5;
     
-    /* Header */
-    --header-height: 80px;
-    --header-height-scrolled: 70px;
-    --header-height-mobile: 70px;
-    --header-height-mobile-scrolled: 60px;
+    /* Header - aumentado */
+    --header-height: 90px;
+    --header-height-scrolled: 90px;
+    --header-height-mobile: 80px;
+    --header-height-mobile-scrolled: 80px;
     
-    /* Container */
-    --container-max-width: 1200px;
-    --container-padding: 1rem;
+    /* Container - más ancho */
+    --container-max-width: 1400px;
+    --container-padding: 2rem;
     
     /* Cards */
     --card-padding: 1.5rem;

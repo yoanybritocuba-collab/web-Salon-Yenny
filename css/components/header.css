@@ -1,14 +1,19 @@
 /* components/header.css */
 .header {
-  background: var(--header-bg);
+  background: #000000 !important; /* Negro intenso */
   color: white;
-  padding: 1rem 0;
+  padding: 0;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
   transition: transform 0.3s ease;
+  height: 100px; /* Cambiado de 90px a 100px (1cm más ancho) */
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid #333333;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.9); /* Sombra más intensa */
 }
 
 .header.hidden {
@@ -16,13 +21,15 @@
 }
 
 .header.scrolled {
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.8);
+  background: #000000 !important; /* Mantiene negro al hacer scroll */
 }
 
 .container {
-  width: 90%;
-  max-width: 1200px;
+  width: 100%;
+  max-width: 1400px; /* Más ancho */
   margin: 0 auto;
+  padding: 0 40px; /* Más padding lateral */
 }
 
 .header-content {
@@ -30,6 +37,7 @@
   justify-content: space-between;
   align-items: center;
   position: relative;
+  height: 100%;
 }
 
 .brand-section {
@@ -41,13 +49,17 @@
 .logo-container {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
 }
 
 .logo-image-small {
-  width: 50px;
-  height: 50px;
+  width: 105px; /* Cambiado de 60px (2cm) a 105px (3.5cm aproximadamente) */
+  height: 105px; /* Cambiado de 60px a 105px */
   object-fit: contain;
+  filter: brightness(1.1);
+  background: transparent !important;
+  border: none !important; /* QUITADO EL BORDE/AFTER */
+  box-shadow: none !important; /* Eliminada sombra del borde */
 }
 
 .logo-text {
@@ -55,80 +67,236 @@
   flex-direction: column;
 }
 
+/* TODAS LAS LETRAS CON COLOR MALVA-FUCSIA (#D147A3) */
 .logo-title {
   font-family: 'Dancing Script', cursive;
-  font-size: 1.8rem;
+  font-size: 2.5rem; /* Más grande para equilibrar con logo */
   margin: 0;
-  white-space: nowrap;
+  color: #D147A3; /* TODAS LAS LETRAS color malva-fucsia */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .logo-subtitle {
-  font-size: 0.7rem;
-  opacity: 0.8;
+  font-size: 0.85rem;
+  opacity: 0.9;
   margin: 0;
+  color: #D147A3; /* TODAS LAS LETRAS color malva-fucsia */
 }
 
 /* Navegación desktop - visible solo en escritorio */
-.nav-compact ul {
+.nav-compact {
+  flex: 1;
   display: flex;
-  gap: 1.5rem;
+  justify-content: center;
+  margin: 0 40px; /* Más margen */
 }
 
+.nav-compact ul {
+  display: flex;
+  gap: 35px; /* Más espacio entre enlaces */
+  padding: 0;
+  margin: 0;
+}
+
+/* TODAS LAS LETRAS CON COLOR MALVA-FUCSIA (#D147A3) */
 .nav-link {
-  color: white;
+  color: #D147A3; /* TODAS LAS LETRAS color malva-fucsia */
   font-weight: 500;
-  transition: color 0.3s;
+  transition: all 0.3s ease;
   white-space: nowrap;
+  padding: 12px 20px;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  font-size: 1.05rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+}
+
+.nav-link.active {
+  color: #D147A3; /* Mismo color malva-fucsia */
+  font-weight: 500;
+  background: transparent; /* SIN FONDO CARMELITA */
+}
+
+/* ELIMINADO FONDO CARMELITA - REEMPLAZADO POR LÍNEA FINA ABAJO */
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 2px;
+  background: #D147A3; /* Línea fina color malva-fucsia */
+  border-radius: 1px;
+  animation: linePulse 2s infinite;
+}
+
+@keyframes linePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Efecto de iluminación al tocar/hover */
+.nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(209, 71, 163, 0.2), /* Color malva-fucsia suave */
+    transparent);
+  transition: left 0.5s ease;
+}
+
+.nav-link:hover::before,
+.nav-link:focus::before,
+.nav-link.active::before {
+  left: 100%;
 }
 
 .nav-link:hover,
-.nav-link.active {
-  color: var(--primary-color);
+.nav-link:focus,
+.nav-link.active:hover {
+  color: #ffffff;
+  background: rgba(209, 71, 163, 0.15); /* Fondo malva-fucsia suave al hover */
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(209, 71, 163, 0.2);
+  outline: none;
 }
 
 /* Botón menú móvil */
 .mobile-menu-toggle {
   display: none;
-  background: none;
-  border: none;
-  color: white;
-  font-size: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(209, 71, 163, 0.3); /* Borde malva-fucsia */
+  color: #D147A3; /* Color malva-fucsia */
+  font-size: 1.8rem;
   cursor: pointer;
-  padding: 0.5rem;
+  padding: 10px 15px;
   z-index: 1002;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.mobile-menu-toggle:hover {
+  background: rgba(209, 71, 163, 0.2); /* Fondo malva-fucsia */
+  transform: scale(1.05);
 }
 
 /* Acciones del header */
 .header-actions {
   display: flex;
-  gap: 1rem;
+  gap: 15px;
   align-items: center;
 }
 
 .btn {
-  padding: 0.5rem 1rem;
+  padding: 12px 25px;
   border: none;
-  border-radius: var(--border-radius);
+  border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
   transition: all 0.3s;
   white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+  font-size: 0.95rem;
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.3), 
+    transparent);
+  transition: left 0.6s ease;
+}
+
+.btn:hover::after {
+  left: 100%;
 }
 
 .btn-fuchsia {
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: linear-gradient(135deg, #E75480, #D147A3);
   color: white;
+  border: 1px solid rgba(231, 84, 128, 0.3);
+}
+
+.btn-fuchsia:hover {
+  background: linear-gradient(135deg, #D147A3, #E75480);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(231, 84, 128, 0.4);
 }
 
 .btn-outline {
-  background: transparent;
-  border: 1px solid white;
-  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(209, 71, 163, 0.3); /* Borde malva-fucsia */
+  color: #D147A3; /* Color malva-fucsia */
+}
+
+.btn-outline:hover {
+  background: rgba(209, 71, 163, 0.2); /* Fondo malva-fucsia suave */
+  border-color: rgba(209, 71, 163, 0.5); /* Borde malva-fucsia más intenso */
+  color: #FFFFFF; /* Blanco al hover */
+  transform: translateY(-2px);
 }
 
 .btn-compact {
-  padding: 0.5rem 1rem;
+  padding: 10px 20px;
   font-size: 0.9rem;
+}
+
+/* BOTÓN DE CITAS - EFECTO VERDE TRANSPARENTE AL HOVER */
+#bookingBtn {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #D147A3 !important; /* Color malva-fucsia */
+  border: 1px solid rgba(209, 71, 163, 0.3) !important; /* Borde malva-fucsia */
+  padding: 12px 25px !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+  backdrop-filter: blur(5px);
+  position: relative;
+  overflow: hidden;
+}
+
+#bookingBtn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.3), 
+    transparent);
+  transition: left 0.6s ease;
+}
+
+#bookingBtn:hover::before {
+  left: 100%;
+}
+
+#bookingBtn:hover {
+  background: rgba(46, 204, 113, 0.3) !important; /* Verde transparente al hover */
+  border-color: rgba(46, 204, 113, 0.5) !important;
+  color: #FFFFFF !important;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
 }
 
 /* Elemento admin móvil - oculto en desktop */
@@ -139,76 +307,68 @@
 /* ===== MEDIA QUERIES PARA MÓVILES ===== */
 @media (max-width: 768px) {
   .header {
-    padding: 0.8rem 0;
+    height: 90px; /* Ajustado proporcionalmente */
+    padding: 0;
+  }
+  
+  .container {
+    padding: 0 20px;
   }
   
   /* Ocultar navegación desktop en móviles */
   .nav-compact {
     display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #000000;
+    border-top: 1px solid #333;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
   }
   
-  /* Mostrar menú hamburguesa - POSICIÓN CORREGIDA A LA DERECHA */
+  /* Mostrar menú hamburguesa */
   .mobile-menu-toggle {
     display: block;
-    order: 3;
-    margin-left: auto;
   }
   
   /* Menú móvil desplegable */
   .nav-compact.mobile-open {
     display: block;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: var(--header-bg);
-    padding: 1rem;
+    padding: 20px;
     z-index: 1001;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   }
   
   .nav-compact.mobile-open ul {
     flex-direction: column;
-    gap: 0;
+    gap: 10px;
   }
   
   .nav-compact.mobile-open .nav-link {
     display: block;
-    padding: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px;
     text-align: center;
     font-size: 1.1rem;
-  }
-  
-  .nav-compact.mobile-open .nav-link:last-child {
-    border-bottom: none;
+    border-radius: 8px;
+    margin: 5px 0;
+    background: rgba(255, 255, 255, 0.05);
   }
   
   /* MOSTRAR ELEMENTO ADMIN EN MÓVIL */
   .admin-mobile-item {
     display: block;
-    text-align: center;
-    padding: 0.8rem;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    border-radius: var(--border-radius);
-    margin-top: 0.5rem;
+    margin-top: 10px;
   }
   
   .admin-mobile-item .nav-link {
-    color: white;
+    background: linear-gradient(135deg, #E75480, #D147A3);
+    color: white !important;
     font-weight: 600;
-    display: block;
-    border: none !important;
-    padding: 0.5rem !important;
   }
   
-  /* Header actions - Solo mostrar botón de cita en móvil */
+  /* Header actions - ajustes para móvil */
   .header-actions {
-    order: 2;
-    gap: 0.5rem;
-    margin-left: auto;
-    margin-right: 1rem;
+    gap: 10px;
   }
   
   /* Ocultar botón Admin en móviles (ya está en el menú hamburguesa) */
@@ -218,93 +378,76 @@
   
   /* Botón de cita más compacto en móvil */
   .btn-compact {
-    padding: 0.6rem 0.8rem;
-    font-size: 0.8rem;
-    white-space: nowrap;
+    padding: 10px 15px;
+    font-size: 0.85rem;
   }
   
   /* Ajustar logo para móviles */
   .logo-title {
-    font-size: 1.3rem;
+    font-size: 2rem;
   }
   
   .logo-image-small {
-    width: 35px;
-    height: 35px;
+    width: 70px; /* Reducido proporcionalmente para móvil */
+    height: 70px;
+    border: none !important; /* Sin borde en móvil */
+    box-shadow: none !important;
   }
   
   .logo-subtitle {
-    font-size: 0.6rem;
-  }
-  
-  .brand-section {
-    min-width: auto;
-  }
-  
-  /* ORDEN CORRECTO DE ELEMENTOS EN MÓVIL */
-  .header-content {
-    justify-content: space-between;
-  }
-  
-  .brand-section {
-    order: 1;
-  }
-  
-  .header-actions {
-    order: 2;
-  }
-  
-  .mobile-menu-toggle {
-    order: 3;
+    font-size: 0.75rem;
   }
 }
 
 @media (max-width: 480px) {
   .header-content {
-    gap: 0.5rem;
+    justify-content: space-between;
   }
   
   .header-actions {
-    gap: 0.3rem;
+    gap: 8px;
   }
   
   .btn-compact {
-    padding: 0.5rem 0.6rem;
-    font-size: 0.75rem;
+    padding: 8px 12px;
+    font-size: 0.8rem;
   }
   
   .logo-title {
-    font-size: 1.1rem;
+    font-size: 1.8rem;
   }
   
   .logo-subtitle {
-    font-size: 0.55rem;
+    font-size: 0.7rem;
   }
   
   .logo-image-small {
-    width: 30px;
-    height: 30px;
-  }
-  
-  /* Texto más corto para el botón de cita en móviles muy pequeños */
-  #bookingBtn {
-    font-size: 0.7rem;
-    padding: 0.4rem 0.5rem;
+    width: 60px;
+    height: 60px;
+    border: none !important; /* Sin borde */
+    box-shadow: none !important;
   }
 }
 
-/* Para pantallas muy pequeñas, ocultar el subtítulo */
+/* Para pantallas muy pequeñas */
 @media (max-width: 360px) {
   .logo-subtitle {
     display: none;
   }
   
   .logo-title {
-    font-size: 1rem;
+    font-size: 1.5rem;
   }
   
-  #bookingBtn {
-    font-size: 0.65rem;
-    padding: 0.35rem 0.4rem;
+  .btn-compact {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+  
+  .logo-image-small {
+    width: 50px;
+    height: 50px;
+    border: none !important; /* Sin borde */
+    box-shadow: none !important;
   }
 }

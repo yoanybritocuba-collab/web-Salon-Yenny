@@ -10,7 +10,7 @@
     <!-- Animate.css para efectos profesionales -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
-        /* FONDO GLOBAL - CORREGIDO DEFINITIVO */
+        /* FONDO GLOBAL - AJUSTADO PARA TOPEAR CON HEADER */
         body {
             margin: 0;
             padding: 0;
@@ -21,23 +21,468 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
             position: relative;
+            overflow-x: hidden;
+            padding-top: 100px; /* Aumentado para header más ancho */
         }
         
-        /* Capa oscura para mejor contraste */
-        body::before {
+        /* CAPA OSCURA SOLO EN SECCIONES INFERIORES */
+        body::after {
             content: '';
             position: fixed;
-            top: 0;
+            top: 100vh; /* Empieza DESPUÉS de la portada */
             left: 0;
             width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            height: calc(100% - 100vh);
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.7));
             z-index: -1;
+            pointer-events: none;
         }
 
-        /* Estilos para los enlaces de contacto - MEJORADO */
+        /* HEADER NEGRO INTENSO Y MÁS ANCHO (+1cm) */
+        .header {
+            background: #000000 !important; /* Negro intenso */
+            backdrop-filter: blur(8px);
+            border-bottom: 2px solid #333333; /* Borde más definido */
+            height: 100px !important; /* 1cm más ancho (de 90px a 100px) */
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.9); /* Sombra más intensa */
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            height: 100%;
+            max-width: 1400px; /* Más ancho */
+            margin: 0 auto;
+            padding: 0 40px; /* Más padding lateral */
+        }
+
+        /* LOGO SIN FONDO Y MÁS GRANDE (de 2cm a 3.5cm) - SIN BORDE/AFTER */
+        .brand-section {
+            display: flex;
+            align-items: center;
+            background: transparent !important;
+            padding: 0 !important;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: transparent !important;
+            padding: 0 !important;
+        }
+
+        .logo-image-small {
+            width: 105px; /* Cambiado de 60px (2cm) a 105px (3.5cm aproximadamente) */
+            height: 105px; /* Cambiado de 60px a 105px */
+            object-fit: contain;
+            background: transparent !important;
+            /* QUITADO EL BORDE/AFTER: border: 3px solid #E75480 !important; */
+            box-shadow: none !important; /* Eliminada sombra del borde */
+            filter: brightness(1.1);
+        }
+
+        .logo-text {
+            background: transparent !important;
+            padding: 0 !important;
+        }
+
+        /* TODAS LAS LETRAS CON COLOR MALVA-FUCSIA (#D147A3) */
+        .logo-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem; /* Más grande para equilibrar con logo */
+            color: #D147A3; /* TODAS LAS LETRAS color malva-fucsia */
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+            background: transparent !important;
+            padding: 0 !important;
+        }
+
+        .logo-subtitle {
+            font-size: 0.85rem;
+            color: #D147A3; /* TODAS LAS LETRAS color malva-fucsia */
+            margin: 0;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: transparent !important;
+            padding: 0 !important;
+        }
+
+        /* NAVEGACIÓN MÁS ANCHA Y CON EFECTO DE ILUMINACIÓN */
+        .nav-compact {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 40px; /* Más margen */
+            background: transparent !important;
+            display: flex;
+            justify-content: center;
+        }
+
+        .nav-compact ul {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 35px; /* Más espacio entre enlaces */
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            height: 100%;
+            background: transparent !important;
+        }
+
+        .nav-compact li {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ENLACES DE NAVEGACIÓN - TODAS LETRAS MALVA-FUCSIA */
+        .nav-link {
+            color: #D147A3 !important; /* TODAS LAS LETRAS color malva-fucsia */
+            text-decoration: none;
+            font-size: 1.05rem;
+            font-weight: 500;
+            padding: 12px 20px;
+            position: relative;
+            transition: all 0.3s ease;
+            background: transparent !important;
+            border: none !important;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .nav-link.active {
+            color: #D147A3 !important; /* Mismo color malva-fucsia */
+            font-weight: 500;
+            background: transparent !important; /* SIN FONDO CARMELITA */
+        }
+
+        /* ELIMINADO FONDO CARMELITA - REEMPLAZADO POR LÍNEA FINA ABAJO */
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 2px;
+            background: #D147A3; /* Línea fina color malva-fucsia */
+            border-radius: 1px;
+            animation: linePulse 2s infinite;
+        }
+
+        @keyframes linePulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Efecto de barra de luz que pasa */
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(209, 71, 163, 0.3), /* Color malva-fucsia suave */
+                transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-link:hover::before,
+        .nav-link:focus::before,
+        .nav-link.active::before {
+            left: 100%;
+        }
+
+        .nav-link:hover,
+        .nav-link:focus,
+        .nav-link.active:hover {
+            color: #FFFFFF !important;
+            background: rgba(209, 71, 163, 0.15) !important; /* Fondo malva-fucsia suave al hover */
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(209, 71, 163, 0.2);
+            outline: none;
+        }
+
+        /* HEADER ACTIONS - BOTONES CON EFECTO DE ILUMINACIÓN */
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            background: transparent !important;
+        }
+
+        /* BOTÓN DE CITAS - CON EFECTO VERDE TRANSPARENTE AL HOVER */
+        #bookingBtn {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: #D147A3 !important; /* Color malva-fucsia */
+            border: 1px solid rgba(209, 71, 163, 0.3) !important; /* Borde malva-fucsia */
+            padding: 12px 25px !important;
+            border-radius: 8px !important;
+            font-weight: 500 !important;
+            transition: all 0.3s ease !important;
+            backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #bookingBtn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.3), 
+                transparent);
+            transition: left 0.6s ease;
+        }
+
+        #bookingBtn:hover::before {
+            left: 100%;
+        }
+
+        #bookingBtn:hover {
+            background: rgba(46, 204, 113, 0.3) !important; /* Verde transparente al hover */
+            border-color: rgba(46, 204, 113, 0.5) !important;
+            color: #FFFFFF !important;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        /* BOTÓN ADMIN - CON EFECTO */
+        #adminBtn {
+            background: transparent !important;
+            color: #D147A3 !important; /* Color malva-fucsia */
+            border: 1px solid rgba(209, 71, 163, 0.3) !important; /* Borde malva-fucsia */
+            padding: 12px 25px !important;
+            border-radius: 8px !important;
+            font-weight: 500 !important;
+            transition: all 0.3s ease !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #adminBtn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.2), 
+                transparent);
+            transition: left 0.6s ease;
+        }
+
+        #adminBtn:hover::before {
+            left: 100%;
+        }
+
+        #adminBtn:hover {
+            background: rgba(209, 71, 163, 0.1) !important; /* Fondo malva-fucsia suave */
+            color: #FFFFFF !important;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(209, 71, 163, 0.2);
+        }
+
+        /* PORTADA AJUSTADA PARA TOPEAR CON HEADER */
+        .hero {
+            position: relative;
+            min-height: calc(100vh - 100px); /* Resta altura del header más alto */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px 0 20px;
+            background: transparent !important;
+            z-index: 1;
+            margin-top: -100px; /* IMPORTANTE: Compensa el header más alto */
+            padding-top: 140px; /* Ajuste para que contenido empiece después del header */
+        }
+
+        /* CONTENIDO DE PORTADA */
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            max-width: 800px;
+            padding: 30px 40px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(3px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: heroEntrance 1s ease-out;
+            margin-top: 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes heroEntrance {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* TÍTULO PRINCIPAL - TODAS LETRAS MALVA-FUCSIA */
+        .hero-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4.5rem; /* Un poco más grande */
+            font-weight: 700;
+            color: #D147A3; /* TODAS LAS LETRAS color malva-fucsia */
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+            margin-bottom: 15px;
+            letter-spacing: 1.5px;
+            animation: titlePulse 3s infinite alternate, fadeInDown 0.8s ease-out;
+            transform-origin: center;
+            line-height: 1.1;
+            margin-top: 0;
+        }
+
+        @keyframes titlePulse {
+            0% {
+                transform: scale(1);
+                text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+            }
+            100% {
+                transform: scale(1.03);
+                text-shadow: 0 4px 20px rgba(209, 71, 163, 0.7);
+            }
+        }
+
+        /* SUBTÍTULO - TODAS LETRAS MALVA-FUCSIA MÁS CLARO */
+        .hero-subtitle {
+            font-size: 1.8rem; /* Un poco más grande */
+            color: #D147A3; /* TODAS LAS LETRAS color malva-fucsia */
+            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.9);
+            margin-bottom: 30px;
+            line-height: 1.4;
+            font-weight: 300;
+            letter-spacing: 0.8px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+            background: rgba(209, 71, 163, 0.1); /* Fondo suave malva-fucsia */
+            padding: 12px 20px;
+            border-radius: 10px;
+            border-left: 3px solid rgba(209, 71, 163, 0.5);
+            backdrop-filter: blur(2px);
+        }
+
+        /* BOTÓN DE PORTADA - TODAS LETRAS MALVA-FUCSIA */
+        .btn-hero {
+            padding: 18px 45px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: 1.2px;
+            background: rgba(209, 71, 163, 0.2); /* Fondo malva-fucsia */
+            border: 1px solid rgba(209, 71, 163, 0.5); /* Borde malva-fucsia */
+            border-radius: 12px;
+            color: #D147A3 !important; /* TODAS LAS LETRAS color malva-fucsia */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(209, 71, 163, 0.3);
+            position: relative;
+            overflow: hidden;
+            animation: buttonEntrance 0.8s ease-out 0.4s both, buttonPulse 2s infinite;
+            transform-origin: center;
+            backdrop-filter: blur(5px);
+        }
+
+        @keyframes buttonEntrance {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes buttonPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 8px 25px rgba(209, 71, 163, 0.3);
+            }
+            50% {
+                transform: scale(1.04);
+                box-shadow: 0 12px 35px rgba(209, 71, 163, 0.4);
+            }
+        }
+
+        .btn-hero:hover {
+            transform: translateY(-4px) scale(1.04);
+            background: rgba(209, 71, 163, 0.3);
+            color: #FFFFFF !important;
+            box-shadow: 0 16px 40px rgba(209, 71, 163, 0.4);
+        }
+
+        /* ICONO DEL BOTÓN */
+        .btn-hero .btn-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            vertical-align: middle;
+            animation: iconFloat 2s infinite ease-in-out;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-4px);
+            }
+        }
+
+        /* BOTÓN BIG BOOKING - TODAS LETRAS MALVA-FUCSIA */
+        .btn-big-booking {
+            background: rgba(209, 71, 163, 0.2) !important;
+            color: #D147A3 !important; /* TODAS LAS LETRAS color malva-fucsia */
+            border: 1px solid rgba(209, 71, 163, 0.5) !important;
+            padding: 15px 35px !important;
+            border-radius: 12px !important;
+            font-weight: 500 !important;
+            transition: all 0.3s ease !important;
+            backdrop-filter: blur(5px);
+        }
+
+        .btn-big-booking:hover {
+            background: rgba(209, 71, 163, 0.3) !important;
+            color: #FFFFFF !important;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(209, 71, 163, 0.4);
+        }
+
+        /* BOTÓN FLOTANTE - TODAS LETRAS MALVA-FUCSIA */
+        .btn-book-now {
+            background: rgba(209, 71, 163, 0.2) !important;
+            color: #D147A3 !important; /* TODAS LAS LETRAS color malva-fucsia */
+            border: 1px solid rgba(209, 71, 163, 0.5) !important;
+            border-radius: 8px !important;
+            transition: all 0.3s ease !important;
+            backdrop-filter: blur(5px);
+        }
+
+        .btn-book-now:hover {
+            background: rgba(209, 71, 163, 0.3) !important;
+            color: #FFFFFF !important;
+        }
+
+        /* Estilos para los enlaces de contacto - TODAS LETRAS MALVA-FUCSIA */
         .contact-link {
-            color: white !important;
+            color: #D147A3 !important; /* TODAS LAS LETRAS color malva-fucsia */
             text-decoration: none;
             transition: all 0.3s ease;
             border-bottom: 1px solid transparent;
@@ -47,8 +492,8 @@
         }
 
         .contact-link:hover {
-            color: #FFD700 !important;
-            border-bottom: 1px solid #FFD700;
+            color: rgba(255, 255, 255, 0.9) !important;
+            border-bottom: 1px solid rgba(209, 71, 163, 0.5);
             transform: translateY(-2px);
         }
 
@@ -58,7 +503,7 @@
             gap: 12px;
             margin-bottom: 18px;
             padding: 15px 20px;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.7);
             border-radius: 12px;
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
@@ -67,21 +512,22 @@
         }
 
         .contact-item:hover {
-            background: rgba(231, 84, 128, 0.8);
+            background: rgba(0, 0, 0, 0.8);
             transform: translateX(10px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            border-color: rgba(209, 71, 163, 0.2);
         }
 
         .contact-item p {
             margin: 0;
-            color: white;
+            color: #D147A3; /* TODAS LAS LETRAS color malva-fucsia */
             font-weight: 600;
             font-size: 1.1rem;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
         }
 
         .contact-icon {
-            color: #FFD700;
+            color: #D147A3; /* TODAS LAS LETRAS color malva-fucsia */
             font-weight: bold;
             font-size: 1.4rem;
             min-width: 35px;
@@ -101,22 +547,24 @@
             transform: translateY(0);
         }
 
-        /* Botones con animación */
-        .btn-fuchsia {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
         .admin-mobile-item {
             display: none;
         }
 
+        /* RESPONSIVE AJUSTADO */
         @media (max-width: 768px) {
+            body {
+                padding-top: 90px;
+            }
+            
+            .header {
+                height: 90px !important;
+            }
+            
+            .header-content {
+                padding: 0 20px;
+            }
+            
             .admin-mobile-item {
                 display: block;
             }
@@ -130,120 +578,206 @@
             body {
                 background-attachment: scroll;
             }
+
+            /* AJUSTES PARA MÓVIL - NAVEGACIÓN */
+            .nav-compact {
+                position: fixed;
+                top: 90px;
+                left: 0;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.95) !important;
+                backdrop-filter: blur(10px);
+                display: none;
+                padding: 20px 0;
+                margin: 0;
+            }
+
+            .nav-compact.mobile-open {
+                display: block;
+            }
+
+            .nav-compact ul {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .nav-compact li {
+                width: 100%;
+                text-align: center;
+            }
+
+            .nav-link {
+                display: block;
+                padding: 15px !important;
+                font-size: 1.2rem;
+            }
+
+            .hero {
+                min-height: calc(100vh - 90px);
+                padding: 20px 15px 0 15px;
+                margin-top: -90px;
+                padding-top: 110px;
+            }
+
+            .hero-content {
+                padding: 20px;
+                margin: 0 5px;
+                background: rgba(255, 255, 255, 0.02);
+            }
+
+            .hero-title {
+                font-size: 3rem;
+                margin-bottom: 10px;
+            }
+
+            .hero-subtitle {
+                font-size: 1.3rem;
+                padding: 10px 15px;
+                margin-bottom: 25px;
+            }
+
+            .btn-hero {
+                padding: 14px 30px;
+                font-size: 1.1rem;
+            }
+
+            body::after {
+                top: 90vh;
+            }
+            
+            /* Logo más pequeño en móvil pero proporcional - SIN BORDE */
+            .logo-image-small {
+                width: 70px;
+                height: 70px;
+                border: none !important; /* Sin borde en móvil */
+                box-shadow: none !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding-top: 80px;
+            }
+            
+            .header {
+                height: 80px !important;
+            }
+            
+            .header-content {
+                padding: 0 15px;
+            }
+            
+            .hero {
+                margin-top: -80px;
+                min-height: calc(100vh - 80px);
+                padding-top: 100px;
+            }
+
+            .logo-image-small {
+                width: 60px;
+                height: 60px;
+                border: none !important; /* Sin borde */
+                box-shadow: none !important;
+            }
+
+            .logo-title {
+                font-size: 2rem;
+            }
+
+            .logo-subtitle {
+                font-size: 0.75rem;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+                padding: 8px 12px;
+            }
+
+            .btn-hero {
+                padding: 12px 25px;
+                font-size: 1rem;
+            }
         }
         
         .btn-paused {
-            background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
+            background: rgba(209, 71, 163, 0.3) !important; /* Malva-fucsia */
+            color: rgba(255, 255, 255, 0.7) !important;
+            border: 1px solid rgba(209, 71, 163, 0.5) !important; /* Malva-fucsia */
             cursor: not-allowed !important;
-            opacity: 0.8;
         }
         
         .btn-active {
-            background: linear-gradient(135deg, #27ae60, #219653) !important;
+            background: rgba(255, 255, 255, 0.1) !important;
         }
 
-        .admin-modal .modal-content {
-            max-height: 90vh !important;
-            overflow: hidden !important;
-            display: flex !important;
-            flex-direction: column !important;
+        /* ANIMACIONES PARA TEXTO */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .admin-modal-content {
-            display: flex !important;
-            flex-direction: column !important;
-            height: 100% !important;
-            padding: 0 !important;
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .admin-auth, #adminContent {
-            flex: 1;
-            overflow-y: auto;
+        /* CONTENEDOR DE SECCIONES INFERIORES */
+        .section-portal:not(#inicio) {
+            position: relative;
+            z-index: 1;
+            padding-top: 40px;
         }
 
-        /* CONTADOR DE NOTIFICACIONES MEJORADO - VISIBLE Y SOBRE EL BOTÓN */
-        #adminBtn {
-            position: relative !important;
+        .section-portal:not(#inicio)::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: -1;
         }
 
-        /* Contador para el botón Admin en PC */
-        .notification-badge-admin {
-            position: absolute !important;
-            top: -5px !important;
-            right: -5px !important;
-            background: #ff4757 !important;
-            color: white !important;
-            border-radius: 50% !important;
-            width: 20px !important;
-            height: 20px !important;
-            font-size: 12px !important;
-            font-weight: bold !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            z-index: 1000 !important;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3) !important;
-            border: 2px solid #1a1a2e !important;
-            pointer-events: none !important;
+        /* BOTÓN MENÚ MÓVIL */
+        .mobile-menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: #D147A3; /* Color malva-fucsia */
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(209, 71, 163, 0.3); /* Borde malva-fucsia */
+            border-radius: 8px;
         }
 
-        /* Contador para el enlace Admin en móvil */
-        .notification-badge-mobile {
-            position: absolute !important;
-            top: -5px !important;
-            right: -5px !important;
-            background: #ff4757 !important;
-            color: white !important;
-            border-radius: 50% !important;
-            width: 18px !important;
-            height: 18px !important;
-            font-size: 10px !important;
-            font-weight: bold !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            z-index: 1000 !important;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3) !important;
-            border: 2px solid #1a1a2e !important;
-            pointer-events: none !important;
-        }
-
-        /* Asegurar que el enlace Admin en móvil tenga posición relativa */
-        #adminMobileBtn {
-            position: relative !important;
-        }
-
-        /* Animación del contador */
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-5px); }
-            60% { transform: translateY(-3px); }
-        }
-
-        /* Botón Admin con notificaciones */
-        .has-notifications {
-            animation: pulse-notification 2s infinite;
-        }
-
-        @keyframes pulse-notification {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        /* Estilos para modales responsive */
         @media (max-width: 768px) {
-            .admin-modal .modal-content {
-                max-height: 100vh !important;
-                border-radius: 0 !important;
-                margin: 0 !important;
-                width: 100% !important;
-                height: 100% !important;
+            .mobile-menu-toggle {
+                display: block;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header Mejorado - Negro con ocultamiento -->
+    <!-- Header NEGRO INTENSO Y MÁS ANCHO -->
     <header class="header">
         <div class="container">
             <div class="header-content">
@@ -274,7 +808,7 @@
                 </button>
 
                 <div class="header-actions">
-                    <button id="bookingBtn" class="btn btn-fuchsia btn-compact animate__animated animate__pulse animate__infinite">HACER TU CITA AQUI</button>
+                    <button id="bookingBtn" class="btn btn-compact">HACER TU CITA AQUI</button>
                     <button id="adminBtn" class="btn btn-outline btn-compact">Admin</button>
                 </div>
             </div>
@@ -282,26 +816,32 @@
     </header>
 
     <main id="main-content">
+        <!-- PORTADA AJUSTADA PARA TOPEAR CON HEADER -->
         <section id="inicio" class="section-portal section-active">
             <div class="hero">
                 <div class="container">
                     <div class="hero-content animate__animated animate__fadeIn">
-                        <h2 class="hero-title animate__animated animate__fadeInDown">Transforma tu Belleza</h2>
-                        <p class="hero-subtitle animate__animated animate__fadeInUp animate__delay-1s">Servicios profesionales de estética con tecnología avanzada</p>
-                        <button class="btn btn-fuchsia btn-hero btn-active animate__animated animate__bounceIn animate__delay-2s" id="heroBookingBtn">
+                        <h2 class="hero-title animate__animated animate__fadeInDown animate__delay-0.5s">
+                            Transforma tu Belleza
+                        </h2>
+                        <p class="hero-subtitle animate__animated animate__fadeInUp animate__delay-1s">
+                            Servicios Profesionales de Peluquería con Tratamientos de Última Generación
+                        </p>
+                        <button class="btn btn-hero animate__animated animate__bounceIn animate__delay-1.5s" id="heroBookingBtn">
                             <span class="btn-icon">📅</span>
-                            Reservar Cita
+                            Reservar Cita Ahora
                         </button>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- SECCIONES INFERIORES -->
         <section id="servicios" class="section-portal">
             <div class="services">
                 <div class="container">
                     <div class="big-booking-btn-container" id="bigBookingContainer">
-                        <button class="btn btn-fuchsia btn-large btn-big-booking btn-active animate__animated animate__pulse animate__slow" id="bigBookingBtn">
+                        <button class="btn btn-large btn-big-booking animate__animated animate__pulse animate__slow" id="bigBookingBtn">
                             <span class="btn-icon">📅</span>
                             Realizar tu cita aquí
                         </button>
@@ -396,7 +936,7 @@
             <div class="no-services">No hay servicios seleccionados</div>
         </div>
         <div class="floating-services-actions">
-            <button class="btn-book-now btn-active" id="floatingBookBtn">
+            <button class="btn-book-now" id="floatingBookBtn">
                 <span class="btn-icon">📅</span> 
                 Reservar Ahora
             </button>
@@ -534,7 +1074,7 @@
         </div>
     </div>
 
-    <!-- Admin Modal CORREGIDO - AHORA COMPACTO Y RESPONSIVE -->
+    <!-- Admin Modal -->
     <div id="adminModal" class="modal admin-modal">
         <div class="modal-content admin-modal-content">
             <span class="close">&times;</span>
@@ -558,7 +1098,7 @@
                 </form>
             </div>
             
-            <!-- Sección de Contenido del Admin (se muestra después de la autenticación) -->
+            <!-- Sección de Contenido del Admin -->
             <div id="adminContent" style="display: none;"></div>
         </div>
     </div>
@@ -618,7 +1158,6 @@
     <!-- JavaScript -->
     <script type="module" src="js/app.js"></script>
     <script>
-        // JavaScript para animaciones al hacer scroll
         document.addEventListener('DOMContentLoaded', function() {
             // Efecto de animación al hacer scroll
             const observer = new IntersectionObserver((entries) => {
@@ -642,7 +1181,6 @@
             };
             img.onerror = function() {
                 console.log('❌ No se pudo cargar la imagen de fondo');
-                // Intentar rutas alternativas
                 const altPaths = [
                     'imagenes/fl/fondo.jpg',
                     './imagenes/FL/fondo.jpg',
@@ -660,6 +1198,30 @@
                 }
             };
             img.src = 'imagenes/FL/fondo.jpg';
+            
+            // Manejo del menú móvil
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const navCompact = document.querySelector('.nav-compact');
+            
+            if (mobileMenuToggle && navCompact) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    navCompact.classList.toggle('mobile-open');
+                    // Cambiar ícono
+                    if (navCompact.classList.contains('mobile-open')) {
+                        mobileMenuToggle.innerHTML = '✕';
+                    } else {
+                        mobileMenuToggle.innerHTML = '☰';
+                    }
+                });
+                
+                // Cerrar menú al hacer clic en un enlace
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', function() {
+                        navCompact.classList.remove('mobile-open');
+                        mobileMenuToggle.innerHTML = '☰';
+                    });
+                });
+            }
         });
     </script>
 </body>
