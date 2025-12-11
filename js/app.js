@@ -25,6 +25,9 @@ let contadorNuevasCitas = 0;
 let notificacionesListener = null;
 let primeraCargaNotificaciones = true;
 
+// Variable para panel admin plegable
+let adminPanelCollapsed = false;
+
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
@@ -1619,9 +1622,9 @@ function openProductCarousel(index) {
                     this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlByb2R1Y3RvPC90ZXh0Pjwvc3ZnPg==';
                 };
                 
-                carouselItem.appendChild(img);
-                carouselTrack.appendChild(carouselItem);
-                carouselItems.push(carouselItem);
+        carouselItem.appendChild(img);
+        carouselTrack.appendChild(carouselItem);
+        carouselItems.push(carouselItem);
             });
             
             viewerModal.style.display = 'block';
@@ -1758,7 +1761,8 @@ async function setupBookingForm() {
                 codigo: generateBookingCode()
             });
             
-            showCentralConfirmation(name, selectedTime, date);
+            // ⭐⭐ CAMBIO IMPORTANTE: SOLO MOSTRAR "CITA CONFIRMADA" - ELIMINADO EL INDICATIVO VERDE ⭐⭐
+            showNotification('✅ Cita Confirmada', 'success');
             
             closeBookingModal();
             
@@ -1785,179 +1789,6 @@ async function setupBookingForm() {
     });
 }
 
-function showCentralConfirmation(clientName, time, date) {
-    const confirmationOverlay = document.createElement('div');
-    confirmationOverlay.className = 'central-confirmation-overlay';
-    confirmationOverlay.innerHTML = `
-        <div class="central-confirmation-content">
-            <div class="confirmation-icon">✅</div>
-            <h2>¡Cita Confirmada!</h2>
-            <p class="confirmation-message">${clientName}, tu cita ha sido agendada exitosamente</p>
-            <div class="confirmation-details">
-                <div class="confirmation-detail">
-                    <span class="detail-icon">📅</span>
-                    <span>${date}</span>
-                </div>
-                <div class="confirmation-detail">
-                    <span class="detail-icon">⏰</span>
-                    <span>${time}</span>
-                </div>
-                <div class="confirmation-detail">
-                    <span class="detail-icon">📍</span>
-                    <span>Tellstrase 32, 8400 Winterthur</span>
-                </div>
-            </div>
-            <div class="confirmation-actions">
-                <button class="btn-confirmation-close">Entendido</button>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(confirmationOverlay);
-    
-    const styles = `
-        .central-confirmation-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .central-confirmation-content {
-            background: linear-gradient(135deg, #27ae60, #219653);
-            color: white;
-            padding: 40px 30px;
-            border-radius: 20px;
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            animation: slideInUp 0.5s ease;
-        }
-        
-        .confirmation-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            animation: bounce 1s ease;
-        }
-        
-        .central-confirmation-content h2 {
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-        
-        .confirmation-message {
-            font-size: 1.1rem;
-            margin-bottom: 25px;
-            opacity: 0.9;
-        }
-        
-        .confirmation-details {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 25px;
-        }
-        
-        .confirmation-detail {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-            justify-content: center;
-        }
-        
-        .confirmation-detail:last-child {
-            margin-bottom: 0;
-        }
-        
-        .detail-icon {
-            font-size: 1.2rem;
-        }
-        
-        .btn-confirmation-close {
-            background: white;
-            color: #27ae60;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-        }
-        
-        .btn-confirmation-close:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes slideInUp {
-            from { 
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateY(0);
-            }
-            40% {
-                transform: translateY(-10px);
-            }
-            60% {
-                transform: translateY(-5px);
-            }
-        }
-    `;
-    
-    if (!document.querySelector('#confirmation-styles')) {
-        const styleSheet = document.createElement('style');
-        styleSheet.id = 'confirmation-styles';
-        styleSheet.textContent = styles;
-        document.head.appendChild(styleSheet);
-    }
-    
-    confirmationOverlay.querySelector('.btn-confirmation-close').addEventListener('click', () => {
-        confirmationOverlay.style.animation = 'fadeOut 0.3s ease';
-        setTimeout(() => {
-            if (confirmationOverlay.parentNode) {
-                confirmationOverlay.remove();
-            }
-        }, 300);
-    });
-    
-    confirmationOverlay.addEventListener('click', (e) => {
-        if (e.target === confirmationOverlay) {
-            confirmationOverlay.style.animation = 'fadeOut 0.3s ease';
-            setTimeout(() => {
-                if (confirmationOverlay.parentNode) {
-                    confirmationOverlay.remove();
-                }
-            }, 300);
-        }
-    });
-}
-
 function generateBookingCode() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let code = '';
@@ -1980,6 +1811,9 @@ function openAdminModal() {
         
         adminModal.style.display = 'block';
         adminModal.classList.add('show');
+        
+        // Resetear estado plegable
+        adminPanelCollapsed = false;
         
         // Enfocar el campo de contraseña automáticamente
         setTimeout(() => {
@@ -2051,7 +1885,7 @@ function setupAdminModal() {
     }
 }
 
-// ========== PANEL DE ADMINISTRACIÓN COMPACTO ==========
+// ========== PANEL DE ADMINISTRACIÓN COMPACTO Y PLEGABLE ==========
 async function loadAdminContent() {
     const adminContent = getElement('adminContent');
     if (!adminContent) return;
@@ -2066,7 +1900,11 @@ async function loadAdminContent() {
                     <h2>🔧 Panel Admin</h2>
                     <p>Gestión de citas y horarios</p>
                     
-                    <div class="admin-global-controls">
+                    <div class="admin-controls-container" id="adminControlsContainer">
+                        <button class="admin-panel-toggle" id="adminPanelToggle">
+                            <span class="toggle-icon">↑</span>
+                        </button>
+                        
                         <div class="control-group">
                             <button class="btn ${configData.isPaused ? 'btn-success' : 'btn-warning'}" id="toggleBookingBtn">
                                 ${configData.isPaused ? '▶️ Reanudar' : '⏸️ Pausar'}
@@ -2084,6 +1922,10 @@ async function loadAdminContent() {
                             </p>
                         </div>
                     </div>
+                    
+                    <button class="btn-back-to-home" onclick="switchSection('inicio'); document.querySelector('#adminModal').style.display='none';">
+                        🏠 Volver al Inicio
+                    </button>
                 </div>
                 
                 <div class="admin-tabs">
@@ -2144,16 +1986,20 @@ async function loadAdminContent() {
             </div>
         `;
         
-        // Configurar scroll para hacer compacto el header
-        const adminContentContainer = adminContent.querySelector('.admin-content-container');
-        const adminHeader = getElement('adminHeader');
+        // Configurar botón plegable
+        const panelToggle = getElement('adminPanelToggle');
+        const controlsContainer = getElement('adminControlsContainer');
         
-        if (adminContentContainer && adminHeader) {
-            adminContentContainer.addEventListener('scroll', function() {
-                if (this.scrollTop > 50) {
-                    adminHeader.classList.add('compact');
+        if (panelToggle && controlsContainer) {
+            panelToggle.addEventListener('click', function() {
+                adminPanelCollapsed = !adminPanelCollapsed;
+                
+                if (adminPanelCollapsed) {
+                    controlsContainer.classList.add('collapsed');
+                    panelToggle.querySelector('.toggle-icon').textContent = '↓';
                 } else {
-                    adminHeader.classList.remove('compact');
+                    controlsContainer.classList.remove('collapsed');
+                    panelToggle.querySelector('.toggle-icon').textContent = '↑';
                 }
             });
         }
@@ -2243,7 +2089,7 @@ function setupAdminControls() {
             
             if (statusIndicator) {
                 statusIndicator.className = `status-indicator ${data.isPaused ? 'paused' : 'active'}`;
-                let statusHTML = `Estado: <strong>${data.isPaused ? '⏸️ CITAS PAUSADAS' : '✅ CITAS ACTIVAS'}</strong>`;
+                let statusHTML = `<strong>${data.isPaused ? '⏸️ CITAS PAUSADAS' : '✅ CITAS ACTIVAS'}</strong>`;
                 if (data.isPaused && data.resumeDate) {
                     statusHTML += `<br><small>Reanudación: ${data.resumeDate}</small>`;
                 }

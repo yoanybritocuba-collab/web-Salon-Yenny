@@ -1480,7 +1480,7 @@ body {
     background: rgba(255,255,255,0.3);
 }
 
-/* ========== ADMIN MODAL ========== */
+/* ========== ADMIN MODAL - MODIFICADO PARA PLEGABLE ========== */
 .admin-modal {
     max-width: 900px;
     padding: 30px;
@@ -1496,15 +1496,86 @@ body {
     margin-bottom: 10px;
 }
 
-.admin-global-controls {
+/* NUEVO: Controles del panel admin plegable */
+.admin-panel-toggle {
+    position: absolute;
+    top: 15px;
+    right: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(209, 71, 163, 0.3);
+    color: #D147A3;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
+.admin-panel-toggle:hover {
+    background: rgba(209, 71, 163, 0.2);
+    transform: scale(1.1);
+}
+
+.admin-panel-toggle.collapsed .toggle-icon {
+    transform: rotate(180deg);
+}
+
+/* Contenedor plegable */
+.admin-controls-container {
     background: #f8f9fa;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 25px;
+    border: 2px solid #e0e0e0;
+    transition: all 0.3s ease;
+    max-height: 300px;
+    overflow: hidden;
+    position: relative;
+}
+
+.admin-controls-container.collapsed {
+    max-height: 80px;
+    padding: 15px 25px;
+}
+
+.admin-controls-container.collapsed .control-group {
+    opacity: 0.7;
+}
+
+.admin-controls-container.collapsed .resume-date-control,
+.admin-controls-container.collapsed .status-indicator {
+    display: none !important;
+}
+
+/* Botón de volver al inicio en admin */
+.btn-back-to-home {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 15px auto;
+}
+
+.btn-back-to-home:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
 }
 
 .control-group {
     text-align: center;
+    transition: all 0.3s ease;
 }
 
 .control-group h4 {
@@ -1517,6 +1588,7 @@ body {
     padding: 10px;
     border-radius: 8px;
     font-weight: 600;
+    transition: all 0.3s ease;
 }
 
 .status-indicator.active {
@@ -1933,6 +2005,51 @@ body {
         text-overflow: clip;
         max-width: none;
     }
+
+    /* Panel admin en móviles */
+    .admin-controls-container {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .admin-controls-container.collapsed {
+        max-height: 60px;
+        padding: 10px 20px;
+    }
+    
+    .admin-panel-toggle {
+        top: 10px;
+        right: 50px;
+        width: 28px;
+        height: 28px;
+        font-size: 1rem;
+    }
+    
+    .citas-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+    
+    .citas-stats {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .cita-item {
+        padding: 15px;
+    }
+    
+    .cita-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .cita-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+    }
 }
 
 @media (max-width: 480px) {
@@ -2008,6 +2125,34 @@ body {
     .mobile-menu-toggle {
         right: 3px;
         padding: 8px 10px;
+    }
+
+    /* Panel admin en móviles pequeños */
+    .admin-modal {
+        padding: 15px;
+    }
+    
+    .admin-controls-container {
+        padding: 15px;
+    }
+    
+    .citas-stats {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .stat-item {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .cita-actions {
+        flex-direction: column;
+    }
+    
+    .btn-sm {
+        width: 100%;
+        margin-bottom: 5px;
     }
 }
 
