@@ -350,11 +350,14 @@ body {
     color: #D147A3; /* TODAS LAS LETRAS color malva-fucsia */
 }
 
+/* CAMBIO: Subtítulo del hero ahora en NEGRO (#000000) */
 .hero-subtitle {
     font-size: 1.8rem; /* Más grande */
     margin-bottom: 40px;
-    color: #D147A3; /* TODAS LAS LETRAS color malva-fucsia */
+    color: #000000 !important; /* CAMBIO: Ahora es NEGRO en lugar de malva-fucsia */
     opacity: 0.95;
+    font-weight: 600; /* Más negrita para mejor visibilidad */
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.7); /* Sombra blanca para contraste */
 }
 
 .btn-hero {
@@ -1817,6 +1820,7 @@ body {
 @media (max-width: 768px) {
     .header-content {
         flex-wrap: wrap;
+        position: relative; /* Para posicionar el botón hamburguesa */
     }
 
     .nav-compact {
@@ -1837,6 +1841,11 @@ body {
 
     .mobile-menu-toggle {
         display: block;
+        position: absolute;
+        right: 15px; /* Pegado a la orilla derecha */
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1002;
     }
 
     .mobile-menu-toggle.active {
@@ -1844,21 +1853,24 @@ body {
     }
 
     .header-actions {
-        margin-left: auto;
+        display: none !important; /* Ocultar en móvil */
     }
 
     .hero {
-        margin-top: -90px;
+        margin-top: -95px; /* Ajustado para header móvil */
         padding-top: 170px;
-        min-height: calc(100vh - 90px);
+        min-height: calc(100vh - 95px);
     }
 
     .hero-title {
         font-size: 3rem;
     }
     
+    /* Subtítulo también en NEGRO en móvil */
     .hero-subtitle {
         font-size: 1.3rem;
+        color: #000000 !important; /* NEGRO también en móvil */
+        text-shadow: 0 1px 3px rgba(255, 255, 255, 0.7);
     }
 
     .services-layout {
@@ -1896,6 +1908,14 @@ body {
         border: none !important; /* Sin borde */
         box-shadow: none !important;
     }
+
+    /* Logo title visible completo en móvil */
+    .logo-title {
+        white-space: nowrap;
+        overflow: visible;
+        text-overflow: clip;
+        max-width: none;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1909,6 +1929,9 @@ body {
 
     .logo-title {
         font-size: 2rem;
+        white-space: nowrap; /* Nombre completo visible */
+        overflow: visible;
+        max-width: none;
     }
     
     .logo-image-small {
@@ -1928,8 +1951,11 @@ body {
         font-size: 2.5rem;
     }
     
+    /* Subtítulo también en NEGRO en móviles pequeños */
     .hero-subtitle {
         font-size: 1.1rem;
+        color: #000000 !important; /* NEGRO también en móviles pequeños */
+        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.7);
     }
 
     .services-grid {
@@ -1952,6 +1978,19 @@ body {
     .btn-large {
         padding: 12px 25px;
         font-size: 1rem;
+    }
+
+    /* Botón hamburguesa más cerca del borde */
+    .mobile-menu-toggle {
+        right: 10px;
+    }
+}
+
+@media (max-width: 360px) {
+    .logo-title {
+        font-size: 1.6rem;
+        white-space: nowrap;
+        max-width: 180px; /* Ajustado pero aún visible */
     }
 }
 

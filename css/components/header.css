@@ -40,10 +40,12 @@
   height: 100%;
 }
 
+/* === CORRECCIÓN: Mover logo y nombre 0.5cm a la izquierda === */
 .brand-section {
   display: flex;
   align-items: center;
   flex-shrink: 0;
+  transform: translateX(-15px); /* Mover 0.5cm a la izquierda para PC y móviles */
 }
 
 .logo-container {
@@ -172,7 +174,39 @@
   outline: none;
 }
 
-/* Botón menú móvil */
+/* === NUEVO: CONTADOR DE CITAS EN MÓVILES === */
+.mobile-citas-counter {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #27ae60; /* VERDE como solicitaste */
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1003;
+  border: 2px solid #000000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  animation: pulseGreen 1.5s infinite;
+}
+
+@keyframes pulseGreen {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.7);
+  }
+  50% { 
+    transform: scale(1.1);
+    box-shadow: 0 0 0 8px rgba(39, 174, 96, 0);
+  }
+}
+
+/* Botón menú móvil con contador - PEGADO A LA DERECHA EN MÓVIL */
 .mobile-menu-toggle {
   display: none;
   background: rgba(255, 255, 255, 0.1);
@@ -184,14 +218,18 @@
   z-index: 1002;
   border-radius: 8px;
   transition: all 0.3s ease;
+  position: absolute; /* Cambiado para móvil */
+  right: 15px; /* Pegado a la orilla derecha */
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .mobile-menu-toggle:hover {
   background: rgba(209, 71, 163, 0.2); /* Fondo malva-fucsia */
-  transform: scale(1.05);
+  transform: scale(1.05) translateY(-50%);
 }
 
-/* Acciones del header */
+/* Acciones del header - SOLO VISIBLE EN PC */
 .header-actions {
   display: flex;
   gap: 15px;
@@ -299,6 +337,44 @@
   box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
 }
 
+/* BOTÓN ADMIN - CON EFECTO */
+#adminBtn {
+  background: transparent !important;
+  color: #D147A3 !important; /* Color malva-fucsia */
+  border: 1px solid rgba(209, 71, 163, 0.3) !important; /* Borde malva-fucsia */
+  padding: 12px 25px !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+  position: relative;
+  overflow: hidden;
+}
+
+#adminBtn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.2), 
+    transparent);
+  transition: left 0.6s ease;
+}
+
+#adminBtn:hover::before {
+  left: 100%;
+}
+
+#adminBtn:hover {
+  background: rgba(209, 71, 163, 0.1) !important; /* Fondo malva-fucsia suave */
+  color: #FFFFFF !important;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(209, 71, 163, 0.2);
+}
+
 /* Elemento admin móvil - oculto en desktop */
 .admin-mobile-item {
   display: none;
@@ -307,36 +383,62 @@
 /* ===== MEDIA QUERIES PARA MÓVILES ===== */
 @media (max-width: 768px) {
   .header {
-    height: 90px; /* Ajustado proporcionalmente */
+    height: 95px; /* CAMBIADO: Aumentado 0.5cm (de 90px a 95px) */
     padding: 0;
   }
   
+  /* === CORRECCIÓN: Header móvil solo con Logo + Nombre + Menú hamburguesa === */
+  .header-content {
+    justify-content: space-between;
+    gap: 10px;
+    position: relative; /* Para posicionar el botón hamburguesa */
+  }
+  
+  /* Mover logo y nombre 0.5cm a la izquierda en móviles */
+  .brand-section {
+    transform: translateX(-10px); /* Un poco más para móviles */
+    flex: 1; /* Ocupa el espacio disponible */
+    max-width: calc(100% - 70px); /* Deja espacio para el botón hamburguesa */
+  }
+  
+  /* === CORRECCIÓN IMPORTANTE: OCULTAR BOTONES EN MÓVILES === */
+  .header-actions {
+    display: none !important; /* OCULTAR completamente en móviles */
+  }
+  
   .container {
-    padding: 0 20px;
+    padding: 0 15px;
+  }
+  
+  /* Mostrar menú hamburguesa - PEGADO A LA DERECHA */
+  .mobile-menu-toggle {
+    display: block;
+    position: absolute;
+    right: 15px; /* Pegado a la orilla derecha */
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 0;
+    z-index: 1002;
   }
   
   /* Ocultar navegación desktop en móviles */
   .nav-compact {
     display: none;
-    position: absolute;
-    top: 100%;
+    position: fixed;
+    top: 95px;
     left: 0;
     right: 0;
-    background: #000000;
+    background: rgba(0, 0, 0, 0.95) !important;
+    backdrop-filter: blur(10px);
     border-top: 1px solid #333;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
-  }
-  
-  /* Mostrar menú hamburguesa */
-  .mobile-menu-toggle {
-    display: block;
+    z-index: 1002;
   }
   
   /* Menú móvil desplegable */
   .nav-compact.mobile-open {
     display: block;
     padding: 20px;
-    z-index: 1001;
   }
   
   .nav-compact.mobile-open ul {
@@ -366,88 +468,81 @@
     font-weight: 600;
   }
   
-  /* Header actions - ajustes para móvil */
-  .header-actions {
-    gap: 10px;
-  }
-  
-  /* Ocultar botón Admin en móviles (ya está en el menú hamburguesa) */
-  #adminBtn {
-    display: none;
-  }
-  
-  /* Botón de cita más compacto en móvil */
-  .btn-compact {
-    padding: 10px 15px;
-    font-size: 0.85rem;
-  }
-  
-  /* Ajustar logo para móviles */
+  /* Ajustar logo para móviles - NOMBRE COMPLETO */
   .logo-title {
-    font-size: 2rem;
+    font-size: 1.8rem; /* Más pequeño para móviles */
+    white-space: nowrap; /* Evitar salto de línea - NOMBRE COMPLETO */
+    overflow: visible; /* Permitir que se vea completo */
+    text-overflow: clip; /* No cortar el texto */
+    max-width: none; /* Sin límite de ancho */
   }
   
   .logo-image-small {
-    width: 70px; /* Reducido proporcionalmente para móvil */
-    height: 70px;
+    width: 60px; /* Más pequeño para móviles */
+    height: 60px;
     border: none !important; /* Sin borde en móvil */
     box-shadow: none !important;
   }
   
   .logo-subtitle {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
+    display: none; /* Ocultar subtítulo en móviles para más espacio */
   }
 }
 
 @media (max-width: 480px) {
   .header-content {
     justify-content: space-between;
+    gap: 5px;
   }
   
-  .header-actions {
-    gap: 8px;
+  .brand-section {
+    transform: translateX(-5px);
+    max-width: calc(100% - 60px); /* Menos espacio para pantallas pequeñas */
   }
   
-  .btn-compact {
+  .mobile-menu-toggle {
+    right: 10px; /* Más cerca del borde en móviles pequeños */
     padding: 8px 12px;
-    font-size: 0.8rem;
+    font-size: 1.6rem;
   }
   
   .logo-title {
-    font-size: 1.8rem;
-  }
-  
-  .logo-subtitle {
-    font-size: 0.7rem;
-  }
-  
-  .logo-image-small {
-    width: 60px;
-    height: 60px;
-    border: none !important; /* Sin borde */
-    box-shadow: none !important;
-  }
-}
-
-/* Para pantallas muy pequeñas */
-@media (max-width: 360px) {
-  .logo-subtitle {
-    display: none;
-  }
-  
-  .logo-title {
-    font-size: 1.5rem;
-  }
-  
-  .btn-compact {
-    padding: 6px 10px;
-    font-size: 0.75rem;
+    font-size: 1.6rem;
+    white-space: nowrap; /* Nombre completo */
+    overflow: visible;
+    max-width: none;
   }
   
   .logo-image-small {
     width: 50px;
     height: 50px;
-    border: none !important; /* Sin borde */
-    box-shadow: none !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .logo-title {
+    font-size: 1.4rem; /* Un poco más pequeño en pantallas muy pequeñas */
+    white-space: nowrap; /* Pero aún visible completo */
+    max-width: 130px; /* Pero ajustado para no solapar con botón */
+  }
+  
+  .logo-image-small {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .mobile-menu-toggle {
+    right: 5px;
+    padding: 6px 10px;
+    font-size: 1.5rem;
+  }
+}
+
+/* Para pantallas muy pequeñas donde el nombre podría solapar */
+@media (max-width: 320px) {
+  .logo-title {
+    font-size: 1.3rem;
+    max-width: 110px;
   }
 }

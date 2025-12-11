@@ -378,11 +378,26 @@ function initNotificacionesCitas() {
     }
 }
 
+// ========== FUNCIÓN MEJORADA PARA ACTUALIZAR NOTIFICACIONES ==========
 function actualizarContadorNotificaciones(numero) {
     const adminBtn = getElement('adminBtn');
     const adminMobileBtn = getElement('adminMobileBtn');
+    const mobileMenuToggle = getElement('mobileMenuToggle');
+    const mobileNotificationBadge = getElement('mobileNotificationBadge');
     
     console.log(`🔄 Actualizando contador a: ${numero}`);
+    
+    // Actualizar botón hamburguesa
+    if (mobileMenuToggle && mobileNotificationBadge) {
+        if (numero > 0) {
+            mobileMenuToggle.classList.add('has-notifications');
+            mobileNotificationBadge.textContent = numero;
+            mobileNotificationBadge.style.display = 'flex';
+        } else {
+            mobileMenuToggle.classList.remove('has-notifications');
+            mobileNotificationBadge.style.display = 'none';
+        }
+    }
     
     // Crear o actualizar elemento de contador para PC
     let contadorPC = document.getElementById('contador-citas-pc');
@@ -540,6 +555,7 @@ function initPortalNavigation() {
             if (navCompact && navCompact.classList.contains('mobile-open')) {
                 navCompact.classList.remove('mobile-open');
                 mobileMenuToggle.classList.remove('active');
+                mobileMenuToggle.innerHTML = '☰';
             }
         });
     });
@@ -600,6 +616,7 @@ function closeAllModals() {
     if (navCompact && navCompact.classList.contains('mobile-open')) {
         navCompact.classList.remove('mobile-open');
         mobileMenuToggle.classList.remove('active');
+        mobileMenuToggle.innerHTML = '☰';
     }
 }
 
@@ -627,6 +644,7 @@ function initHeaderScroll() {
     }, { passive: true });
 }
 
+// ========== FUNCIÓN MODIFICADA PARA MÓVIL ==========
 function initMobileMenu() {
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const navCompact = document.querySelector('.nav-compact');
@@ -635,6 +653,13 @@ function initMobileMenu() {
         mobileMenuToggle.addEventListener('click', function() {
             navCompact.classList.toggle('mobile-open');
             this.classList.toggle('active');
+            
+            // Cambiar ícono
+            if (navCompact.classList.contains('mobile-open')) {
+                this.innerHTML = '✕';
+            } else {
+                this.innerHTML = '☰';
+            }
         });
     }
 
@@ -649,6 +674,7 @@ function initMobileMenu() {
             navCompact.classList.remove('mobile-open');
             if (mobileMenuToggle) {
                 mobileMenuToggle.classList.remove('active');
+                mobileMenuToggle.innerHTML = '☰';
             }
         }
     });
@@ -666,6 +692,7 @@ function initMobileMenu() {
             if (navCompact && navCompact.classList.contains('mobile-open')) {
                 navCompact.classList.remove('mobile-open');
                 mobileMenuToggle.classList.remove('active');
+                mobileMenuToggle.innerHTML = '☰';
             }
         });
     }
@@ -1995,6 +2022,7 @@ function setupAdminModal() {
             if (navCompact && navCompact.classList.contains('mobile-open')) {
                 navCompact.classList.remove('mobile-open');
                 mobileMenuToggle.classList.remove('active');
+                mobileMenuToggle.innerHTML = '☰';
             }
         });
     }

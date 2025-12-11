@@ -81,7 +81,6 @@
             height: 105px; /* Cambiado de 60px a 105px */
             object-fit: contain;
             background: transparent !important;
-            /* QUITADO EL BORDE/AFTER: border: 3px solid #E75480 !important; */
             box-shadow: none !important; /* Eliminada sombra del borde */
             filter: brightness(1.1);
         }
@@ -305,25 +304,22 @@
             justify-content: center;
             text-align: center;
             padding: 40px 20px 0 20px;
-            background: transparent !important;
+            background: transparent !important; /* FONDO TRANSPARENTE */
             z-index: 1;
             margin-top: -100px; /* IMPORTANTE: Compensa el header más alto */
             padding-top: 140px; /* Ajuste para que contenido empiece después del header */
         }
 
-        /* CONTENIDO DE PORTADA */
+        /* CONTENIDO DE PORTADA CON FONDO TRANSPARENTE */
         .hero-content {
             position: relative;
             z-index: 3;
             max-width: 800px;
             padding: 30px 40px;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(3px);
+            background: transparent !important; /* FONDO TRANSPARENTE DETRÁS DEL TEXTO */
             border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
             animation: heroEntrance 1s ease-out;
             margin-top: 0;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         @keyframes heroEntrance {
@@ -337,7 +333,7 @@
             }
         }
 
-        /* TÍTULO PRINCIPAL - TODAS LETRAS MALVA-FUCSIA */
+        /* TÍTULO PRINCIPAL - TODAS LETRAS MALVA-FUCSIA CON FONDO TRANSPARENTE */
         .hero-title {
             font-family: 'Dancing Script', cursive;
             font-size: 4.5rem; /* Un poco más grande */
@@ -350,6 +346,7 @@
             transform-origin: center;
             line-height: 1.1;
             margin-top: 0;
+            background: transparent !important; /* FONDO TRANSPARENTE */
         }
 
         @keyframes titlePulse {
@@ -363,20 +360,19 @@
             }
         }
 
-        /* SUBTÍTULO - TODAS LETRAS MALVA-FUCSIA MÁS CLARO */
+        /* SUBTÍTULO - CAMBIADO A COLOR NEGRO (#000000) COMO SOLICITASTE */
         .hero-subtitle {
             font-size: 1.8rem; /* Un poco más grande */
-            color: #D147A3; /* TODAS LAS LETRAS color malva-fucsia */
-            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.9);
+            color: #000000 !important; /* CAMBIO: Ahora es NEGRO en lugar de malva-fucsia */
+            text-shadow: 0 1px 5px rgba(255, 255, 255, 0.7); /* Sombra blanca para mejor contraste */
             margin-bottom: 30px;
             line-height: 1.4;
-            font-weight: 300;
+            font-weight: 600; /* Más negrita para mejor visibilidad */
             letter-spacing: 0.8px;
             animation: fadeInUp 0.8s ease-out 0.2s both;
-            background: rgba(209, 71, 163, 0.1); /* Fondo suave malva-fucsia */
+            background: transparent !important; /* FONDO TRANSPARENTE */
             padding: 12px 20px;
             border-radius: 10px;
-            border-left: 3px solid rgba(209, 71, 163, 0.5);
             backdrop-filter: blur(2px);
         }
 
@@ -551,18 +547,108 @@
             display: none;
         }
 
+        /* BOTÓN MENÚ MÓVIL CON NOTIFICACIÓN - PEGADO A LA ORILLA DERECHA */
+        .mobile-menu-toggle {
+            position: relative;
+            display: none;
+            background: transparent;
+            border: none;
+            color: #D147A3; /* Color malva-fucsia */
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(209, 71, 163, 0.3); /* Borde malva-fucsia */
+            border-radius: 8px;
+            margin-left: auto;
+            position: absolute; /* Cambiado para móvil */
+            right: 15px; /* Pegado a la orilla derecha */
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* NOTIFICACIÓN EN BOTÓN HAMBURGUESA */
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e74c3c;
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: bold;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #000000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            z-index: 1003;
+        }
+
+        .mobile-menu-toggle.has-notifications .notification-badge {
+            display: flex;
+        }
+
         /* RESPONSIVE AJUSTADO */
         @media (max-width: 768px) {
             body {
-                padding-top: 90px;
+                padding-top: 95px; /* Aumentado para header móvil */
             }
             
             .header {
-                height: 90px !important;
+                height: 95px !important;
+                padding: 0 15px !important;
             }
             
             .header-content {
-                padding: 0 20px;
+                padding: 0 10px;
+                position: relative; /* Para posicionar el botón hamburguesa */
+            }
+            
+            /* Ocultar botones de header-actions en móvil */
+            .header-actions {
+                display: none !important;
+            }
+            
+            /* Mostrar solo el botón hamburguesa en móvil - PEGADO A LA DERECHA */
+            .mobile-menu-toggle {
+                display: block;
+                position: absolute;
+                right: 15px; /* Pegado a la orilla derecha */
+                top: 50%;
+                transform: translateY(-50%);
+                margin-left: 0;
+                z-index: 1002;
+            }
+            
+            /* Ajustar logo y brand-section - ESPACIO PARA NOMBRE COMPLETO */
+            .brand-section {
+                flex: 1;
+                margin-left: 0;
+                max-width: calc(100% - 70px); /* Deja espacio para el botón hamburguesa */
+            }
+            
+            .logo-container {
+                gap: 10px;
+            }
+            
+            .logo-image-small {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .logo-title {
+                font-size: 2rem;
+                white-space: nowrap; /* Evita que se corte el nombre */
+                overflow: visible; /* Permite que se vea completo */
+                text-overflow: clip; /* No corta el texto */
+                max-width: none; /* Sin límite de ancho */
+            }
+            
+            .logo-subtitle {
+                font-size: 0.75rem;
             }
             
             .admin-mobile-item {
@@ -582,7 +668,7 @@
             /* AJUSTES PARA MÓVIL - NAVEGACIÓN */
             .nav-compact {
                 position: fixed;
-                top: 90px;
+                top: 95px;
                 left: 0;
                 width: 100%;
                 background: rgba(0, 0, 0, 0.95) !important;
@@ -590,6 +676,7 @@
                 display: none;
                 padding: 20px 0;
                 margin: 0;
+                z-index: 1002;
             }
 
             .nav-compact.mobile-open {
@@ -613,27 +700,31 @@
             }
 
             .hero {
-                min-height: calc(100vh - 90px);
+                min-height: calc(100vh - 95px);
                 padding: 20px 15px 0 15px;
-                margin-top: -90px;
+                margin-top: -95px;
                 padding-top: 110px;
             }
 
             .hero-content {
                 padding: 20px;
                 margin: 0 5px;
-                background: rgba(255, 255, 255, 0.02);
+                background: transparent !important; /* Fondo transparente en móvil */
             }
 
             .hero-title {
                 font-size: 3rem;
                 margin-bottom: 10px;
+                background: transparent !important;
             }
 
             .hero-subtitle {
                 font-size: 1.3rem;
+                color: #000000 !important; /* NEGRO también en móvil */
                 padding: 10px 15px;
                 margin-bottom: 25px;
+                background: transparent !important;
+                text-shadow: 0 1px 3px rgba(255, 255, 255, 0.7); /* Sombra blanca */
             }
 
             .btn-hero {
@@ -642,15 +733,7 @@
             }
 
             body::after {
-                top: 90vh;
-            }
-            
-            /* Logo más pequeño en móvil pero proporcional - SIN BORDE */
-            .logo-image-small {
-                width: 70px;
-                height: 70px;
-                border: none !important; /* Sin borde en móvil */
-                box-shadow: none !important;
+                top: 95vh;
             }
         }
         
@@ -664,7 +747,13 @@
             }
             
             .header-content {
-                padding: 0 15px;
+                padding: 0 5px;
+            }
+            
+            .mobile-menu-toggle {
+                right: 10px; /* Más cerca del borde en móviles pequeños */
+                padding: 8px;
+                font-size: 1.6rem;
             }
             
             .hero {
@@ -676,16 +765,17 @@
             .logo-image-small {
                 width: 60px;
                 height: 60px;
-                border: none !important; /* Sin borde */
-                box-shadow: none !important;
             }
 
             .logo-title {
-                font-size: 2rem;
+                font-size: 1.8rem;
+                white-space: nowrap; /* Nombre completo */
+                overflow: visible;
+                max-width: none;
             }
 
             .logo-subtitle {
-                font-size: 0.75rem;
+                font-size: 0.7rem;
             }
 
             .hero-title {
@@ -694,12 +784,25 @@
 
             .hero-subtitle {
                 font-size: 1.1rem;
+                color: #000000 !important; /* NEGRO también en móviles pequeños */
                 padding: 8px 12px;
+                text-shadow: 0 1px 2px rgba(255, 255, 255, 0.7);
             }
 
             .btn-hero {
                 padding: 12px 25px;
                 font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .logo-title {
+                font-size: 1.6rem; /* Un poco más pequeño en pantallas muy pequeñas */
+                max-width: 180px; /* Pero aún visible completo */
+            }
+            
+            .mobile-menu-toggle {
+                right: 5px;
             }
         }
         
@@ -754,26 +857,6 @@
             background: rgba(0, 0, 0, 0.8);
             z-index: -1;
         }
-
-        /* BOTÓN MENÚ MÓVIL */
-        .mobile-menu-toggle {
-            display: none;
-            background: transparent;
-            border: none;
-            color: #D147A3; /* Color malva-fucsia */
-            font-size: 1.8rem;
-            cursor: pointer;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(209, 71, 163, 0.3); /* Borde malva-fucsia */
-            border-radius: 8px;
-        }
-
-        @media (max-width: 768px) {
-            .mobile-menu-toggle {
-                display: block;
-            }
-        }
     </style>
 </head>
 <body>
@@ -803,10 +886,13 @@
                     </ul>
                 </nav>
 
+                <!-- Botón hamburguesa con notificación - PEGADO A LA DERECHA EN MÓVIL -->
                 <button class="mobile-menu-toggle" id="mobileMenuToggle">
                     ☰
+                    <span class="notification-badge" id="mobileNotificationBadge"></span>
                 </button>
 
+                <!-- Header actions - OCULTOS EN MÓVIL -->
                 <div class="header-actions">
                     <button id="bookingBtn" class="btn btn-compact">HACER TU CITA AQUI</button>
                     <button id="adminBtn" class="btn btn-outline btn-compact">Admin</button>
