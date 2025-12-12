@@ -547,25 +547,91 @@
             display: none;
         }
 
-        /* BOTÓN MENÚ MÓVIL CON NOTIFICACIÓN - MUY PEGADO AL BORDE DERECHO */
-        .mobile-menu-toggle {
-            position: relative;
-            display: none;
-            background: transparent;
-            border: none;
-            color: #D147A3; /* Color malva-fucsia */
-            font-size: 1.8rem;
-            cursor: pointer;
-            padding: 10px 12px; /* Reducido padding horizontal */
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(209, 71, 163, 0.3); /* Borde malva-fucsia */
-            border-radius: 8px;
-            margin-left: auto;
-            position: absolute; /* Para móvil */
-            right: 5px; /* CAMBIO: MUY PEGADO AL BORDE (de 20px a 5px) */
-            top: 50%;
-            transform: translateY(-50%);
-        }
+      /* BOTÓN MENÚ MÓVIL MODERNO - MÁXIMAMENTE PEGADO AL BORDE */
+.mobile-menu-toggle {
+    position: relative;
+    display: none;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #D147A3;
+    font-size: 1.8rem;
+    cursor: pointer;
+    padding: 10px 12px;
+    border: 1px solid rgba(209, 71, 163, 0.3);
+    border-radius: 8px;
+    margin-left: auto;
+    position: absolute;
+    right: 5px; /* PC/Tablet */
+    top: 50%;
+    transform: translateY(-50%);
+    transition: all 0.3s ease;
+    transform-style: preserve-3d;
+}
+
+/* ============================================
+   RESPONSIVE - MÁXIMAMENTE PEGADO
+   ============================================ */
+
+/* TODOS LOS MÓVILES - COMPLETAMENTE PEGADO */
+@media (max-width: 768px) {
+    .mobile-menu-toggle {
+        right: 0 !important; /* ← COMPLETAMENTE PEGADO AL BORDE */
+        border-radius: 8px 0 0 8px !important; /* Solo redondeo izquierdo */
+        border-right: none !important; /* Sin borde derecho */
+    }
+}
+
+/* MÓVILES PEQUEÑOS */
+@media (max-width: 480px) {
+    .mobile-menu-toggle {
+        right: 0 !important;
+        padding: 8px 10px;
+        font-size: 1.6rem;
+    }
+}
+
+/* MÓVILES MUY PEQUEÑOS */
+@media (max-width: 360px) {
+    .mobile-menu-toggle {
+        right: 0 !important;
+        padding: 6px 8px;
+        font-size: 1.5rem;
+    }
+}
+
+/* Quitar todos los efectos hover que hagan que se baje */
+.mobile-menu-toggle:hover,
+.mobile-menu-toggle:focus,
+.mobile-menu-toggle:active {
+    transform: translateY(-50%) !important;
+    background: rgba(209, 71, 163, 0.2) !important;
+    box-shadow: 0 0 15px rgba(209, 71, 163, 0.3) !important;
+    outline: none;
+}
+
+/* Animación moderna para el cambio de ícono (☰ → ✕) */
+.mobile-menu-toggle.active {
+    color: #FFFFFF !important;
+    background: rgba(209, 71, 163, 0.3) !important;
+    border-color: rgba(209, 71, 163, 0.5) !important;
+    transform: translateY(-50%) rotate(90deg) !important;
+    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    box-shadow: 0 0 20px rgba(209, 71, 163, 0.4) !important;
+}
+
+/* Efecto de pulso al tener notificaciones */
+.mobile-menu-toggle.has-notifications {
+    animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+    0%, 100% { 
+        box-shadow: 0 0 5px rgba(231, 76, 60, 0.5);
+    }
+    50% { 
+        box-shadow: 0 0 15px rgba(231, 76, 60, 0.8);
+    }
+}
 
         /* NOTIFICACIÓN EN BOTÓN HAMBURGUESA - CONTADOR DE CITAS */
         .notification-badge {
@@ -983,7 +1049,7 @@
                             <span class="indicator-icon">👇</span>
                             <div class="indicator-text">
                                 <h3>¡Escoge los servicios que deseas!</h3>
-                                <p>Selecciona los servicios que quieres reservar</p>
+                                <p>👇Selecciona los servicios que quieres reservar</p>
                             </div>
                         </div>
                     </div>
@@ -1356,7 +1422,7 @@
                 });
             }
 
-            // ===== FUNCIÓN PARA ACTUALIZAR CONTADOR DE CITAS =====
+                        // ===== FUNCIÓN PARA ACTUALIZAR CONTADOR DE CITAS =====
             function actualizarContadorCitas() {
                 const badge = document.getElementById('mobileNotificationBadge');
                 const mobileToggle = document.getElementById('mobileMenuToggle');

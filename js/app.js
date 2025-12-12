@@ -27,6 +27,8 @@ let primeraCargaNotificaciones = true;
 
 // Variable para panel admin plegable
 let adminPanelCollapsed = false;
+let lastAdminScrollPosition = 0;
+let adminPanelScrollable = false;
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
@@ -441,9 +443,7 @@ function actualizarContadorNotificaciones(numero) {
             adminBtn.removeAttribute('data-count');
         }
     }
-}
-
-function mostrarNotificacionWhatsApp(numCitas) {
+}function mostrarNotificacionWhatsApp(numCitas) {
     // Evitar múltiples notificaciones simultáneas
     if (document.querySelector('.whatsapp-notification')) {
         return;
@@ -456,13 +456,13 @@ function mostrarNotificacionWhatsApp(numCitas) {
         <div class="whatsapp-notification-header">
             <div class="whatsapp-icon">💬</div>
             <div class="whatsapp-title">
-                <strong>Nuevas Citas</strong>
+                <strong>Cita Realizada con Éxito</strong>
                 <span>Ahora</span>
             </div>
             <button class="whatsapp-close">&times;</button>
         </div>
         <div class="whatsapp-notification-body">
-            <p>Tienes <strong>${numCitas} ${numCitas === 1 ? 'cita nueva' : 'citas nuevas'}</strong> pendientes de revisión.</p>
+            <p>Cita Realizada con Éxito</p>
             <div class="whatsapp-actions">
                 <button class="whatsapp-action-btn" onclick="openAdminModal()">
                     Ver Citas
@@ -470,7 +470,6 @@ function mostrarNotificacionWhatsApp(numCitas) {
             </div>
         </div>
     `;
-    
     document.body.appendChild(notification);
     
     // Asegurar que los estilos se apliquen
@@ -768,7 +767,7 @@ function handleBookingButtonClick() {
     if (selectedServices.length === 0) {
         switchSection('servicios');
         showServicesIndicator();
-        showNotification('👆 Selecciona los servicios que deseas reservar', 'info');
+        showNotification('👇 Selecciona los servicios que deseas reservar', 'info');
     } else {
         openBookingModal();
     }
@@ -1986,7 +1985,7 @@ async function loadAdminContent() {
             </div>
         `;
         
-        // Configurar botón plegable
+        // Configurar botón plegable interno
         const panelToggle = getElement('adminPanelToggle');
         const controlsContainer = getElement('adminControlsContainer');
         
@@ -2010,9 +2009,132 @@ async function loadAdminContent() {
         loadEstadisticas();
         setupAdminTabs();
         
+        // Inicializar sistema de panel plegable en móvil
+        setTimeout(() => {
+            initAdminPanelScroll();
+            
+            // Agregar botón manual de plegar/desplegar para móvil
+            const adminHeader = document.getElementById('adminHeader');
+            if (adminHeader && window.innerWidth <= 768) {
+                const manualToggle = document.createElement('button');
+                manualToggle.className = 'admin-panel-toggle-scroll';
+                manualToggle.innerHTML = '↓';
+                manualToggle.title = 'Plegar/Desplegar panel';
+                adminHeader.appendChild(manualToggle);
+                
+                manualToggle.addEventListener('click', function() {
+                    const modalContent = document.querySelector('.admin-modal .modal-content');
+                    if (modalContent.classList.contains('panel-collapsed')) {
+                        expandAdminPanel();
+                        this.innerHTML = '↓';
+                    } else {
+                        collapseAdminPanel();
+                        this.innerHTML = '↑';
+                    }
+                });
+            }
+        }, 500);
+        
     } catch (error) {
         console.error('Error cargando contenido admin:', error);
         adminContent.innerHTML = '<div style="padding: 20px; text-align: center; color: #e74c3c;">❌ Error cargando el panel</div>';
+    }
+}
+
+// ========== NUEVO SISTEMA DE PANEL PLEGABLE EN MÓVILES ==========
+function initAdminPanelScroll() {
+    const adminContentContainer = document.querySelector('.admin-content-container');
+    if (!adminContentContainer) return;
+    
+    // Solo aplicar en móviles
+    if (window.innerWidth > 768) return;
+    
+    adminPanelScrollable = true;
+    lastAdminScrollPosition = 0;
+    
+    adminContentContainer.addEventListener('scroll', function() {
+        const currentScroll = this.scrollTop;
+        
+        // Si el usuario hace scroll hacia arriba (negativo) y está cerca del top
+        if (currentScroll < lastAdminScrollPosition && currentScroll < 50) {
+            collapseAdminPanel();
+        }
+        // Si el usuario hace scroll hacia abajo (positivo) y ha bajado suficiente
+        else if (currentScroll > lastAdminScrollPosition && currentScroll > 100) {
+            expandAdminPanel();
+        }
+        
+        lastAdminScrollPosition = currentScroll;
+    });
+}
+
+function collapseAdminPanel() {
+    const modalContent = document.querySelector('.admin-modal .modal-content');
+    if (modalContent && !modalContent.classList.contains('panel-collapsed')) {
+        modalContent.classList.add('panel-collapsed');
+        
+        // Mostrar indicador de que se puede expandir
+        showPanelToggleIndicator();
+    }
+}
+
+function expandAdminPanel() {
+    const modalContent = document.querySelector('.admin-modal .modal-content');
+    if (modalContent && modalContent.classList.contains('panel-collapsed')) {
+        modalContent.classList.remove('panel-collapsed');
+        
+        // Ocultar indicador
+        hidePanelToggleIndicator();
+    }
+}
+
+function showPanelToggleIndicator() {
+    if (document.querySelector('.panel-toggle-indicator') || window.innerWidth > 768) {
+        return;
+    }
+    
+    const indicator = document.createElement('div');
+    indicator.className = 'panel-toggle-indicator';
+    indicator.innerHTML = '👇 Toca para expandir el panel';
+    indicator.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(231, 84, 128, 0.9);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 25px;
+        z-index: 10001;
+        font-weight: bold;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        animation: bounce 2s infinite;
+        cursor: pointer;
+    `;
+    document.body.appendChild(indicator);
+    
+    indicator.addEventListener('click', expandAdminPanel);
+    
+    // Auto-eliminar después de 5 segundos
+    setTimeout(() => {
+        if (indicator.parentNode) {
+            indicator.style.opacity = '0';
+            indicator.style.transition = 'opacity 0.3s';
+            setTimeout(() => indicator.remove(), 300);
+        }
+    }, 5000);
+}
+
+function hidePanelToggleIndicator() {
+    const indicator = document.querySelector('.panel-toggle-indicator');
+    if (indicator) {
+        indicator.style.opacity = '0';
+        indicator.style.transition = 'opacity 0.3s';
+        setTimeout(() => {
+            if (indicator.parentNode) {
+                indicator.remove();
+            }
+        }, 300);
     }
 }
 
@@ -2316,6 +2438,20 @@ function setupGlobalEventListeners() {
     
     if (prevImageBtn) prevImageBtn.addEventListener('click', () => navigateCarousel(-1));
     if (nextImageBtn) nextImageBtn.addEventListener('click', () => navigateCarousel(1));
+    
+    // Cerrar panel plegable al hacer clic fuera en móvil
+    if (window.innerWidth <= 768) {
+        document.addEventListener('click', function(e) {
+            const modalContent = document.querySelector('.admin-modal .modal-content');
+            const indicator = document.querySelector('.panel-toggle-indicator');
+            
+            if (modalContent && modalContent.classList.contains('panel-collapsed') && 
+                indicator && !indicator.contains(e.target) && 
+                !modalContent.contains(e.target)) {
+                expandAdminPanel();
+            }
+        });
+    }
 }
 
 function closeSuccessModal() {
@@ -2352,7 +2488,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initFloatingServices();
     
     // Inicializar sistema de notificaciones
-    setTimeout(initNotificacionesCitas, 2000); // Esperar 2 segundos para que Firebase cargue
+    setTimeout(initNotificacionesCitas, 2000);
     
     // Cargar contenido con manejo de errores
     try {
@@ -2385,3 +2521,5 @@ window.switchSection = switchSection;
 window.scrollToServices = scrollToServices;
 window.openAdminModal = openAdminModal;
 window.removeService = removeService;
+window.collapseAdminPanel = collapseAdminPanel;
+window.expandAdminPanel = expandAdminPanel;
