@@ -454,7 +454,7 @@ function actualizarContadorNotificaciones(numero) {
     notification.className = 'whatsapp-notification';
     notification.innerHTML = `
         <div class="whatsapp-notification-header">
-            <div class="whatsapp-icon">💬</div>
+            <div class="whatsapp-icon"></div>
             <div class="whatsapp-title">
                 <strong>Cita Realizada con Éxito</strong>
                 <span>Ahora</span>
@@ -462,10 +462,10 @@ function actualizarContadorNotificaciones(numero) {
             <button class="whatsapp-close">&times;</button>
         </div>
         <div class="whatsapp-notification-body">
-            <p>Cita Realizada con Éxito</p>
+            <p>Te Eperamos</p>
             <div class="whatsapp-actions">
                 <button class="whatsapp-action-btn" onclick="openAdminModal()">
-                    Ver Citas
+                    Gracias 
                 </button>
             </div>
         </div>
