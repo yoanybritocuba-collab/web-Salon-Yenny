@@ -332,69 +332,98 @@ body {
     display: block;
 }
 
-/* ========== HERO SECTION - ajustado ========== */
+/* ======================= STYLE.CSS CORREGIDO ======================= */
+
+/* ========== HERO SECTION - AJUSTADO ========== */
 .hero {
-    background: linear-gradient(135deg, rgba(76, 175, 80, 0.9), rgba(46, 125, 50, 0.9)), /* CAMBIADO A VERDE */
-                url('../imagenes/FL/fondo.jpg') center/cover;
+    position: relative;
+    background: url('../imagenes/FL/fondo.jpg') center/cover no-repeat;
     color: white;
-    padding: 120px 0 80px;
+    min-height: calc(100vh - var(--header-height));
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    margin-top: -100px; /* Importante: compensa header más alto */
-    padding-top: 190px; /* Aumentado para compensar */
+    padding: 180px 20px 100px;
+    z-index: 1;
 }
 
+/* Overlay semi-transparente para mejorar visibilidad del texto */
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.25); /* Ajustable si quieres más o menos contraste */
+    z-index: 0;
+}
+
+/* Contenedor del contenido */
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Título principal */
 .hero-title {
     font-family: 'Dancing Script', cursive;
-    font-size: 4.5rem; /* Más grande */
-    margin-bottom: 20px;
+    font-size: 4.2rem;
     font-weight: 700;
-    color: #2E7D32; /* CAMBIADO: VERDE OSCURO */
+    color: #2E7D32; /* Verde oscuro */
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.6);
+    margin-bottom: 20px;
+    line-height: 1.2;
 }
 
-/* CAMBIO: Subtítulo del hero ahora en NEGRO (#000000) */
+/* Subtítulo */
 .hero-subtitle {
-    font-size: 1.8rem; /* Más grande */
+    font-size: 1.8rem;
+    color: #000000 !important; /* NEGRO */
+    font-weight: 600;
+    line-height: 1.4;
+    text-shadow: 1px 1px 5px rgba(255,255,255,0.5);
     margin-bottom: 40px;
-    color: #000000 !important; /* CAMBIO: Ahora es NEGRO en lugar de malva-fucsia */
-    opacity: 0.95;
-    font-weight: 600; /* Más negrita para mejor visibilidad */
-    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.7); /* Sombra blanca para contraste */
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-/* ========== BOTONES PRINCIPALES - EFECTO VERDE TRANSPARENTE ========== */
-
-/* BOTÓN HERO - "Reservar Cita Ahora" */
+/* ========== BOTONES PRINCIPALES HERO ========== */
 .btn-hero {
-    padding: 15px 40px;
-    font-size: 1.1rem;
+    padding: 16px 40px;
+    font-size: 1.2rem;
+    font-weight: 600;
     border-radius: 30px;
-    background: rgba(76, 175, 80, 0.15) !important; /* CAMBIADO: FONDO VERDE 15% TRANSPARENTE */
-    border: 2px solid rgba(76, 175, 80, 0.4) !important; /* CAMBIADO: BORDE VERDE */
-    color: #2E7D32 !important; /* CAMBIADO: TEXTO VERDE OSCURO */
-    cursor: pointer !important;
-    transition: all 0.3s ease !important;
-    font-weight: 600 !important;
-    display: inline-block !important;
-    text-align: center !important;
-    backdrop-filter: blur(5px) !important;
+    background: rgba(76, 175, 80, 0.15);
+    border: 2px solid rgba(76, 175, 80, 0.4);
+    color: #2E7D32;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    display: inline-block;
 }
 
-/* EFECTO HOVER - VERDE TRANSPARENTE */
+/* Hover botón hero */
 .btn-hero:hover {
-    background: rgba(76, 175, 80, 0.25) !important; /* CAMBIADO: VERDE 25% TRANSPARENTE */
-    border-color: #4CAF50 !important; /* CAMBIADO: BORDE VERDE SÓLIDO */
-    color: #000000 !important; /* CAMBIADO: TEXTO NEGRO */
-    transform: translateY(-3px) !important;
-    box-shadow: 0 10px 25px rgba(76, 175, 80, 0.3) !important; /* CAMBIADO: SOMBRA VERDE */
+    background: rgba(76, 175, 80, 0.25);
+    border-color: #4CAF50;
+    color: #000000;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(76,175,80,0.3);
 }
 
-/* EFECTO MÓVIL */
+/* Botón activo móvil */
 .btn-hero:active {
-    background: rgba(76, 175, 80, 0.35) !important; /* CAMBIADO: VERDE 35% TRANSPARENTE */
-    transform: scale(0.97) !important;
+    background: rgba(76, 175, 80, 0.35);
+    transform: scale(0.97);
 }
 
-/* ========== SERVICIOS ========== */
+/* ========== SECCIONES ========== */
 .services {
     padding: 80px 0;
     background: #f8f9fa;
@@ -413,9 +442,9 @@ body {
 
 /* BOTÓN GRANDE - "Realizar tu cita aquí" */
 .btn-big-booking {
-    background: rgba(76, 175, 80, 0.15) !important; /* CAMBIADO: FONDO VERDE 15% TRANSPARENTE */
-    color: #2E7D32 !important; /* CAMBIADO: TEXTO VERDE OSCURO */
-    border: 2px solid rgba(76, 175, 80, 0.4) !important; /* CAMBIADO: BORDE VERDE */
+    background: rgba(76, 175, 80, 0.15) !important;
+    color: #2E7D32 !important;
+    border: 2px solid rgba(76, 175, 80, 0.4) !important;
     padding: 15px 40px !important;
     font-size: 1.2rem !important;
     border-radius: 30px !important;
@@ -427,24 +456,24 @@ body {
     backdrop-filter: blur(5px) !important;
 }
 
-/* EFECTO HOVER - VERDE TRANSPARENTE */
+/* Hover botón grande */
 .btn-big-booking:hover {
-    background: rgba(76, 175, 80, 0.25) !important; /* CAMBIADO: VERDE 25% TRANSPARENTE */
-    color: #000000 !important; /* CAMBIADO: TEXTO NEGRO */
-    border-color: #4CAF50 !important; /* CAMBIADO: BORDE VERDE SÓLIDO */
+    background: rgba(76, 175, 80, 0.25) !important;
+    color: #000000 !important;
+    border-color: #4CAF50 !important;
     transform: translateY(-3px) !important;
-    box-shadow: 0 10px 25px rgba(76, 175, 80, 0.3) !important; /* CAMBIADO: SOMBRA VERDE */
+    box-shadow: 0 10px 25px rgba(76, 175, 80, 0.3) !important;
 }
 
-/* EFECTO MÓVIL */
+/* Botón activo grande */
 .btn-big-booking:active {
-    background: rgba(76, 175, 80, 0.35) !important; /* CAMBIADO: VERDE 35% TRANSPARENTE */
+    background: rgba(76, 175, 80, 0.35) !important;
     transform: scale(0.97) !important;
 }
 
 /* Indicador de servicios */
 .services-indicator {
-    background: linear-gradient(135deg, #4CAF50, #2E7D32); /* CAMBIADO A VERDE */
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
     color: white;
     padding: 20px;
     border-radius: 15px;

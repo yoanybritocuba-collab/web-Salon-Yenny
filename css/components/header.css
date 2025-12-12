@@ -1,6 +1,8 @@
-/* components/header.css */
+/* ===================== HEADER.CSS CORREGIDO ===================== */
+
+/* ===== HEADER PRINCIPAL ===== */
 .header {
-  background: #000000 !important; /* Negro intenso */
+  background: #000 !important; /* Negro intenso */
   color: white;
   padding: 0;
   position: fixed;
@@ -8,12 +10,12 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  transition: transform 0.3s ease;
-  height: 100px; /* Cambiado de 90px a 100px (1cm más ancho) */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100px; /* Ajustado de 90px a 100px */
   display: flex;
   align-items: center;
-  border-bottom: 2px solid #333333;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.9); /* Sombra más intensa */
+  border-bottom: 2px solid #333;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.9);
 }
 
 .header.hidden {
@@ -22,16 +24,18 @@
 
 .header.scrolled {
   box-shadow: 0 2px 15px rgba(0, 0, 0, 0.8);
-  background: #000000 !important; /* Mantiene negro al hacer scroll */
+  background: #000 !important;
 }
 
+/* ===== CONTENEDOR ===== */
 .container {
   width: 100%;
-  max-width: 1400px; /* Más ancho */
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 40px; /* Más padding lateral */
+  padding: 0 40px;
 }
 
+/* ===== HEADER CONTENT ===== */
 .header-content {
   display: flex;
   justify-content: space-between;
@@ -40,12 +44,12 @@
   height: 100%;
 }
 
-/* === CORRECCIÓN: Mover logo y nombre 0.5cm a la izquierda === */
+/* ===== BRAND / LOGO ===== */
 .brand-section {
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  transform: translateX(-15px); /* Mover 0.5cm a la izquierda para PC y móviles */
+  transform: translateX(-15px); /* Mover 0.5cm a la izquierda */
 }
 
 .logo-container {
@@ -55,13 +59,13 @@
 }
 
 .logo-image-small {
-  width: 105px; /* Cambiado de 60px (2cm) a 105px (3.5cm aproximadamente) */
-  height: 105px; /* Cambiado de 60px a 105px */
+  width: 105px;
+  height: 105px;
   object-fit: contain;
   filter: brightness(1.1);
   background: transparent !important;
-  border: none !important; /* QUITADO EL BORDE/AFTER */
-  box-shadow: none !important; /* Eliminada sombra del borde */
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .logo-text {
@@ -69,40 +73,38 @@
   flex-direction: column;
 }
 
-/* TODAS LAS LETRAS CON COLOR MALVA-FUCSIA (#D147A3) */
 .logo-title {
   font-family: 'Dancing Script', cursive;
-  font-size: 2.5rem; /* Más grande para equilibrar con logo */
+  font-size: 2.5rem;
   margin: 0;
-  color: #D147A3; /* TODAS LAS LETRAS color malva-fucsia */
+  color: #D147A3;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .logo-subtitle {
   font-size: 0.85rem;
-  opacity: 0.9;
   margin: 0;
-  color: #D147A3; /* TODAS LAS LETRAS color malva-fucsia */
+  opacity: 0.9;
+  color: #D147A3;
 }
 
-/* Navegación desktop - visible solo en escritorio */
+/* ===== NAVEGACIÓN ===== */
 .nav-compact {
   flex: 1;
   display: flex;
   justify-content: center;
-  margin: 0 40px; /* Más margen */
+  margin: 0 40px;
 }
 
 .nav-compact ul {
   display: flex;
-  gap: 35px; /* Más espacio entre enlaces */
+  gap: 35px;
   padding: 0;
   margin: 0;
 }
 
-/* TODAS LAS LETRAS CON COLOR MALVA-FUCSIA (#D147A3) */
 .nav-link {
-  color: #D147A3; /* TODAS LAS LETRAS color malva-fucsia */
+  color: #D147A3;
   font-weight: 500;
   transition: all 0.3s ease;
   white-space: nowrap;
@@ -114,17 +116,15 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  text-decoration: none;
   display: block;
 }
 
 .nav-link.active {
-  color: #D147A3; /* Mismo color malva-fucsia */
+  color: #D147A3;
   font-weight: 500;
-  background: transparent; /* SIN FONDO CARMELITA */
+  background: transparent;
 }
 
-/* ELIMINADO FONDO CARMELITA - REEMPLAZADO POR LÍNEA FINA ABAJO */
 .nav-link.active::after {
   content: '';
   position: absolute;
@@ -133,7 +133,7 @@
   transform: translateX(-50%);
   width: 60%;
   height: 2px;
-  background: #D147A3; /* Línea fina color malva-fucsia */
+  background: #D147A3;
   border-radius: 1px;
   animation: linePulse 2s infinite;
 }
@@ -143,7 +143,6 @@
   50% { opacity: 0.7; }
 }
 
-/* Efecto de iluminación al tocar/hover */
 .nav-link::before {
   content: '';
   position: absolute;
@@ -151,10 +150,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, 
-    transparent, 
-    rgba(209, 71, 163, 0.2), /* Color malva-fucsia suave */
-    transparent);
+  background: linear-gradient(90deg, transparent, rgba(209, 71, 163, 0.2), transparent);
   transition: left 0.5s ease;
 }
 
@@ -167,74 +163,66 @@
 .nav-link:hover,
 .nav-link:focus,
 .nav-link.active:hover {
-  color: #ffffff;
-  background: rgba(209, 71, 163, 0.15); /* Fondo malva-fucsia suave al hover */
+  color: #fff;
+  background: rgba(209, 71, 163, 0.15);
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(209, 71, 163, 0.2);
-  outline: none;
 }
 
-/* === BOTÓN HAMBURGUESA MUY PEGADO AL BORDE DERECHO === */
+/* ===== BOTÓN HAMBURGUESA ===== */
 .mobile-menu-toggle {
-  position: relative;
   display: none;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(209, 71, 163, 0.3); /* Borde malva-fucsia */
-  color: #D147A3; /* Color malva-fucsia */
-  font-size: 1.8rem;
-  cursor: pointer;
-  padding: 10px 12px; /* Reducido padding horizontal */
-  z-index: 1002;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  position: absolute; /* Para móvil */
-  right: 5px; /* CAMBIO: MUY PEGADO AL BORDE (de 20px a 5px) */
+  position: absolute;
+  right: 5px;
   top: 50%;
   transform: translateY(-50%);
+  padding: 10px 12px;
+  font-size: 1.8rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(209, 71, 163, 0.3);
+  color: #D147A3;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  z-index: 1002;
 }
 
 .mobile-menu-toggle:hover {
-  background: rgba(209, 71, 163, 0.2); /* Fondo malva-fucsia */
+  background: rgba(209, 71, 163, 0.2);
   transform: scale(1.05) translateY(-50%);
 }
 
-/* NOTIFICACIÓN EN BOTÓN HAMBURGUESA - CONTADOR DE CITAS */
+/* ===== CONTADOR CITAS ===== */
 .mobile-citas-counter {
   position: absolute;
-  top: -5px; /* Ajustado para estar más visible */
-  right: -5px; /* Ajustado para estar más visible */
-  background: #e74c3c; /* Rojo para llamar la atención */
+  top: -5px;
+  right: -5px;
+  background: #e74c3c;
   color: white;
-  width: 22px; /* Un poco más pequeño para caber mejor */
+  width: 22px;
   height: 22px;
   border-radius: 50%;
-  font-size: 11px; /* Un poco más pequeño */
+  font-size: 11px;
   font-weight: bold;
-  display: none; /* Oculto por defecto */
+  display: none;
   align-items: center;
   justify-content: center;
-  border: 2px solid #000000;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  border: 2px solid #000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
   z-index: 1003;
-  animation: pulseRed 1.5s infinite; /* Animación de pulso */
+  animation: pulseRed 1.5s infinite;
 }
 
 @keyframes pulseRed {
-  0%, 100% { 
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
-  }
-  50% { 
-    transform: scale(1.1);
-    box-shadow: 0 0 0 6px rgba(231, 76, 60, 0);
-  }
+  0%,100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(231,76,60,0.7); }
+  50% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(231,76,60,0); }
 }
 
 .mobile-menu-toggle.has-notifications .mobile-citas-counter {
   display: flex;
 }
 
-/* Acciones del header - SOLO VISIBLE EN PC */
+/* ===== HEADER ACTIONS / BOTONES ===== */
 .header-actions {
   display: flex;
   gap: 15px;
@@ -261,52 +249,41 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, 
-    transparent, 
-    rgba(255, 255, 255, 0.3), 
-    transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
   transition: left 0.6s ease;
 }
 
-.btn:hover::after {
-  left: 100%;
-}
+.btn:hover::after { left: 100%; }
 
 .btn-fuchsia {
   background: linear-gradient(135deg, #E75480, #D147A3);
   color: white;
-  border: 1px solid rgba(231, 84, 128, 0.3);
+  border: 1px solid rgba(231,84,128,0.3);
 }
 
 .btn-fuchsia:hover {
   background: linear-gradient(135deg, #D147A3, #E75480);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(231, 84, 128, 0.4);
+  box-shadow: 0 8px 20px rgba(231,84,128,0.4);
 }
 
 .btn-outline {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(209, 71, 163, 0.3); /* Borde malva-fucsia */
-  color: #D147A3; /* Color malva-fucsia */
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(209,71,163,0.3);
+  color: #D147A3;
 }
 
 .btn-outline:hover {
-  background: rgba(209, 71, 163, 0.2); /* Fondo malva-fucsia suave */
-  border-color: rgba(209, 71, 163, 0.5); /* Borde malva-fucsia más intenso */
-  color: #FFFFFF; /* Blanco al hover */
+  background: rgba(209,71,163,0.2);
+  border-color: rgba(209,71,163,0.5);
+  color: #fff;
   transform: translateY(-2px);
 }
 
-.btn-compact {
-  padding: 10px 20px;
-  font-size: 0.9rem;
-}
-
-/* BOTÓN DE CITAS - EFECTO VERDE TRANSPARENTE AL HOVER */
 #bookingBtn {
-  background: rgba(255, 255, 255, 0.1) !important;
-  color: #D147A3 !important; /* Color malva-fucsia */
-  border: 1px solid rgba(209, 71, 163, 0.3) !important; /* Borde malva-fucsia */
+  background: rgba(255,255,255,0.1) !important;
+  color: #D147A3 !important;
+  border: 1px solid rgba(209,71,163,0.3) !important;
   padding: 12px 25px !important;
   border-radius: 8px !important;
   font-weight: 500 !important;
@@ -323,260 +300,51 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, 
-    transparent, 
-    rgba(255, 255, 255, 0.3), 
-    transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
   transition: left 0.6s ease;
 }
 
-#bookingBtn:hover::before {
-  left: 100%;
-}
-
+#bookingBtn:hover::before { left: 100%; }
 #bookingBtn:hover {
-  background: rgba(46, 204, 113, 0.3) !important; /* Verde transparente al hover */
-  border-color: rgba(46, 204, 113, 0.5) !important;
-  color: #FFFFFF !important;
+  background: rgba(46,204,113,0.3) !important;
+  border-color: rgba(46,204,113,0.5) !important;
+  color: #fff !important;
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+  box-shadow: 0 5px 15px rgba(46,204,113,0.3);
 }
 
-/* BOTÓN ADMIN - CON EFECTO */
-#adminBtn {
-  background: transparent !important;
-  color: #D147A3 !important; /* Color malva-fucsia */
-  border: 1px solid rgba(209, 71, 163, 0.3) !important; /* Borde malva-fucsia */
-  padding: 12px 25px !important;
-  border-radius: 8px !important;
-  font-weight: 500 !important;
-  transition: all 0.3s ease !important;
-  position: relative;
-  overflow: hidden;
+/* ===== MEDIA QUERIES ===== */
+@media(max-width: 768px) {
+  .header { height: 95px; }
+  .brand-section { transform: translateX(-20px); flex:1; max-width: calc(100%-70px); }
+  .header-actions { display: none !important; }
+  .nav-compact { display: none; position: fixed; top:95px; left:0; right:0; background: rgba(0,0,0,0.95) !important; backdrop-filter: blur(10px); border-top:1px solid #333; box-shadow:0 10px 30px rgba(0,0,0,0.9); z-index:1002; }
+  .nav-compact.mobile-open { display:block; padding:20px; }
+  .nav-compact.mobile-open ul { flex-direction: column; gap:10px; }
+  .nav-compact.mobile-open .nav-link { padding:15px; text-align:center; background: rgba(255,255,255,0.05); margin:5px 0; }
+  .admin-mobile-item { display:block; margin-top:10px; }
+  .logo-title { font-size:1.8rem; white-space:nowrap; overflow:visible; }
+  .logo-subtitle { font-size:0.7rem; display:block !important; letter-spacing:1.5px; }
+  .logo-image-small { width:60px; height:60px; }
+  .mobile-menu-toggle { display:block; right:5px; padding:10px 12px; font-size:1.8rem; }
 }
 
-#adminBtn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, 
-    transparent, 
-    rgba(255, 255, 255, 0.2), 
-    transparent);
-  transition: left 0.6s ease;
+@media(max-width:480px){
+  .brand-section { transform: translateX(-15px); max-width: calc(100%-65px); }
+  .mobile-menu-toggle { right:3px; padding:8px 10px; font-size:1.6rem; }
+  .mobile-citas-counter { width:20px;height:20px;font-size:10px;top:-4px;right:-4px; }
+  .logo-title { font-size:1.6rem; }
+  .logo-subtitle { font-size:0.65rem; }
+  .logo-image-small { width:50px;height:50px; }
 }
 
-#adminBtn:hover::before {
-  left: 100%;
+@media(max-width:360px){
+  .logo-title{font-size:1.4rem;max-width:130px;}
+  .logo-subtitle{font-size:0.6rem;}
+  .mobile-menu-toggle{right:2px;padding:6px 8px;font-size:1.5rem;}
+  .mobile-citas-counter{width:18px;height:18px;font-size:9px;top:-3px;right:-3px;}
 }
 
-#adminBtn:hover {
-  background: rgba(209, 71, 163, 0.1) !important; /* Fondo malva-fucsia suave */
-  color: #FFFFFF !important;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(209, 71, 163, 0.2);
-}
-
-/* Elemento admin móvil - oculto en desktop */
-.admin-mobile-item {
-  display: none;
-}
-
-/* ===== MEDIA QUERIES PARA MÓVILES ===== */
-@media (max-width: 768px) {
-  .header {
-    height: 95px; /* CAMBIADO: Aumentado 0.5cm (de 90px a 95px) */
-    padding: 0;
-  }
-  
-  /* === CORRECCIÓN: Header móvil solo con Logo + Nombre + Menú hamburguesa === */
-  .header-content {
-    justify-content: space-between;
-    gap: 10px;
-    position: relative; /* Para posicionar el botón hamburguesa */
-  }
-  
-  /* CAMBIO: Mover logo y nombre 0.5cm más a la izquierda en móviles */
-  .brand-section {
-    transform: translateX(-20px); /* CAMBIO: 0.5cm más a la izquierda (de -10px a -20px) */
-    flex: 1; /* Ocupa el espacio disponible */
-    max-width: calc(100% - 70px); /* Menos espacio para el botón más pequeño */
-  }
-  
-  /* === CORRECCIÓN IMPORTANTE: OCULTAR BOTONES EN MÓVILES === */
-  .header-actions {
-    display: none !important; /* OCULTAR completamente en móviles */
-  }
-  
-  .container {
-    padding: 0 15px;
-  }
-  
-  /* Mostrar menú hamburguesa - MUY PEGADO AL BORDE DERECHO */
-  .mobile-menu-toggle {
-    display: block;
-    position: absolute;
-    right: 5px; /* CAMBIO: MUY PEGADO AL BORDE (de 20px a 5px) */
-    top: 50%;
-    transform: translateY(-50%);
-    margin-left: 0;
-    z-index: 1002;
-    padding: 10px 12px; /* Padding reducido */
-  }
-  
-  /* Ocultar navegación desktop en móviles */
-  .nav-compact {
-    display: none;
-    position: fixed;
-    top: 95px;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.95) !important;
-    backdrop-filter: blur(10px);
-    border-top: 1px solid #333;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
-    z-index: 1002;
-  }
-  
-  /* Menú móvil desplegable */
-  .nav-compact.mobile-open {
-    display: block;
-    padding: 20px;
-  }
-  
-  .nav-compact.mobile-open ul {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .nav-compact.mobile-open .nav-link {
-    display: block;
-    padding: 15px;
-    text-align: center;
-    font-size: 1.1rem;
-    border-radius: 8px;
-    margin: 5px 0;
-    background: rgba(255, 255, 255, 0.05);
-  }
-  
-  /* MOSTRAR ELEMENTO ADMIN EN MÓVIL */
-  .admin-mobile-item {
-    display: block;
-    margin-top: 10px;
-  }
-  
-  .admin-mobile-item .nav-link {
-    background: linear-gradient(135deg, #E75480, #D147A3);
-    color: white !important;
-    font-weight: 600;
-  }
-  
-  /* Ajustar logo para móviles - NOMBRE COMPLETO + BELLEZA PROFESIONAL */
-  .logo-title {
-    font-size: 1.8rem; /* Más pequeño para móviles */
-    white-space: nowrap; /* Evitar salto de línea - NOMBRE COMPLETO */
-    overflow: visible; /* Permitir que se vea completo */
-    text-overflow: clip; /* No cortar el texto */
-    max-width: none; /* Sin límite de ancho */
-  }
-  
-  /* CAMBIO: Mostrar "BELLEZA PROFESIONAL" en móvil */
-  .logo-subtitle {
-    font-size: 0.7rem;
-    display: block !important; /* CAMBIO: Mostrar en móvil */
-    color: #D147A3;
-    letter-spacing: 1.5px;
-    margin-top: 2px;
-  }
-  
-  .logo-image-small {
-    width: 60px; /* Más pequeño para móviles */
-    height: 60px;
-    border: none !important; /* Sin borde en móvil */
-    box-shadow: none !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .header-content {
-    justify-content: space-between;
-    gap: 5px;
-  }
-  
-  /* CAMBIO: 0.5cm más a la izquierda también en móviles pequeños */
-  .brand-section {
-    transform: translateX(-15px); /* 0.5cm a la izquierda */
-    max-width: calc(100% - 65px); /* Menos espacio para pantallas pequeñas */
-  }
-  
-  .mobile-menu-toggle {
-    right: 3px; /* CAMBIO: AÚN MÁS PEGADO EN MÓVILES PEQUEÑOS */
-    padding: 8px 10px; /* Más compacto */
-    font-size: 1.6rem;
-  }
-  
-  /* Ajustar el badge para pantallas pequeñas */
-  .mobile-citas-counter {
-    width: 20px;
-    height: 20px;
-    font-size: 10px;
-    top: -4px;
-    right: -4px;
-  }
-  
-  .logo-title {
-    font-size: 1.6rem;
-    white-space: nowrap; /* Nombre completo */
-    overflow: visible;
-    max-width: none;
-  }
-  
-  /* "BELLEZA PROFESIONAL" visible en móviles pequeños */
-  .logo-subtitle {
-    font-size: 0.65rem;
-    display: block !important; /* Mostrar en móviles pequeños */
-    color: #D147A3;
-  }
-  
-  .logo-image-small {
-    width: 50px;
-    height: 50px;
-  }
-}
-
-@media (max-width: 360px) {
-  .logo-title {
-    font-size: 1.4rem; /* Un poco más pequeño en pantallas muy pequeñas */
-    white-space: nowrap; /* Pero aún visible completo */
-    max-width: 130px; /* Pero ajustado para no solapar con botón */
-  }
-  
-  .logo-subtitle {
-    font-size: 0.6rem; /* Un poco más pequeño */
-  }
-  
-  .mobile-menu-toggle {
-    right: 2px; /* MÁXIMO PEGADO EN PANTALLAS MUY PEQUEÑAS */
-    padding: 6px 8px;
-    font-size: 1.5rem;
-  }
-  
-  .mobile-citas-counter {
-    width: 18px;
-    height: 18px;
-    font-size: 9px;
-    top: -3px;
-    right: -3px;
-  }
-}
-
-/* Para pantallas muy pequeñas donde el nombre podría solapar */
-@media (max-width: 320px) {
-  .logo-title {
-    font-size: 1.3rem;
-    max-width: 110px;
-  }
+@media(max-width:320px){
+  .logo-title{font-size:1.3rem; max-width:110px;}
 }

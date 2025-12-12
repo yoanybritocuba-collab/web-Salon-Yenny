@@ -309,11 +309,31 @@ body {
     transform: translateY(-2px);
 }
 
+/* ======================= MAIN.CSS CORREGIDO ======================= */
+
+/* ================= BOTONES ================= */
 .btn-hero {
     padding: 16px 35px;
     font-size: 1.2rem;
     margin-top: 25px;
     border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-align: center;
+    background: rgba(76, 175, 80, 0.15);
+    border: 2px solid rgba(76, 175, 80, 0.4);
+    color: #2E7D32;
+    backdrop-filter: blur(5px);
+}
+
+.btn-hero:hover {
+    background: rgba(76, 175, 80, 0.25);
+    border-color: #4CAF50;
+    color: #000000;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(76,175,80,0.3);
 }
 
 .btn-large {
@@ -346,60 +366,60 @@ body {
     font-size: 1.2rem;
 }
 
-/* ========== HERO SECTION AJUSTADO ========== */
+/* ================= HERO SECTION ================= */
 .hero {
+    position: relative;
+    background: url('../imagenes/FL/fondo.jpg') center/cover no-repeat;
     color: white;
-    padding: 180px 0 100px; /* Más padding-top para compensar header */
-    text-align: center;
-    margin-top: calc(var(--header-height) * -1); /* Compensa altura del header */
     min-height: calc(100vh - var(--header-height));
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
+    text-align: center;
+    padding: 180px 20px 100px;
+    z-index: 1;
 }
 
 .hero::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.3);
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.25);
     z-index: 0;
 }
 
 .hero-content {
+    position: relative;
+    z-index: 2;
     max-width: 850px;
     margin: 0 auto;
-    position: relative;
-    z-index: 1;
+    padding: 20px;
 }
 
 .hero-title {
     font-size: 3.8rem;
     margin-bottom: 25px;
     font-weight: 800;
-    color: white;
-    text-shadow: 3px 3px 15px rgba(0, 0, 0, 0.8);
+    color: #2E7D32; /* Verde oscuro */
+    text-shadow: 3px 3px 15px rgba(0,0,0,0.8);
     letter-spacing: 1px;
     line-height: 1.2;
 }
 
 .hero-subtitle {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     margin-bottom: 35px;
-    color: white;
-    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
-    opacity: 0.95;
+    color: #000000 !important;
+    font-weight: 600;
     line-height: 1.4;
     max-width: 700px;
     margin-left: auto;
     margin-right: auto;
+    text-shadow: 1px 1px 5px rgba(255,255,255,0.5);
+    opacity: 0.95;
 }
 
-/* ========== SECCIONES ========== */
+/* ================= SECCIONES ================= */
 .section-portal {
     display: none;
     padding: 100px 0;
@@ -418,7 +438,7 @@ body {
     margin-bottom: 60px;
     color: white;
     position: relative;
-    text-shadow: 3px 3px 12px rgba(0, 0, 0, 0.9);
+    text-shadow: 3px 3px 12px rgba(0,0,0,0.9);
     font-weight: 700;
     padding-bottom: 20px;
 }
@@ -433,10 +453,10 @@ body {
     height: 4px;
     background: linear-gradient(135deg, #E75480, #FFD700);
     border-radius: 2px;
-    box-shadow: 0 2px 10px rgba(231, 84, 128, 0.5);
+    box-shadow: 0 2px 10px rgba(231,84,128,0.5);
 }
 
-/* ========== SERVICIOS ========== */
+/* ================= SERVICIOS ================= */
 .services {
     background: transparent !important;
     padding: 40px 0;
@@ -446,11 +466,11 @@ body {
     text-align: center;
     margin: 40px 0 50px;
     padding: 25px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255,255,255,0.1);
     border-radius: 20px;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
 .services-indicator {
@@ -461,8 +481,8 @@ body {
     margin: 30px auto;
     max-width: 600px;
     animation: bounce 2s infinite;
-    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 5px 20px rgba(102,126,234,0.4);
+    border: 2px solid rgba(255,255,255,0.1);
 }
 
 .indicator-content {
@@ -470,6 +490,12 @@ body {
     align-items: center;
     gap: 20px;
     justify-content: center;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
 }
 
 .indicator-icon {
