@@ -216,47 +216,45 @@
             align-items: center;
             background: transparent !important;
         }
+/* BOTÓN DE CITAS - CON EFECTO VERDE TRANSPARENTE AL HOVER */
+#bookingBtn {
+    background: rgba(76, 175, 80, 0.08) !important; /* FONDO VERDE 8% TRANSPARENTE */
+    color: #2E7D32 !important; /* TEXTO VERDE OSCURO */
+    border: 1.5px solid rgba(76, 175, 80, 0.2) !important; /* BORDE VERDE */
+    padding: 12px 25px !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+}
 
-        /* BOTÓN DE CITAS - CON EFECTO VERDE TRANSPARENTE AL HOVER */
-        #bookingBtn {
-            background: rgba(255, 255, 255, 0.1) !important;
-            color: #D147A3 !important; /* Color malva-fucsia */
-            border: 1px solid rgba(209, 71, 163, 0.3) !important; /* Borde malva-fucsia */
-            padding: 12px 25px !important;
-            border-radius: 8px !important;
-            font-weight: 500 !important;
-            transition: all 0.3s ease !important;
-            backdrop-filter: blur(5px);
-            position: relative;
-            overflow: hidden;
-        }
+#bookingBtn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.4), 
+        transparent);
+    transition: left 0.6s ease;
+}
 
-        #bookingBtn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, 
-                transparent, 
-                rgba(255, 255, 255, 0.3), 
-                transparent);
-            transition: left 0.6s ease;
-        }
+#bookingBtn:hover::before {
+    left: 100%;
+}
 
-        #bookingBtn:hover::before {
-            left: 100%;
-        }
-
-        #bookingBtn:hover {
-            background: rgba(46, 204, 113, 0.3) !important; /* Verde transparente al hover */
-            border-color: rgba(46, 204, 113, 0.5) !important;
-            color: #FFFFFF !important;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
-        }
-
+#bookingBtn:hover {
+    background: rgba(76, 175, 80, 0.15) !important; /* VERDE 15% TRANSPARENTE */
+    border-color: rgba(76, 175, 80, 0.4) !important; /* BORDE VERDE MÁS VISIBLE */
+    color: #000000 !important; /* TEXTO NEGRO */
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2);
+}
         /* BOTÓN ADMIN - CON EFECTO */
         #adminBtn {
             background: transparent !important;
@@ -375,27 +373,51 @@
             border-radius: 10px;
             backdrop-filter: blur(2px);
         }
+/* BOTÓN DE PORTADA - EFECTO VERDE TRANSPARENTE */
+.btn-hero {
+    padding: 18px 45px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    background: rgba(76, 175, 80, 0.08) !important; /* FONDO VERDE 8% TRANSPARENTE */
+    border: 1.5px solid rgba(76, 175, 80, 0.2) !important; /* BORDE VERDE */
+    border-radius: 12px;
+    color: #2E7D32 !important; /* TEXTO VERDE OSCURO */
+    cursor: pointer;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.1);
+    position: relative;
+    overflow: hidden;
+    animation: buttonEntrance 0.8s ease-out 0.4s both, buttonPulse 2s infinite;
+    transform-origin: center;
+    backdrop-filter: blur(10px);
+}
 
-        /* BOTÓN DE PORTADA - TODAS LETRAS MALVA-FUCSIA */
-        .btn-hero {
-            padding: 18px 45px;
-            font-size: 1.3rem;
-            font-weight: 600;
-            letter-spacing: 1.2px;
-            background: rgba(209, 71, 163, 0.2); /* Fondo malva-fucsia */
-            border: 1px solid rgba(209, 71, 163, 0.5); /* Borde malva-fucsia */
-            border-radius: 12px;
-            color: #D147A3 !important; /* TODAS LAS LETRAS color malva-fucsia */
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(209, 71, 163, 0.3);
-            position: relative;
-            overflow: hidden;
-            animation: buttonEntrance 0.8s ease-out 0.4s both, buttonPulse 2s infinite;
-            transform-origin: center;
-            backdrop-filter: blur(5px);
-        }
+.btn-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.4), 
+        transparent);
+    transition: left 0.6s ease;
+}
 
+.btn-hero:hover::before {
+    left: 100%;
+}
+
+.btn-hero:hover {
+    transform: translateY(-4px) scale(1.04);
+    background: rgba(76, 175, 80, 0.15) !important; /* VERDE 15% TRANSPARENTE */
+    border-color: rgba(76, 175, 80, 0.4) !important; /* BORDE VERDE MÁS VISIBLE */
+    color: #000000 !important; /* TEXTO NEGRO */
+    box-shadow: 0 16px 40px rgba(76, 175, 80, 0.25);
+}
         @keyframes buttonEntrance {
             0% {
                 opacity: 0;
@@ -441,41 +463,90 @@
                 transform: translateY(-4px);
             }
         }
+/* BOTÓN BIG BOOKING - EFECTO ESPEJO CON ILUMINACIÓN VERDE */
+.btn-big-booking {
+    background: rgba(255, 255, 255, 0.05) !important; /* FONDO CASI TRANSPARENTE */
+    color: #000000 !important; /* LETRAS NEGRAS */
+    border: 2px solid rgba(255, 255, 255, 0.15) !important;
+    padding: 15px 35px !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    backdrop-filter: blur(15px);
+    position: relative;
+    overflow: hidden;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    /* EFECTO ESPEJO */
+    box-shadow: 
+        inset 0 2px 6px rgba(255, 255, 255, 0.25),
+        inset 0 -2px 6px rgba(0, 0, 0, 0.2),
+        0 8px 35px rgba(0, 0, 0, 0.15);
+}
 
-        /* BOTÓN BIG BOOKING - TODAS LETRAS MALVA-FUCSIA */
-        .btn-big-booking {
-            background: rgba(209, 71, 163, 0.2) !important;
-            color: #D147A3 !important; /* TODAS LAS LETRAS color malva-fucsia */
-            border: 1px solid rgba(209, 71, 163, 0.5) !important;
-            padding: 15px 35px !important;
-            border-radius: 12px !important;
-            font-weight: 500 !important;
-            transition: all 0.3s ease !important;
-            backdrop-filter: blur(5px);
-        }
+/* CAPA DE ILUMINACIÓN VERDE INTERIOR */
+.btn-big-booking::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(76, 175, 80, 0) 0%,
+        rgba(76, 175, 80, 0.07) 50%,
+        rgba(76, 175, 80, 0) 100%
+    );
+    border-radius: 12px;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
 
-        .btn-big-booking:hover {
-            background: rgba(209, 71, 163, 0.3) !important;
-            color: #FFFFFF !important;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(209, 71, 163, 0.4);
-        }
+/* EFECTO DE LÍNEA DE LUZ QUE RECORRE */
+.btn-big-booking::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(76, 175, 80, 0.5),
+        rgba(76, 175, 80, 0.3),
+        transparent
+    );
+    z-index: 2;
+    transition: left 0.5s ease;
+}
 
-        /* BOTÓN FLOTANTE - TODAS LETRAS MALVA-FUCSIA */
-        .btn-book-now {
-            background: rgba(209, 71, 163, 0.2) !important;
-            color: #D147A3 !important; /* TODAS LAS LETRAS color malva-fucsia */
-            border: 1px solid rgba(209, 71, 163, 0.5) !important;
-            border-radius: 8px !important;
-            transition: all 0.3s ease !important;
-            backdrop-filter: blur(5px);
-        }
+/* HOVER - ILUMINACIÓN VERDE ESPEJO */
+.btn-big-booking:hover {
+    background: rgba(76, 175, 80, 0.1) !important; /* VERDE TRANSPARENTE */
+    border-color: rgba(76, 175, 80, 0.35) !important; /* BORDE VERDE */
+    color: #000000 !important; /* LETRAS NEGRAS */
+    transform: translateY(-3px);
+    box-shadow: 
+        inset 0 2px 8px rgba(255, 255, 255, 0.35),
+        inset 0 -2px 6px rgba(0, 0, 0, 0.15),
+        0 15px 45px rgba(76, 175, 80, 0.25);
+}
 
-        .btn-book-now:hover {
-            background: rgba(209, 71, 163, 0.3) !important;
-            color: #FFFFFF !important;
-        }
+.btn-big-booking:hover::before {
+    opacity: 1; /* Activar iluminación interior */
+}
 
+.btn-big-booking:hover::after {
+    left: 100%; /* La línea de luz se mueve */
+}
+
+.btn-big-booking:active {
+    transform: scale(0.97);
+    background: rgba(76, 175, 80, 0.16) !important;
+}
         /* Estilos para los enlaces de contacto - TODAS LETRAS MALVA-FUCSIA */
         .contact-link {
             color: #D147A3 !important; /* TODAS LAS LETRAS color malva-fucsia */
