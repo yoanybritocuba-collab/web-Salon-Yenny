@@ -307,73 +307,74 @@
             margin-top: -100px; /* IMPORTANTE: Compensa el header más alto */
             padding-top: 140px; /* Ajuste para que contenido empiece después del header */
         }
+/* CONTENIDO DE PORTADA CON FONDO TRANSPARENTE */
+.hero-content {
+    position: relative;
+    z-index: 3;
+    max-width: 800px;
+    padding: 30px 40px;
+    background: transparent !important; /* FONDO TRANSPARENTE DETRÁS DEL TEXTO */
+    border-radius: 15px;
+    animation: heroEntrance 1s ease-out;
+    margin-top: -120px; /* ← CAMBIADO: Sube todo 4cm */
+}
 
-        /* CONTENIDO DE PORTADA CON FONDO TRANSPARENTE */
-        .hero-content {
-            position: relative;
-            z-index: 3;
-            max-width: 800px;
-            padding: 30px 40px;
-            background: transparent !important; /* FONDO TRANSPARENTE DETRÁS DEL TEXTO */
-            border-radius: 15px;
-            animation: heroEntrance 1s ease-out;
-            margin-top: 0;
-        }
+@keyframes heroEntrance {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
-        @keyframes heroEntrance {
-            0% {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+/* TÍTULO PRINCIPAL - TODAS LETRAS MALVA-FUCSIA CON FONDO TRANSPARENTE */
+.hero-title {
+    font-family: 'Dancing Script', cursive;
+    font-size: 4.5rem; /* Un poco más grande */
+    font-weight: 700;
+    color: #D147A3; /* TODAS LAS LETRAS color malva-fucsia */
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+    margin-bottom: 5px; /* ← REDUCIDO: Menos espacio abajo */
+    letter-spacing: 1.5px;
+    animation: titlePulse 3s infinite alternate, fadeInDown 0.8s ease-out;
+    transform-origin: center;
+    line-height: 1.1;
+    margin-top: -30px; /* ← AÑADIDO: Sube el título 30px */
+    background: transparent !important; /* FONDO TRANSPARENTE */
+}
 
-        /* TÍTULO PRINCIPAL - TODAS LETRAS MALVA-FUCSIA CON FONDO TRANSPARENTE */
-        .hero-title {
-            font-family: 'Dancing Script', cursive;
-            font-size: 4.5rem; /* Un poco más grande */
-            font-weight: 700;
-            color: #D147A3; /* TODAS LAS LETRAS color malva-fucsia */
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
-            margin-bottom: 15px;
-            letter-spacing: 1.5px;
-            animation: titlePulse 3s infinite alternate, fadeInDown 0.8s ease-out;
-            transform-origin: center;
-            line-height: 1.1;
-            margin-top: 0;
-            background: transparent !important; /* FONDO TRANSPARENTE */
-        }
+@keyframes titlePulse {
+    0% {
+        transform: scale(1);
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+    }
+    100% {
+        transform: scale(1.03);
+        text-shadow: 0 4px 20px rgba(209, 71, 163, 0.7);
+    }
+}
 
-        @keyframes titlePulse {
-            0% {
-                transform: scale(1);
-                text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
-            }
-            100% {
-                transform: scale(1.03);
-                text-shadow: 0 4px 20px rgba(209, 71, 163, 0.7);
-            }
-        }
+/* SUBTÍTULO - CAMBIADO A COLOR NEGRO (#000000) COMO SOLICITASTE */
+.hero-subtitle {
+    font-size: 1.8rem; /* Un poco más grande */
+    color: #000000 !important; /* CAMBIO: Ahora es NEGRO en lugar de malva-fucsia */
+    text-shadow: 0 1px 5px rgba(255, 255, 255, 0.7); /* Sombra blanca para mejor contraste */
+    margin-bottom: 20px; /* ← REDUCIDO: Menos espacio abajo */
+    line-height: 1.4;
+    font-weight: 600; /* Más negrita para mejor visibilidad */
+    letter-spacing: 0.8px;
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+    background: transparent !important; /* FONDO TRANSPARENTE */
+    padding: 12px 20px;
+    border-radius: 10px;
+    backdrop-filter: blur(2px);
+    margin-top: 20px !important; /* ← AÑADIDO: Baja el subtítulo 20px */
+}
 
-        /* SUBTÍTULO - CAMBIADO A COLOR NEGRO (#000000) COMO SOLICITASTE */
-        .hero-subtitle {
-            font-size: 1.8rem; /* Un poco más grande */
-            color: #000000 !important; /* CAMBIO: Ahora es NEGRO en lugar de malva-fucsia */
-            text-shadow: 0 1px 5px rgba(255, 255, 255, 0.7); /* Sombra blanca para mejor contraste */
-            margin-bottom: 30px;
-            line-height: 1.4;
-            font-weight: 600; /* Más negrita para mejor visibilidad */
-            letter-spacing: 0.8px;
-            animation: fadeInUp 0.8s ease-out 0.2s both;
-            background: transparent !important; /* FONDO TRANSPARENTE */
-            padding: 12px 20px;
-            border-radius: 10px;
-            backdrop-filter: blur(2px);
-        }
-/* BOTÓN DE PORTADA - EFECTO VERDE TRANSPARENTE */
+/* BOTÓN DE PORTADA - EFECTO VERDE TRANSPARENTE CON LETRAS NEGRAS */
 .btn-hero {
     padding: 18px 45px;
     font-size: 1.3rem;
@@ -382,7 +383,7 @@
     background: rgba(76, 175, 80, 0.08) !important; /* FONDO VERDE 8% TRANSPARENTE */
     border: 1.5px solid rgba(76, 175, 80, 0.2) !important; /* BORDE VERDE */
     border-radius: 12px;
-    color: #2E7D32 !important; /* TEXTO VERDE OSCURO */
+    color: #000000 !important; /* ← CAMBIADO A NEGRO (era #2E7D32) */
     cursor: pointer;
     transition: all 0.3s ease !important;
     box-shadow: 0 8px 25px rgba(76, 175, 80, 0.1);
@@ -407,6 +408,17 @@
     transition: left 0.6s ease;
 }
 
+.btn-hero:hover::before {
+    left: 100%;
+}
+
+.btn-hero:hover {
+    background: rgba(76, 175, 80, 0.15) !important; /* VERDE 15% TRANSPARENTE */
+    border-color: rgba(76, 175, 80, 0.4) !important; /* BORDE VERDE MÁS VISIBLE */
+    color: #000000 !important; /* MANTENER NEGRO */
+    transform: translateY(-4px) scale(1.04);
+    box-shadow: 0 16px 40px rgba(76, 175, 80, 0.25);
+}
 .btn-hero:hover::before {
     left: 100%;
 }
