@@ -643,12 +643,16 @@
    RESPONSIVE - MÁXIMAMENTE PEGADO
    ============================================ */
 
+
 /* TODOS LOS MÓVILES - COMPLETAMENTE PEGADO */
 @media (max-width: 768px) {
     .mobile-menu-toggle {
         right: 0 !important; /* ← COMPLETAMENTE PEGADO AL BORDE */
         border-radius: 8px 0 0 8px !important; /* Solo redondeo izquierdo */
         border-right: none !important; /* Sin borde derecho */
+        background: transparent !important; /* ← SIN FONDO */
+        border: none !important; /* ← SIN BORDE */
+        box-shadow: none !important; /* ← SIN SOMBRA */
     }
 }
 
@@ -658,6 +662,9 @@
         right: 0 !important;
         padding: 8px 10px;
         font-size: 1.6rem;
+        background: transparent !important; /* ← SIN FONDO */
+        border: none !important; /* ← SIN BORDE */
+        box-shadow: none !important; /* ← SIN SOMBRA */
     }
 }
 
@@ -667,6 +674,9 @@
         right: 0 !important;
         padding: 6px 8px;
         font-size: 1.5rem;
+        background: transparent !important; /* ← SIN FONDO */
+        border: none !important; /* ← SIN BORDE */
+        box-shadow: none !important; /* ← SIN SOMBRA */
     }
 }
 
@@ -675,19 +685,20 @@
 .mobile-menu-toggle:focus,
 .mobile-menu-toggle:active {
     transform: translateY(-50%) !important;
-    background: rgba(209, 71, 163, 0.2) !important;
-    box-shadow: 0 0 15px rgba(209, 71, 163, 0.3) !important;
+    background: transparent !important; /* ← SIN FONDO AL HOVER */
+    box-shadow: none !important; /* ← SIN SOMBRA AL HOVER */
+    color: #FFFFFF !important; /* ← SOLO CAMBIA EL COLOR */
     outline: none;
 }
 
 /* Animación moderna para el cambio de ícono (☰ → ✕) */
 .mobile-menu-toggle.active {
     color: #FFFFFF !important;
-    background: rgba(209, 71, 163, 0.3) !important;
-    border-color: rgba(209, 71, 163, 0.5) !important;
+    background: transparent !important; /* ← SIN FONDO */
+    border: none !important; /* ← SIN BORDE */
     transform: translateY(-50%) rotate(90deg) !important;
     transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    box-shadow: 0 0 20px rgba(209, 71, 163, 0.4) !important;
+    box-shadow: none !important; /* ← SIN SOMBRA */
 }
 
 /* Efecto de pulso al tener notificaciones */
@@ -697,296 +708,318 @@
 
 @keyframes pulse-glow {
     0%, 100% { 
-        box-shadow: 0 0 5px rgba(231, 76, 60, 0.5);
+        color: #D147A3; /* ← COLOR MALVA-FUCSIA NORMAL */
     }
     50% { 
-        box-shadow: 0 0 15px rgba(231, 76, 60, 0.8);
+        color: #FFFFFF; /* ← COLOR BLANCO BRILLANTE */
     }
 }
 
-        /* NOTIFICACIÓN EN BOTÓN HAMBURGUESA - CONTADOR DE CITAS */
-        .notification-badge {
-            position: absolute;
-            top: -5px; /* Ajustado para estar más visible */
-            right: -5px; /* Ajustado para estar más visible */
-            background: #e74c3c; /* Rojo para llamar la atención */
-            color: white;
-            width: 22px; /* Un poco más pequeño para caber mejor */
-            height: 22px;
-            border-radius: 50%;
-            font-size: 11px; /* Un poco más pequeño */
-            font-weight: bold;
-            display: none; /* Oculto por defecto */
-            align-items: center;
-            justify-content: center;
-            border: 2px solid #000000;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
-            z-index: 1003;
-            animation: pulseRed 1.5s infinite; /* Animación de pulso */
-        }
+/* NOTIFICACIÓN EN BOTÓN HAMBURGUESA - CONTADOR DE CITAS */
+.notification-badge {
+    position: absolute;
+    top: -5px; /* Ajustado para estar más visible */
+    right: -5px; /* Ajustado para estar más visible */
+    background: #e74c3c; /* Rojo para llamar la atención */
+    color: white;
+    width: 22px; /* Un poco más pequeño para caber mejor */
+    height: 22px;
+    border-radius: 50%;
+    font-size: 11px; /* Un poco más pequeño */
+    font-weight: bold;
+    display: none; /* Oculto por defecto */
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #000000;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    z-index: 1003;
+    animation: pulseRed 1.5s infinite; /* Animación de pulso */
+}
 
-        @keyframes pulseRed {
-            0%, 100% { 
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
-            }
-            50% { 
-                transform: scale(1.1);
-                box-shadow: 0 0 0 6px rgba(231, 76, 60, 0);
-            }
-        }
+@keyframes pulseRed {
+    0%, 100% { 
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+    }
+    50% { 
+        transform: scale(1.1);
+        box-shadow: 0 0 0 6px rgba(231, 76, 60, 0);
+    }
+}
 
-        .mobile-menu-toggle.has-notifications .notification-badge {
-            display: flex;
-        }
+.mobile-menu-toggle.has-notifications .notification-badge {
+    display: flex;
+}
 
-        /* RESPONSIVE AJUSTADO */
-        @media (max-width: 768px) {
-            body {
-                padding-top: 95px; /* Aumentado para header móvil */
-            }
-            
-            .header {
-                height: 95px !important;
-                padding: 0 15px !important;
-            }
-            
-            .header-content {
-                padding: 0 10px;
-                position: relative; /* Para posicionar el botón hamburguesa */
-            }
-            
-            /* Ocultar botones de header-actions en móvil */
-            .header-actions {
-                display: none !important;
-            }
-            
-            /* Mostrar solo el botón hamburguesa en móvil - MUY PEGADO AL BORDE */
-            .mobile-menu-toggle {
-                display: block;
-                position: absolute;
-                right: 5px; /* CAMBIO: MUY PEGADO AL BORDE (de 20px a 5px) */
-                top: 50%;
-                transform: translateY(-50%);
-                margin-left: 0;
-                z-index: 1002;
-                padding: 10px 12px; /* Padding reducido */
-            }
-            
-            /* Ajustar logo y brand-section - 0.5cm A LA IZQUIERDA */
-            .brand-section {
-                flex: 1;
-                margin-left: 0;
-                max-width: calc(100% - 70px); /* Menos espacio para el botón más pequeño */
-                transform: translateX(-15px); /* CAMBIO: 0.5cm a la izquierda (15px ≈ 0.5cm) */
-            }
-            
-            .logo-container {
-                gap: 10px;
-            }
-            
-            .logo-image-small {
-                width: 70px;
-                height: 70px;
-            }
-            
-            .logo-title {
-                font-size: 2rem;
-                white-space: nowrap; /* Evita que se corte el nombre */
-                overflow: visible; /* Permite que se vea completo */
-                text-overflow: clip; /* No corta el texto */
-                max-width: none; /* Sin límite de ancho */
-            }
-            
-            /* MOSTRAR "BELLEZA PROFESIONAL" EN MÓVIL */
-            .logo-subtitle {
-                font-size: 0.75rem;
-                display: block !important; /* CAMBIO: Mostrar en móvil */
-                color: #D147A3;
-                letter-spacing: 1.5px;
-                margin-top: 2px;
-            }
-            
-            .admin-mobile-item {
-                display: block;
-            }
-            
-            .contact-item {
-                background: rgba(0, 0, 0, 0.7);
-                padding: 12px 15px;
-                margin: 10px 0;
-            }
-            
-            body {
-                background-attachment: scroll;
-            }
+/* RESPONSIVE AJUSTADO */
+@media (max-width: 768px) {
+    body {
+        padding-top: 95px; /* Aumentado para header móvil */
+    }
+    
+    .header {
+        height: 95px !important;
+        padding: 0 15px !important;
+    }
+    
+    .header-content {
+        padding: 0 10px;
+        position: relative; /* Para posicionar el botón hamburguesa */
+    }
+    
+    /* Ocultar botones de header-actions en móvil */
+    .header-actions {
+        display: none !important;
+    }
+    
+    /* Mostrar solo el botón hamburguesa en móvil - SIN CUADRADO Y PEGADO AL BORDE */
+    .mobile-menu-toggle {
+        display: block;
+        position: absolute;
+        right: 0 !important; /* ← PEGADO AL BORDE DERECHO */
+        top: 50%;
+        transform: translateY(-50%);
+        margin-left: 0;
+        z-index: 1002;
+        padding: 10px 12px; /* Padding reducido */
+        background: transparent !important; /* ← SIN FONDO */
+        border: none !important; /* ← SIN BORDE */
+        box-shadow: none !important; /* ← SIN SOMBRA */
+        border-radius: 0 !important; /* ← SIN BORDES REDONDOS */
+    }
+    
+    /* Ajustar logo y brand-section - 0.5cm A LA IZQUIERDA */
+    .brand-section {
+        flex: 1;
+        margin-left: 0;
+        max-width: calc(100% - 50px); /* Menos espacio para botón más pequeño */
+        transform: translateX(-15px); /* CAMBIO: 0.5cm a la izquierda (15px ≈ 0.5cm) */
+    }
+    
+    .logo-container {
+        gap: 10px;
+    }
+    
+    .logo-image-small {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .logo-title {
+        font-size: 2rem;
+        white-space: nowrap; /* Evita que se corte el nombre */
+        overflow: visible; /* Permite que se vea completo */
+        text-overflow: clip; /* No corta el texto */
+        max-width: none; /* Sin límite de ancho */
+    }
+    
+    /* MOSTRAR "BELLEZA PROFESIONAL" EN MÓVIL */
+    .logo-subtitle {
+        font-size: 0.75rem;
+        display: block !important; /* CAMBIO: Mostrar en móvil */
+        color: #D147A3;
+        letter-spacing: 1.5px;
+        margin-top: 2px;
+    }
+    
+    .admin-mobile-item {
+        display: block;
+    }
+    
+    .contact-item {
+        background: rgba(0, 0, 0, 0.7);
+        padding: 12px 15px;
+        margin: 10px 0;
+    }
+    
+    body {
+        background-attachment: scroll;
+    }
 
-            /* AJUSTES PARA MÓVIL - NAVEGACIÓN */
-            .nav-compact {
-                position: fixed;
-                top: 95px;
-                left: 0;
-                width: 100%;
-                background: rgba(0, 0, 0, 0.95) !important;
-                backdrop-filter: blur(10px);
-                display: none;
-                padding: 20px 0;
-                margin: 0;
-                z-index: 1002;
-            }
+    /* AJUSTES PARA MÓVIL - NAVEGACIÓN */
+    .nav-compact {
+        position: fixed;
+        top: 95px;
+        left: 0;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.95) !important;
+        backdrop-filter: blur(10px);
+        display: none;
+        padding: 20px 0;
+        margin: 0;
+        z-index: 1002;
+    }
 
-            .nav-compact.mobile-open {
-                display: block;
-            }
+    .nav-compact.mobile-open {
+        display: block;
+    }
 
-            .nav-compact ul {
-                flex-direction: column;
-                gap: 20px;
-            }
+    .nav-compact ul {
+        flex-direction: column;
+        gap: 20px;
+    }
 
-            .nav-compact li {
-                width: 100%;
-                text-align: center;
-            }
+    .nav-compact li {
+        width: 100%;
+        text-align: center;
+    }
 
-            .nav-link {
-                display: block;
-                padding: 15px !important;
-                font-size: 1.2rem;
-            }
+    .nav-link {
+        display: block;
+        padding: 15px !important;
+        font-size: 1.2rem;
+    }
 
-            .hero {
-                min-height: calc(100vh - 95px);
-                padding: 20px 15px 0 15px;
-                margin-top: -95px;
-                padding-top: 110px;
-            }
+    .hero {
+        min-height: calc(100vh - 95px);
+        padding: 20px 15px 0 15px;
+        margin-top: -95px;
+        padding-top: 110px;
+    }
 
-            .hero-content {
-                padding: 20px;
-                margin: 0 5px;
-                background: transparent !important; /* Fondo transparente en móvil */
-            }
+    .hero-content {
+        padding: 20px;
+        margin: 0 5px;
+        background: transparent !important; /* Fondo transparente en móvil */
+    }
 
-            .hero-title {
-                font-size: 3rem;
-                margin-bottom: 10px;
-                background: transparent !important;
-            }
+    .hero-title {
+        font-size: 3rem;
+        margin-bottom: 10px;
+        background: transparent !important;
+        margin-top: -45px !important; /* ← 3CM MÁS ARRIBA (45px ≈ 3cm) */
+    }
+    
+    .hero-subtitle {
+        font-size: 1.3rem;
+        color: #000000 !important; /* NEGRO también en móvil */
+        padding: 10px 15px;
+        margin-bottom: 25px;
+        background: transparent !important;
+        text-shadow: 0 1px 3px rgba(255, 255, 255, 0.7); /* Sombra blanca */
+    }
 
-            .hero-subtitle {
-                font-size: 1.3rem;
-                color: #000000 !important; /* NEGRO también en móvil */
-                padding: 10px 15px;
-                margin-bottom: 25px;
-                background: transparent !important;
-                text-shadow: 0 1px 3px rgba(255, 255, 255, 0.7); /* Sombra blanca */
-            }
+    .btn-hero {
+        padding: 14px 30px;
+        font-size: 1.1rem;
+    }
 
-            .btn-hero {
-                padding: 14px 30px;
-                font-size: 1.1rem;
-            }
+    body::after {
+        top: 95px;
+        height: calc(100% - 95px);
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1)) !important; /* MÁXIMA TRANSPARENCIA */
+    }
+}
 
-            body::after {
-                top: 95vh;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            body {
-                padding-top: 80px;
-            }
-            
-            .header {
-                height: 80px !important;
-            }
-            
-            .header-content {
-                padding: 0 5px;
-            }
-            
-            .mobile-menu-toggle {
-                right: 3px; /* CAMBIO: AÚN MÁS PEGADO EN MÓVILES PEQUEÑOS */
-                padding: 8px 10px; /* Más compacto */
-                font-size: 1.6rem;
-            }
-            
-            /* Ajustar el badge para pantallas pequeñas */
-            .notification-badge {
-                width: 20px;
-                height: 20px;
-                font-size: 10px;
-                top: -4px;
-                right: -4px;
-            }
-            
-            .hero {
-                margin-top: -80px;
-                min-height: calc(100vh - 80px);
-                padding-top: 100px;
-            }
+@media (max-width: 480px) {
+    body {
+        padding-top: 80px;
+    }
+    
+    .header {
+        height: 80px !important;
+    }
+    
+    .header-content {
+        padding: 0 5px;
+    }
+    
+    .mobile-menu-toggle {
+        right: 0 !important; /* ← PEGADO AL BORDE DERECHO */
+        padding: 8px 10px; /* Más compacto */
+        font-size: 1.6rem;
+        background: transparent !important; /* ← SIN FONDO */
+        border: none !important; /* ← SIN BORDE */
+        box-shadow: none !important; /* ← SIN SOMBRA */
+        border-radius: 0 !important; /* ← SIN BORDES REDONDOS */
+    }
+    
+    /* Ajustar el badge para pantallas pequeñas */
+    .notification-badge {
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+        top: -4px;
+        right: -4px;
+    }
+    
+    .hero {
+        margin-top: -80px;
+        min-height: calc(100vh - 80px);
+        padding-top: 100px;
+    }
 
-            .logo-image-small {
-                width: 60px;
-                height: 60px;
-            }
+    .logo-image-small {
+        width: 60px;
+        height: 60px;
+    }
 
-            .logo-title {
-                font-size: 1.8rem;
-                white-space: nowrap; /* Nombre completo */
-                overflow: visible;
-                max-width: none;
-            }
+    .logo-title {
+        font-size: 1.8rem;
+        white-space: nowrap; /* Nombre completo */
+        overflow: visible;
+        max-width: none;
+    }
 
-            /* "BELLEZA PROFESIONAL" visible en móviles pequeños */
-            .logo-subtitle {
-                font-size: 0.7rem;
-                display: block !important; /* Mostrar en móviles pequeños */
-                color: #D147A3;
-            }
+    /* "BELLEZA PROFESIONAL" visible en móviles pequeños */
+    .logo-subtitle {
+        font-size: 0.7rem;
+        display: block !important; /* Mostrar en móviles pequeños */
+        color: #D147A3;
+    }
 
-            .hero-title {
-                font-size: 2.5rem;
-            }
+    .hero-title {
+        font-size: 2.5rem;
+        margin-top: -45px !important; /* ← 3CM MÁS ARRIBA (45px ≈ 3cm) */
+    }
 
-            .hero-subtitle {
-                font-size: 1.1rem;
-                color: #000000 !important; /* NEGRO también en móviles pequeños */
-                padding: 8px 12px;
-                text-shadow: 0 1px 2px rgba(255, 255, 255, 0.7);
-            }
+    .hero-subtitle {
+        font-size: 1.1rem;
+        color: #000000 !important; /* NEGRO también en móviles pequeños */
+        padding: 8px 12px;
+        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.7);
+    }
 
-            .btn-hero {
-                padding: 12px 25px;
-                font-size: 1rem;
-            }
-        }
-        
-        @media (max-width: 360px) {
-            .logo-title {
-                font-size: 1.6rem; /* Un poco más pequeño en pantallas muy pequeñas */
-                max-width: 180px; /* Pero aún visible completo */
-            }
-            
-            .logo-subtitle {
-                font-size: 0.65rem; /* Un poco más pequeño */
-            }
-            
-            .mobile-menu-toggle {
-                right: 2px; /* MÁXIMO PEGADO EN PANTALLAS MUY PEQUEÑAS */
-                padding: 6px 8px;
-                font-size: 1.5rem;
-            }
-            
-            .notification-badge {
-                width: 18px;
-                height: 18px;
-                font-size: 9px;
-                top: -3px;
-                right: -3px;
-            }
-        }
+    .btn-hero {
+        padding: 12px 25px;
+        font-size: 1rem;
+    }
+
+    body::after {
+        top: 80px;
+        height: calc(100% - 80px);
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1)) !important; /* MÁXIMA TRANSPARENCIA */
+    }
+}
+
+@media (max-width: 360px) {
+    .logo-title {
+        font-size: 1.6rem; /* Un poco más pequeño en pantallas muy pequeñas */
+        max-width: 180px; /* Pero aún visible completo */
+    }
+    
+    .logo-subtitle {
+        font-size: 0.65rem; /* Un poco más pequeño */
+    }
+    
+    .mobile-menu-toggle {
+        right: 0 !important; /* ← PEGADO AL BORDE DERECHO */
+        padding: 6px 8px;
+        font-size: 1.5rem;
+        background: transparent !important; /* ← SIN FONDO */
+        border: none !important; /* ← SIN BORDE */
+        box-shadow: none !important; /* ← SIN SOMBRA */
+        border-radius: 0 !important; /* ← SIN BORDES REDONDOS */
+    }
+    
+    .notification-badge {
+        width: 18px;
+        height: 18px;
+        font-size: 9px;
+        top: -3px;
+        right: -3px;
+    }
+}
         
         .btn-paused {
             background: rgba(209, 71, 163, 0.3) !important; /* Malva-fucsia */
@@ -998,7 +1031,6 @@
         .btn-active {
             background: rgba(255, 255, 255, 0.1) !important;
         }
-
         /* ANIMACIONES PARA TEXTO */
         @keyframes fadeInDown {
             from {
