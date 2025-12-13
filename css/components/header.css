@@ -312,39 +312,101 @@
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(46,204,113,0.3);
 }
-
-/* ===== MEDIA QUERIES ===== */
-@media(max-width: 768px) {
-  .header { height: 95px; }
-  .brand-section { transform: translateX(-20px); flex:1; max-width: calc(100%-70px); }
-  .header-actions { display: none !important; }
-  .nav-compact { display: none; position: fixed; top:95px; left:0; right:0; background: rgba(0,0,0,0.95) !important; backdrop-filter: blur(10px); border-top:1px solid #333; box-shadow:0 10px 30px rgba(0,0,0,0.9); z-index:1002; }
-  .nav-compact.mobile-open { display:block; padding:20px; }
-  .nav-compact.mobile-open ul { flex-direction: column; gap:10px; }
-  .nav-compact.mobile-open .nav-link { padding:15px; text-align:center; background: rgba(255,255,255,0.05); margin:5px 0; }
-  .admin-mobile-item { display:block; margin-top:10px; }
-  .logo-title { font-size:1.8rem; white-space:nowrap; overflow:visible; }
-  .logo-subtitle { font-size:0.7rem; display:block !important; letter-spacing:1.5px; }
-  .logo-image-small { width:60px; height:60px; }
-  .mobile-menu-toggle { display:block; right:5px; padding:10px 12px; font-size:1.8rem; }
+/* ================= HERO SECTION ================= */
+.hero {
+    position: relative;
+    background: url('../imagenes/FL/fondo.jpg') center/cover no-repeat;
+    color: white;
+    min-height: calc(100vh - var(--header-height));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 180px 20px 100px;
+    z-index: 1;
 }
 
-@media(max-width:480px){
-  .brand-section { transform: translateX(-15px); max-width: calc(100%-65px); }
-  .mobile-menu-toggle { right:3px; padding:8px 10px; font-size:1.6rem; }
-  .mobile-citas-counter { width:20px;height:20px;font-size:10px;top:-4px;right:-4px; }
-  .logo-title { font-size:1.6rem; }
-  .logo-subtitle { font-size:0.65rem; }
-  .logo-image-small { width:50px;height:50px; }
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.25);
+    z-index: 0;
 }
 
-@media(max-width:360px){
-  .logo-title{font-size:1.4rem;max-width:130px;}
-  .logo-subtitle{font-size:0.6rem;}
-  .mobile-menu-toggle{right:2px;padding:6px 8px;font-size:1.5rem;}
-  .mobile-citas-counter{width:18px;height:18px;font-size:9px;top:-3px;right:-3px;}
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
-@media(max-width:320px){
-  .logo-title{font-size:1.3rem; max-width:110px;}
+/* ===== HERO TITLE ===== */
+.hero-title {
+    font-family: 'Playfair Display', serif; /* Fuente elegante */
+    font-size: 3.8rem;
+    margin-bottom: 25px;
+    font-weight: 800;
+    color: #D147A3; /* Rosado */
+    
+    -webkit-text-stroke: 2px #1a0000; /* Borde negro vino */
+    -moz-text-stroke: 2px #1a0000;
+    -ms-text-stroke: 2px #1a0000;
+    text-stroke: 2px #1a0000;
+    
+    text-shadow: 0 0 12px rgba(0,0,0,0.8);
+    letter-spacing: 1px;
+    line-height: 1.2;
+}
+
+/* ===== HERO SUBTITLE ===== */
+.hero-subtitle {
+    font-size: 1.8rem;
+    margin-bottom: 35px;
+    color: #000000 !important;
+    font-weight: 600;
+    line-height: 1.4;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    text-shadow: 1px 1px 5px rgba(255,255,255,0.5);
+    opacity: 0.95;
+}
+
+/* ================= SECCIONES ================= */
+.section-portal {
+    display: none;
+    padding: 100px 0;
+    min-height: 100vh;
+    background: transparent !important;
+    position: relative;
+}
+
+.section-portal.section-active {
+    display: block;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 3rem;
+    margin-bottom: 60px;
+    color: white;
+    position: relative;
+    text-shadow: 3px 3px 12px rgba(0,0,0,0.9);
+    font-weight: 700;
+    padding-bottom: 20px;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 4px;
+    background: linear-gradient(135deg, #E75480, #FFD700);
+    border-radius: 2px;
+    box-shadow: 0 2px 10px rgba(231,84,128,0.5);
 }

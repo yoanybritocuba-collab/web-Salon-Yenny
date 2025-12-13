@@ -293,97 +293,88 @@
             box-shadow: 0 5px 15px rgba(209, 71, 163, 0.2);
         }
 
-        /* PORTADA AJUSTADA PARA TOPEAR CON HEADER */
-        .hero {
-            position: relative;
-            min-height: calc(100vh - 100px); /* Resta altura del header más alto */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 40px 20px 0 20px;
-            background: transparent !important; /* FONDO TRANSPARENTE */
-            z-index: 1;
-            margin-top: -100px; /* IMPORTANTE: Compensa el header más alto */
-            padding-top: 140px; /* Ajuste para que contenido empiece después del header */
-        }
+      /* ================= HERO SECTION CORREGIDO ================= */
+
+/* PORTADA AJUSTADA PARA TOPEAR CON HEADER */
+.hero {
+    position: relative;
+    min-height: calc(100vh - 100px); /* Resta altura del header más alto */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px 0 20px;
+    background: transparent !important; /* FONDO TRANSPARENTE */
+    z-index: 1;
+    margin-top: -100px; /* Compensa el header más alto */
+    padding-top: 140px; /* Ajuste para que contenido empiece después del header */
+}
+
 /* CONTENIDO DE PORTADA CON FONDO TRANSPARENTE */
 .hero-content {
     position: relative;
     z-index: 3;
     max-width: 800px;
     padding: 30px 40px;
-    background: transparent !important; /* FONDO TRANSPARENTE DETRÁS DEL TEXTO */
+    background: transparent !important; /* Fondo transparente detrás del texto */
     border-radius: 15px;
     animation: heroEntrance 1s ease-out;
-    margin-top: -120px; /* ← CAMBIADO: Sube todo 4cm */
+    margin-top: 0;
 }
 
 @keyframes heroEntrance {
-    0% {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
 }
 
-/* TÍTULO PRINCIPAL - TODAS LETRAS MALVA-FUCSIA CON FONDO TRANSPARENTE */
+/* TÍTULO PRINCIPAL - FUENTE ELEGANTE CON SOMBRA NEGRA */
 .hero-title {
-    font-family: 'Dancing Script', cursive;
+    font-family: 'Playfair Display', serif; /* Fuente elegante */
     font-size: 4.5rem; /* Un poco más grande */
     font-weight: 700;
-    color: #D147A3; /* TODAS LAS LETRAS color malva-fucsia */
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
-    margin-bottom: 5px; /* ← REDUCIDO: Menos espacio abajo */
+    color: #D147A3; /* Letras malva-fucsia */
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.85); /* sombra negra */
+    margin-bottom: 15px;
     letter-spacing: 1.5px;
+    line-height: 1.1;
+    margin-top: 0;
+    background: transparent !important;
     animation: titlePulse 3s infinite alternate, fadeInDown 0.8s ease-out;
     transform-origin: center;
-    line-height: 1.1;
-    margin-top: -30px; /* ← AÑADIDO: Sube el título 30px */
-    background: transparent !important; /* FONDO TRANSPARENTE */
 }
 
 @keyframes titlePulse {
-    0% {
-        transform: scale(1);
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
-    }
-    100% {
-        transform: scale(1.03);
-        text-shadow: 0 4px 20px rgba(209, 71, 163, 0.7);
-    }
+    0% { transform: scale(1); text-shadow: 2px 2px 6px rgba(0,0,0,0.85); }
+    100% { transform: scale(1.03); text-shadow: 2px 2px 10px rgba(0,0,0,0.95); }
 }
 
-/* SUBTÍTULO - CAMBIADO A COLOR NEGRO (#000000) COMO SOLICITASTE */
+/* SUBTÍTULO - SOMBRA NEGRA SUAVE */
 .hero-subtitle {
+    font-family: 'Playfair Display', serif; /* Fuente elegante */
     font-size: 1.8rem; /* Un poco más grande */
-    color: #000000 !important; /* CAMBIO: Ahora es NEGRO en lugar de malva-fucsia */
-    text-shadow: 0 1px 5px rgba(255, 255, 255, 0.7); /* Sombra blanca para mejor contraste */
-    margin-bottom: 20px; /* ← REDUCIDO: Menos espacio abajo */
+    color: #000000 !important; /* Negro */
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8); /* sombra negra */
+    margin-bottom: 30px;
     line-height: 1.4;
-    font-weight: 600; /* Más negrita para mejor visibilidad */
+    font-weight: 600; /* Más negrita para visibilidad */
     letter-spacing: 0.8px;
     animation: fadeInUp 0.8s ease-out 0.2s both;
-    background: transparent !important; /* FONDO TRANSPARENTE */
+    background: transparent !important; /* Fondo transparente */
     padding: 12px 20px;
     border-radius: 10px;
     backdrop-filter: blur(2px);
-    margin-top: 20px !important; /* ← AÑADIDO: Baja el subtítulo 20px */
 }
 
-/* BOTÓN DE PORTADA - EFECTO VERDE TRANSPARENTE CON LETRAS NEGRAS */
+/* BOTÓN DE PORTADA - EFECTO VERDE TRANSPARENTE */
 .btn-hero {
     padding: 18px 45px;
     font-size: 1.3rem;
     font-weight: 600;
     letter-spacing: 1.2px;
-    background: rgba(76, 175, 80, 0.08) !important; /* FONDO VERDE 8% TRANSPARENTE */
-    border: 1.5px solid rgba(76, 175, 80, 0.2) !important; /* BORDE VERDE */
+    background: rgba(76, 175, 80, 0.08) !important; /* Fondo verde 8% transparente */
+    border: 1.5px solid rgba(76, 175, 80, 0.2) !important; /* Borde verde */
     border-radius: 12px;
-    color: #000000 !important; /* ← CAMBIADO A NEGRO (era #2E7D32) */
+    color: #2E7D32 !important; /* Texto verde oscuro */
     cursor: pointer;
     transition: all 0.3s ease !important;
     box-shadow: 0 8px 25px rgba(76, 175, 80, 0.1);
@@ -401,10 +392,7 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, 
-        transparent, 
-        rgba(255, 255, 255, 0.4), 
-        transparent);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
     transition: left 0.6s ease;
 }
 
@@ -413,59 +401,31 @@
 }
 
 .btn-hero:hover {
-    background: rgba(76, 175, 80, 0.15) !important; /* VERDE 15% TRANSPARENTE */
-    border-color: rgba(76, 175, 80, 0.4) !important; /* BORDE VERDE MÁS VISIBLE */
-    color: #000000 !important; /* MANTENER NEGRO */
     transform: translateY(-4px) scale(1.04);
+    background: rgba(76, 175, 80, 0.15) !important; /* Verde 15% transparente */
+    border-color: rgba(76, 175, 80, 0.4) !important; /* Borde verde más visible */
+    color: #000000 !important; /* Texto negro */
     box-shadow: 0 16px 40px rgba(76, 175, 80, 0.25);
 }
-.btn-hero:hover::before {
-    left: 100%;
+
+@keyframes buttonEntrance {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
 }
 
-.btn-hero:hover {
-    transform: translateY(-4px) scale(1.04);
-    background: rgba(76, 175, 80, 0.15) !important; /* VERDE 15% TRANSPARENTE */
-    border-color: rgba(76, 175, 80, 0.4) !important; /* BORDE VERDE MÁS VISIBLE */
-    color: #000000 !important; /* TEXTO NEGRO */
-    box-shadow: 0 16px 40px rgba(76, 175, 80, 0.25);
+@keyframes buttonPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 8px 25px rgba(209,71,163,0.3); }
+    50% { transform: scale(1.04); box-shadow: 0 12px 35px rgba(209,71,163,0.4); }
 }
-        @keyframes buttonEntrance {
-            0% {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
 
-        @keyframes buttonPulse {
-            0%, 100% {
-                transform: scale(1);
-                box-shadow: 0 8px 25px rgba(209, 71, 163, 0.3);
-            }
-            50% {
-                transform: scale(1.04);
-                box-shadow: 0 12px 35px rgba(209, 71, 163, 0.4);
-            }
-        }
+/* ICONO DEL BOTÓN */
+.btn-hero .btn-icon {
+    font-size: 1.5rem;
+    margin-right: 10px;
+    vertical-align: middle;
+    animation: iconFloat 2s infinite ease-in-out;
+}
 
-        .btn-hero:hover {
-            transform: translateY(-4px) scale(1.04);
-            background: rgba(209, 71, 163, 0.3);
-            color: #FFFFFF !important;
-            box-shadow: 0 16px 40px rgba(209, 71, 163, 0.4);
-        }
-
-        /* ICONO DEL BOTÓN */
-        .btn-hero .btn-icon {
-            font-size: 1.5rem;
-            margin-right: 10px;
-            vertical-align: middle;
-            animation: iconFloat 2s infinite ease-in-out;
-        }
 
         @keyframes iconFloat {
             0%, 100% {
